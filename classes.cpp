@@ -48,6 +48,7 @@ public:
 
 class Property : Card{
 public:
+    string color;
     int saleValue;
     int baseRent;
     int * houseRent;
@@ -57,7 +58,7 @@ public:
     int hotelCost;
     Tile * linkTile;
 
-    Property(string name, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name){
+    Property(string color, string name, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name){
         this->saleValue = saleValue;
         this->baseRent = baseRent;
         this->houseRent = houseRent; //Test that this works!!!
@@ -96,7 +97,36 @@ class getMoneyCard : Card{
 
 class Tile{
 public:
+    string name;
+
+    Tile(string name){
+        this->name = name;
+    }
+
+    virtual void doCardFunction(Player *) = 0;
+};
+
+class PropertyTile : Tile{
+public:
     Card * linkedCard;
+    int houseNum;
+    int hotelNum;
+    Player * owner;
+    bool isMonopoly;
+    bool isMortgaged;
+
+    PropertyTile(string name, Card * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMonopoly = false, bool isMortgaged = false) : Tile(name){
+        this->linkedCard = linkedCard;
+        this->houseNum = houseNum;
+        this->hotelNum = hotelNum;
+        this->owner = owner;
+        this->isMonopoly = isMonopoly;
+        this->isMortgaged = isMortgaged;
+    }
+
+    void doCardFunction(Player * P) {
+
+    }
 };
 
 int main() {
