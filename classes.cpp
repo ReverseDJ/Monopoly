@@ -20,6 +20,7 @@ public:
     int locatoin;
     bool inJail;
 
+
 };
 
 class Card{
@@ -31,13 +32,13 @@ public:
     }
 };
 
-class railRoads : Card{
+class RailRoadCard : Card{
 public:
     int baseRent; //railroad rent is doubled for each property owned
     int mortValue;
     Tile * linkTile;
 
-    railRoads(int baseRent=25, int mortValue = 100, string name="RR", Tile* link= nullptr):Card(name){
+    RailRoadCard(int baseRent=25, int mortValue = 100, string name="RR", Tile* link= nullptr):Card(name){
         this->baseRent = baseRent;
         this->mortValue = mortValue;
         this->name = name;
@@ -46,7 +47,7 @@ public:
 
 };
 
-class Property : Card{
+class PropertyCard : Card{
 public:
     string color;
     int saleValue;
@@ -58,7 +59,7 @@ public:
     int hotelCost;
     Tile * linkTile;
 
-    Property(string color, string name, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name){
+    PropertyCard(string color, string name, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name){
         this->saleValue = saleValue;
         this->baseRent = baseRent;
         this->houseRent = houseRent; //Test that this works!!!
@@ -70,14 +71,14 @@ public:
     }
 };
 
-class Utility : Card{
+class UtilityCard : Card{
 public:
     int saleValue;
     int mort;
     int rentOneUtil;
     int rentTwoUtil;
 
-    Utility(string name, int saleValue, int mort, int rentOneUtil, int rentTwoUtil): Card(name){
+    UtilityCard(string name, int saleValue, int mort, int rentOneUtil, int rentTwoUtil): Card(name){
         this->saleValue = saleValue;
         this->mort = mort;
         this->rentOneUtil = rentOneUtil;
@@ -103,7 +104,9 @@ public:
         this->name = name;
     }
 
-    virtual void doCardFunction(Player *) = 0;
+    void doCardFunction(){
+        return;
+    };
 };
 
 class PropertyTile : Tile{
@@ -125,9 +128,38 @@ public:
     }
 
     void doCardFunction(Player * P) {
-
+        //determine if space is owned
+        //should deduct the corrct amount money from the player and send it to the owner player
     }
 };
+
+class RailRoadTile : Tile{
+public:
+    //impliment me!
+};
+
+class DrawCardTile : Tile{
+public:
+    //impliment me!
+};
+
+class TaxTile : Tile{
+public:
+    //impliment me!
+};
+
+class UtilityTile : Tile{
+public:
+    //impliment me!
+};
+
+class GoToJailTile : Tile{
+public:
+    //impliment me!
+};
+
+//Free Parking, Jail, and Go will just be implementations of Card and do not have dervied classes.
+//Their functionality will be done in the game loop
 
 int main() {
 
