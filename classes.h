@@ -1,8 +1,11 @@
+//
+// Created by mdeno on 11/28/2022.
+//
+
 #include <iostream>
 #include <string>
 #include <unordered_map>
 
-using namespace std;
 
 class Tile;
 class Player;
@@ -12,22 +15,30 @@ class Player{
 public:
     int money;
     //hash table of owned properties
-    unordered_map<string, Card*> ownedCards;
+    std::unordered_map<std::string, Card*> ownedCards;
     //hash table of mortgated properties
-    unordered_map<string, Card*> mortCards;
-    string name;
-    string piece;
-    int locatoin;
+    std::unordered_map<std::string, Card*> mortCards;
+    std::string name;
+    int location;
     bool inJail;
+
+    Player(int money = 1500, std::unordered_map<std::string, Card*> ownedCards = {}, std::unordered_map<std::string, Card*> mortCards = {}, std::string name = "", int location = 0, bool inJail = false){
+        this->ownedCards = ownedCards;
+        this->money = money;
+        this->mortCards = mortCards;
+        this->name = name;
+        this->location = location;
+        this->inJail = inJail;
+    }
 
 
 };
 
 class Card{
 public:
-    string name;
+    std::string name;
 
-    Card(string name=""){
+    Card(std::string name=""){
         name = name;
     }
 };
@@ -38,7 +49,7 @@ public:
     int mortValue;
     Tile * linkTile;
 
-    RailRoadCard(int baseRent=25, int mortValue = 100, string name="RR", Tile* link= nullptr):Card(name){
+    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", Tile* link= nullptr):Card(name){
         this->baseRent = baseRent;
         this->mortValue = mortValue;
         this->name = name;
@@ -49,7 +60,7 @@ public:
 
 class PropertyCard : Card{
 public:
-    string color;
+    std::string color;
     int saleValue;
     int baseRent;
     int * houseRent;
@@ -59,7 +70,7 @@ public:
     int hotelCost;
     Tile * linkTile;
 
-    PropertyCard(string color, string name, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name){
+    PropertyCard(std::string color, std::string name, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name){
         this->saleValue = saleValue;
         this->baseRent = baseRent;
         this->houseRent = houseRent; //Test that this works!!!
@@ -78,7 +89,7 @@ public:
     int rentOneUtil;
     int rentTwoUtil;
 
-    UtilityCard(string name, int saleValue, int mort, int rentOneUtil, int rentTwoUtil): Card(name){
+    UtilityCard(std::string name, int saleValue, int mort, int rentOneUtil, int rentTwoUtil): Card(name){
         this->saleValue = saleValue;
         this->mort = mort;
         this->rentOneUtil = rentOneUtil;
@@ -88,9 +99,9 @@ public:
 
 class getMoneyCard : Card{
     int moneyAmount;
-    string cardDesc;
+    std::string cardDesc;
 
-    getMoneyCard(int moneyAmount, string cardDesc){
+    getMoneyCard(int moneyAmount, std::string cardDesc){
         this->moneyAmount = moneyAmount;
         this->cardDesc = cardDesc;
     }
@@ -98,9 +109,9 @@ class getMoneyCard : Card{
 
 class Tile{
 public:
-    string name;
+    std::string name;
 
-    Tile(string name){
+    Tile(std::string name){
         this->name = name;
     }
 
@@ -118,7 +129,7 @@ public:
     bool isMonopoly;
     bool isMortgaged;
 
-    PropertyTile(string name, Card * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMonopoly = false, bool isMortgaged = false) : Tile(name){
+    PropertyTile(std::string name, Card * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMonopoly = false, bool isMortgaged = false) : Tile(name){
         this->linkedCard = linkedCard;
         this->houseNum = houseNum;
         this->hotelNum = hotelNum;
@@ -161,7 +172,5 @@ public:
 //Free Parking, Jail, and Go will just be implementations of Card and do not have dervied classes.
 //Their functionality will be done in the game loop
 
-int main() {
 
-    return 0;
-}
+
