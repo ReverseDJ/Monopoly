@@ -139,10 +139,26 @@ public:
     }
 
     void doCardFunction(Player * P) {
-        //determine if space is owned
-        //should deduct the corrct amount money from the player and send it to the owner player
+        if (owner != nullptr){
+            int rent;
+            
+            if (hotelNum != 0){
+                rent = linkedCard->hotelRent;
+            }
+            else if ((hotelNum == 0) && (houseNum != 0)){
+                rent = linkedCard->houseRent[houseNum];
+            }
+            else{
+                rent = linkedCard->baseRent;
+            }
+            P->money = P->money - rent;
+            owner->money = owner->money + rent;
+        }
+        else{
+            // buy or auction property
+        }
     }
-};
+    };
 
 class RailRoadTile : Tile{
 public:
