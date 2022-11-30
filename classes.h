@@ -120,9 +120,7 @@ public:
         this->name = name;
     }
 
-    void doCardFunction(){
-        return;
-    };
+    virtual doCardFunction() = 0;
 };
 
 class PropertyTile : Tile{
