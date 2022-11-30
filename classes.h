@@ -37,9 +37,11 @@ public:
 class Card{
 public:
     std::string name;
+    std::string cardID;
 
-    Card(std::string name=""){
-        name = name;
+    Card(std::string name="",std::string cardID){
+        this->name = name;
+        this->cardID = cardID;
     }
 };
 
@@ -49,11 +51,12 @@ public:
     int mortValue;
     Tile * linkTile;
 
-    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", Tile* link= nullptr):Card(name){
+    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID,Tile* link= nullptr):Card(name,cardID){
         this->baseRent = baseRent;
         this->mortValue = mortValue;
         this->name = name;
         this->linkTile = link;
+        this->cardID = cardID;
     }
 
 };
@@ -70,7 +73,7 @@ public:
     int hotelCost;
     Tile * linkTile;
 
-    PropertyCard(std::string color, std::string name, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name){
+    PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name,cardID){
         this->saleValue = saleValue;
         this->baseRent = baseRent;
         this->houseRent = houseRent; //Test that this works!!!
@@ -79,6 +82,7 @@ public:
         this->houseCost = houseCost;
         this->hotelCost = hotelCost;
         this->linkTile = linkTitle;
+        this->cardID = cardID;
     }
 };
 
@@ -89,11 +93,12 @@ public:
     int rentOneUtil;
     int rentTwoUtil;
 
-    UtilityCard(std::string name, int saleValue, int mort, int rentOneUtil, int rentTwoUtil): Card(name){
+    UtilityCard(std::string name, std::string cardID, int saleValue, int mort, int rentOneUtil, int rentTwoUtil): Card(name,cardID){
         this->saleValue = saleValue;
         this->mort = mort;
         this->rentOneUtil = rentOneUtil;
         this->rentTwoUtil = rentTwoUtil;
+        this->cardID = cardID;
     }
 };
 
@@ -150,9 +155,9 @@ public:
             }
             else{
                 rent = linkedCard->baseRent;
-                bool monopoly = checkMonopoly(P, linkedCard);
+                int monopoly = checkMonopoly(P, linkedCard);
                 
-                if (monopoly == true){
+                if (monopoly >= linkedCard->int(cardID[1])){
                     rent = rent*2;
                 }
             }
@@ -160,7 +165,7 @@ public:
             owner->money = owner->money + rent;
         }
         else{
-            // buy or auction property
+            buyProperty(P);
         }
     }
     };
