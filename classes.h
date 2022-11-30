@@ -150,6 +150,11 @@ public:
             }
             else{
                 rent = linkedCard->baseRent;
+                bool monopoly = checkMonopoly(P, linkedCard);
+                
+                if (monopoly == true){
+                    rent = rent*2;
+                }
             }
             P->money = P->money - rent;
             owner->money = owner->money + rent;
