@@ -6,7 +6,6 @@
 #include <string>
 #include <unordered_map>
 
-
 class Tile;
 class Player;
 class Card;
@@ -39,7 +38,7 @@ public:
     std::string name;
     std::string cardID;
 
-    Card(std::string name="",std::string cardID){
+    Card(std::string name="",std::string cardID=""){
         this->name = name;
         this->cardID = cardID;
     }
@@ -51,7 +50,7 @@ public:
     int mortValue;
     Tile * linkTile;
 
-    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID,Tile* link= nullptr):Card(name,cardID){
+    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID="",Tile* link= nullptr):Card(name,cardID){
         this->baseRent = baseRent;
         this->mortValue = mortValue;
         this->name = name;
@@ -71,7 +70,7 @@ public:
     int mort;
     int houseCost;
     int hotelCost;
-    Tile * linkTile;
+    Tile * linkTile; 
 
     PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name,cardID){
         this->saleValue = saleValue;
@@ -123,7 +122,7 @@ public:
     virtual doCardFunction() = 0;
 };
 
-class PropertyTile : Tile{
+class PropertyTile : Tile{ 
 public:
     Card * linkedCard;
     int houseNum;
