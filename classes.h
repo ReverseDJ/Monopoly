@@ -8,6 +8,7 @@
 #include <math.h>
 #include <queue>
 #include <list>
+#include "functions.h"
 
 
 class Tile;
