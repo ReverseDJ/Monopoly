@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <math.h>
 #include <queue>
+#include <list>
 
 
 class Tile;
@@ -48,6 +49,39 @@ public:
 
 
 };
+
+class PlayerTurn{
+    public:
+    std::list<Player*> playerList;
+    std::list<Player*>::iterator it;
+    Player* currentPlayer;
+    
+    PlayerTurn(std::list<Player*> playerList){
+        this->playerList = playerList;
+        it = playerList.begin();
+        currentPlayer = *it;
+    }
+    
+    void next_player(){
+        if (it == playerList.end()){
+            it = playerList.begin();
+        }
+        else{
+            std::advance(it,1);
+        }
+        currentPlayer = *it;
+    }
+    
+    void RemovePlayer(Player* P){  
+        
+        if (P == currentPlayer){
+            next_player();
+        }
+        playerList.remove(P);
+    }
+    
+};
+
 
 class Card{
 public:
@@ -142,6 +176,37 @@ class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
     void doDeckCardFunction(Player * P){
         P->money = P->money + moneyAmount;
     }
+};
+
+class transferMoneyCard : public DeckCard{ //get money from other player(s) or pay money to other player(s)
+    int moneyAmount; //negative if player pays money
+    std::list<Player*> playerList;
+    std::string cardDesc;
+
+    transferMoneyCard(int moneyAmount, std::list<Player*> playerList, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
+        this->moneyAmount = moneyAmount; // positive if player recieves money, negative if player pays money;
+        this->cardDesc = cardDesc;
+        this->playerList = playerList;
+    }
+
+    void doDeckCardFunction(Player * P){
+    
+    int payAmount;
+    
+    for (auto it = playerList.begin(); it != playerList.end(); ++it){
+        if (moneyAmount > 0){
+            checkBalance(*it,moneyAmount);
+        }
+        (*it)->money = (*it)->money - moneyAmount;
+        payAmount = payAmount + moneyAmount;
+    }
+        if (moneyAmount < 0){
+            checkBalance(P,payAmount);
+        }
+        P->money = P->money + payAmount;
+        
+    }
+    
 };
 
 class getOutOfJailCard : public DeckCard{
