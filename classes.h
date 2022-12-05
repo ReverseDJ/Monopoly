@@ -31,6 +31,8 @@ public:
     std::unordered_map<std::string, Card*> ownedCards;
     //hash table of mortgated properties
     std::unordered_map<std::string, Card*> mortCards;
+    //hash table of deck cards (get out of jail free)
+    std::unordered_map<std::string, DeckCard*> DeckCards;
     std::string name;
     int location;
     bool inJail;
@@ -122,10 +124,10 @@ class DeckCard : public Card{ // ABC for all cards in chance/community chest que
     public:
     std::string cardDesc;
 
-    DeckCard(std::string name, std::string cardDesc, std::string cardID, std::string type):Card(name,cardID,type){
+    DeckCard(std::string name, std::string cardDesc, std::string cardID, std::string type): Card(name,cardID, type){
         this->cardDesc = cardDesc;
     }
-    virtual void doDeckCardFunction() = 0;
+    virtual void doDeckCardFunction(Player * P) = 0;
     };
 
 class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
@@ -139,6 +141,14 @@ class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
 
     void doDeckCardFunction(Player * P){
         P->money = P->money + moneyAmount;
+    }
+};
+
+class getOutOfJailCard : public DeckCard{
+    
+    void doDeckCardFunction(Player * P){
+        P->inJail = false;
+        P->DeckCards.erase(name);
     }
 };
 
@@ -289,21 +299,26 @@ public:
     }
 };
 
-
-class DrawCardTile : Tile{
+class DrawCardTile : public Tile{
 public:
-    queue<Card*> cardDeck;
+    std::queue<DeckCard*> cardDeck;
     
-    DrawCardTile(queue<Card*> cardDeck) : Tile(name) {
+    DrawCardTile(std::queue<DeckCard*> cardDeck) : Tile(name) {
         this->cardDeck = cardDeck;
     }
     
     void doCardFunction(Player * P){
-        Card * frontCard = cardDeck.front();
+        DeckCard * frontCard = cardDeck.front();
         cardDeck.pop();
-        cardDeck.push(frontCard);
         
-        //use card
+        if (frontCard->type == "GetOutOfJail"){
+            P->DeckCards[frontCard->name] = frontCard;
+        }
+        else{
+            cardDeck.push(frontCard);
+            frontCard->doDeckCardFunction(P);
+        }
+        
     }
 };
 
