@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <math.h>
+#include <queue>
 
 
 class Tile;
@@ -265,7 +266,19 @@ public:
 
 class DrawCardTile : Tile{
 public:
-    //impliment me!
+    queue<Card*> cardDeck;
+    
+    DrawCardTile(queue<Card*> cardDeck) : Tile(name) {
+        this->cardDeck = cardDeck;
+    }
+    
+    void doCardFunction(Player * P){
+        Card * frontCard = cardDeck.front();
+        cardDeck.pop();
+        cardDeck.push(frontCard);
+        
+        //use card
+    }
 };
 
 //Free Parking, Jail, and Go will just be implementations of Card and do not have dervied classes.
