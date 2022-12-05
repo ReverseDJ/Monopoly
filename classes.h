@@ -198,17 +198,56 @@ public:
     }
 };
 
-class DrawCardTile : Tile{
-public:
-    //impliment me!
-};
-
 class TaxTile : Tile{
 public:
-    //impliment me!
+    int taxValue;
+
+    TaxTile(std::string name, int taxValue=0): Tile(name) {
+        this->taxValue = taxValue;
+    }
+
+    void doCardFunction(Player * P) {
+        checkBalance(P);
+        P->money = P->money - taxValue;
+    }
+
 };
 
 class UtilityTile : Tile{
+public:
+    Card * linkedCard;
+    Player * owner;
+    bool isMortgaged;
+
+    UtilityTile(std::string name, Card * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
+            this->linkedCard = linkedCard;
+            this->houseNum = houseNum;
+            this->hotelNum = hotelNum;
+            this->owner = owner;
+            this->isMortgaged = isMortgaged;
+    }
+
+    void doCardFunction(Player * P) {
+        if (owner != nullptr && (isMortgaged == false)) {
+            int rent;
+            int monopoly = checkMonopoly(P, linkedCard);
+            
+            if (monopoly == 2){
+                rent = linkedCard->rentTwoUtil;
+            }
+            else{
+                rent = linkedCard->rentOneUtil;
+            }
+            checkBalance(P);
+            P->money = P->money - rent;
+            owner->money = owner->money + rent;
+        } else {
+            buyProperty(P);
+        }
+    }
+};
+
+class DrawCardTile : Tile{
 public:
     //impliment me!
 };
