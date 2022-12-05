@@ -40,8 +40,9 @@ class Card{
 public:
     std::string name;
     std::string cardID;
+    std::string type; //note: Allow constructor to use default value for derived classes
 
-    Card(std::string name="",std::string cardID){
+    Card(std::string name="",std::string cardID="",std::string type=""){
         this->name = name;
         this->cardID = cardID;
     }
@@ -53,7 +54,7 @@ public:
     int mortValue;
     RailRoadTile * linkTile;
 
-    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID,RailRoadTile* linkTile=nullptr):Card(name,cardID){
+    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID, RailRoadTile* linkTile=nullptr, std::string type="RR"):Card(name,cardID, type){
         this->baseRent = baseRent;
         this->mortValue = mortValue;
         this->name = name;
@@ -75,7 +76,7 @@ public:
     int hotelCost;
     PropertyTile * linkTile;
 
-    PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, PropertyTile * linkTile): Card(name,cardID){
+    PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, PropertyTile * linkTile, std::string type="Property"): Card(name,cardID,type){
         this->saleValue = saleValue;
         this->baseRent = baseRent;
         this->houseRent = houseRent; //Test that this works!!!
@@ -96,7 +97,7 @@ public:
     int rentTwoUtil;
     UtilityTile * linkTile;
 
-    UtilityCard(std::string name, std::string cardID, int saleValue, int mort, int rentOneUtil, int rentTwoUtil, UtilityTile * linkTile): Card(name,cardID){
+    UtilityCard(std::string name, std::string cardID, int saleValue, int mort, int rentOneUtil, int rentTwoUtil, UtilityTile * linkTile, std::string type="Utility"): Card(name,cardID, type){
         this->saleValue = saleValue;
         this->mort = mort;
         this->rentOneUtil = rentOneUtil;
@@ -106,15 +107,30 @@ public:
     }
 };
 
-class getMoneyCard : Card{
-    int moneyAmount;
+class DeckCard : Card{ // ABC for all cards in chance/community chest queues
+    public:
     std::string cardDesc;
 
-    getMoneyCard(int moneyAmount, std::string cardDesc){
+    DeckCard(std::string name, std::string cardDesc, std::string cardID, std::string type):Card(name,cardID,type){
+        this->cardDesc = cardDesc;
+    }
+    virtual void doDeckCardFunction() = 0;
+    };
+
+class getMoneyCard : DeckCard{ //get money from bank or pay money to bank
+    int moneyAmount; //negative if player pays to bank
+    std::string cardDesc;
+
+    getMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount;
         this->cardDesc = cardDesc;
     }
+
+    void doDeckCardFunction(Player * P){
+        P->money = P->money + moneyAmount;
+    }
 };
+
 
 class Tile{
 public:
