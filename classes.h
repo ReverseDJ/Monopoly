@@ -12,6 +12,17 @@
 class Tile;
 class Player;
 class Card;
+class RailRoadCard;
+class PropertyCard;
+class DeckCard;
+class UtilityCard;
+class getMoneyCard;
+class RailRoadTile;
+class PropertyTile;
+class UtilityTile;
+class TaxTile;
+class GoToJailTile;
+class DrawCardTile;
 
 class Player{
 public:
@@ -48,13 +59,13 @@ public:
     }
 };
 
-class RailRoadCard : Card{
+class RailRoadCard : public Card{
 public:
     int baseRent; //railroad rent is doubled for each property owned
     int mortValue;
     RailRoadTile * linkTile;
 
-    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID, RailRoadTile* linkTile=nullptr, std::string type="RR"):Card(name,cardID, type){
+    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID="", RailRoadTile* linkTile=nullptr, std::string type="RR"):Card(name,cardID, type){
         this->baseRent = baseRent;
         this->mortValue = mortValue;
         this->name = name;
@@ -64,7 +75,7 @@ public:
 
 };
 
-class PropertyCard : Card{
+class PropertyCard : public Card{
 public:
     std::string color;
     int saleValue;
@@ -89,7 +100,7 @@ public:
     }
 };
 
-class UtilityCard : Card{
+class UtilityCard : public Card{
 public:
     int saleValue;
     int mort;
@@ -107,7 +118,7 @@ public:
     }
 };
 
-class DeckCard : Card{ // ABC for all cards in chance/community chest queues
+class DeckCard : public Card{ // ABC for all cards in chance/community chest queues
     public:
     std::string cardDesc;
 
@@ -117,7 +128,7 @@ class DeckCard : Card{ // ABC for all cards in chance/community chest queues
     virtual void doDeckCardFunction() = 0;
     };
 
-class getMoneyCard : DeckCard{ //get money from bank or pay money to bank
+class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
     int moneyAmount; //negative if player pays to bank
     std::string cardDesc;
 
@@ -140,10 +151,10 @@ public:
         this->name = name;
     }
 
-    virtual doCardFunction() = 0;
+    virtual void doCardFunction() = 0;
 };
 
-class PropertyTile : Tile{
+class PropertyTile : public Tile{
 public:
     PropertyCard * linkedCard;
     int houseNum;
@@ -162,6 +173,8 @@ PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int 
 void doCardFunction(Player * P) {
     if (owner != nullptr && (isMortgaged == false)){
         int rent;
+        std::string linkedID = linkedCard->cardID;
+        int numCardsInMonopoly = int(linkedID[1]);
 
         if (hotelNum != 0){
             rent = linkedCard->hotelRent;
@@ -173,7 +186,7 @@ void doCardFunction(Player * P) {
             rent = linkedCard->baseRent;
             int monopoly = checkMonopoly(P, linkedCard);
 
-            if (monopoly >= linkedCard->int(cardID[1])){
+            if (monopoly >= numCardsInMonopoly){
                 rent = rent*2;
             }
         }
@@ -187,7 +200,7 @@ void doCardFunction(Player * P) {
 }
 };
 
-class RailRoadTile : Tile{
+class RailRoadTile : public Tile{
 public:
     RailRoadCard * linkedCard;
     Player * owner;
@@ -195,8 +208,6 @@ public:
 
     RailRoadTile(std::string name, RailRoadCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
         this->linkedCard = linkedCard;
-        this->houseNum = houseNum;
-        this->hotelNum = hotelNum;
         this->owner = owner;
         this->isMortgaged = isMortgaged;
     }
@@ -217,7 +228,7 @@ public:
     }
 };
 
-class TaxTile : Tile{
+class TaxTile : public Tile{
 public:
     int taxValue;
 
@@ -232,7 +243,7 @@ public:
 
 };
 
-class UtilityTile : Tile{
+class UtilityTile : public Tile{
 public:
     UtilityCard * linkedCard;
     Player * owner;
@@ -240,8 +251,6 @@ public:
 
     UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
             this->linkedCard = linkedCard;
-            this->houseNum = houseNum;
-            this->hotelNum = hotelNum;
             this->owner = owner;
             this->isMortgaged = isMortgaged;
     }
@@ -266,11 +275,11 @@ public:
     }
 };
 
-class GoToJailTile : Tile{
+class GoToJailTile : public Tile{
 public:
-    jailLocation;
+    int jailLocation;
     
-    GoToJailTile(int jailLocation){
+    GoToJailTile(std::string name, int jailLocation):Tile(name){
         this->jailLocation = jailLocation;
     }
     
@@ -279,6 +288,7 @@ public:
         P->location = jailLocation;
     }
 };
+
 
 class DrawCardTile : Tile{
 public:
