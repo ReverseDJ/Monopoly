@@ -12,48 +12,55 @@ int checkMonopoly(Player * P, Card * C);
 
 void displayProperties(Player * P); //Prints out all properties owned by the player, generally useful during the game loop.
 
-
-
-void checkBalance(Player * P, int money){
-    if (P->money >= money){
-        return;
-    }
-    else if(P->ownedCards.empty() == false){
-        cout << "You don't have enough money to pay this balance.\n";
-        cout << "current balance: " << P->money << "\n";
-        cout << "amount due: " << money << "\n"; 
-        
-        displayProperties(P);
-        
-        cout << "Which property would you like to mortgage?\n";
-        
-        cin >> std::string playerResponse;
-        
-        P->money = P->money + P->ownedCards[playerResponse].mortValue;
-        
-        (P->ownedCards[playerResponse]).linkedTile->isMortgaged = true;
-        
-        P->mortCards[playerResponse] = P->ownedCards[playerResponse];
-        
-        P->ownedCards.erase("playerResponse");
-        
-        checkBalance(P);
-    }
-    else{
-        Bankruptcy(P);
-    } 
- }
+void Bankruptcy(Player* P, PlayerTurn* Turn); //Removes Player from Player Turn list and declares them bankrupt
 
 void displayProperties(Player * P){
-    cout << "You own the following properties:\n";
+    std::cout << "You own the following properties:\n";
         
         std::unordered_map<std::string, Card*>::iterator it = P->ownedCards.begin();
      
         while (it != P->ownedCards.end()){
             
         std::string propertyName = it->first;
-        int mortgageValue = it->second;
+        int mortgageValue = it->second->mortValue;
         std::cout << propertyName << " : " << mortgageValue << "\n";
         it++;
     }
 }
+
+void checkBalance(Player * P, int money){
+    if (P->money >= money){
+        return;
+    }
+    else if(P->ownedCards.empty() == false){
+        std::cout << "You don't have enough money to pay this balance.\n";
+        std::cout << "current balance: " << P->money << "\n";
+        std::cout << "amount due: " << money << "\n"; 
+        
+        displayProperties(P);
+        
+        std::cout << "Which property would you like to mortgage?\n";
+        
+        std::string playerResponse;
+        
+        std::cin >> playerResponse;
+        
+        P->money = P->money + P->ownedCards[playerResponse]->mortValue;
+        
+        (P->ownedCards[playerResponse])->linkedTile->isMortgaged = true;
+        
+        P->mortCards[playerResponse] = P->ownedCards[playerResponse];
+        
+        P->ownedCards.erase("playerResponse");
+        
+        checkBalance(P,money);
+    }
+    else{
+        Bankruptcy(P);
+    }
+  }
+    
+    void Bankruptcy(Player* P, PlayerTurn* Turn){
+        Turn->RemovePlayer(P);
+        std::cout << P->name " has gone bankrupt!\n";
+    }
