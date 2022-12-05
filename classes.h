@@ -158,7 +158,7 @@ void doCardFunction(Player * P) {
                 rent = rent*2;
             }
         }
-        checkBalance(P);
+        checkBalance(P, rent);
         P->money = P->money - rent;
         owner->money = owner->money + rent;
     }
@@ -189,7 +189,7 @@ public:
 
             rent = rent * pow(2, monopoly);
 
-            checkBalance(P);
+            checkBalance(P, rent);
             P->money = P->money - rent;
             owner->money = owner->money + rent;
         } else {
@@ -238,7 +238,7 @@ public:
             else{
                 rent = linkedCard->rentOneUtil;
             }
-            checkBalance(P);
+            checkBalance(P,rent);
             P->money = P->money - rent;
             owner->money = owner->money + rent;
         } else {
