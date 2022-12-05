@@ -247,12 +247,21 @@ public:
     }
 };
 
-class DrawCardTile : Tile{
+class GoToJailTile : Tile{
 public:
-    //impliment me!
+    jailLocation;
+    
+    GoToJailTile(int jailLocation){
+        this->jailLocation = jailLocation;
+    }
+    
+    void doCardFunction(Player * P) {
+        P->inJail = true;
+        P->location = jailLocation;
+    }
 };
 
-class GoToJailTile : Tile{
+class DrawCardTile : Tile{
 public:
     //impliment me!
 };
