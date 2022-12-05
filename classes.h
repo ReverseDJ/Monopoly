@@ -187,7 +187,7 @@ public:
             int rent = linkedCard->baseRent;
             int monopoly = checkMonopoly(P, linkedCard);
 
-            rent = rent * pow(2, monopoly);
+            rent = rent * pow(2, (monopoly - 1));
 
             checkBalance(P, rent);
             P->money = P->money - rent;
