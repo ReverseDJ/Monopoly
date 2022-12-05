@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <math.h>
 
 
 class Tile;
@@ -129,48 +130,72 @@ public:
     int houseNum;
     int hotelNum;
     Player * owner;
-    bool isMonopoly;
     bool isMortgaged;
 
-    PropertyTile(std::string name, Card * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMonopoly = false, bool isMortgaged = false) : Tile(name){
+PropertyTile(std::string name, Card * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false) : Tile(name){
         this->linkedCard = linkedCard;
         this->houseNum = houseNum;
         this->hotelNum = hotelNum;
         this->owner = owner;
-        this->isMonopoly = isMonopoly;
+        this->isMortgaged = isMortgaged;
+}
+
+void doCardFunction(Player * P) {
+    if (owner != nullptr && (isMortgaged == false)){
+        int rent;
+
+        if (hotelNum != 0){
+            rent = linkedCard->hotelRent;
+        }
+        else if ((hotelNum == 0) && (houseNum != 0)){
+            rent = linkedCard->houseRent[houseNum];
+        }
+        else{
+            rent = linkedCard->baseRent;
+            int monopoly = checkMonopoly(P, linkedCard);
+
+            if (monopoly >= linkedCard->int(cardID[1])){
+                rent = rent*2;
+            }
+        }
+        checkBalance(P);
+        P->money = P->money - rent;
+        owner->money = owner->money + rent;
+    }
+    else{
+        buyProperty(P);
+    }
+}
+};
+
+class RailRoadTile : Tile{
+public:
+    Card * linkedCard;
+    Player * owner;
+    bool isMortgaged;
+
+    RailRoadTile(std::string name, Card * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
+        this->linkedCard = linkedCard;
+        this->houseNum = houseNum;
+        this->hotelNum = hotelNum;
+        this->owner = owner;
         this->isMortgaged = isMortgaged;
     }
 
     void doCardFunction(Player * P) {
-        if (owner != nullptr){
-            int rent;
-            
-            if (hotelNum != 0){
-                rent = linkedCard->hotelRent;
-            }
-            else if ((hotelNum == 0) && (houseNum != 0)){
-                rent = linkedCard->houseRent[houseNum];
-            }
-            else{
-                rent = linkedCard->baseRent;
-                int monopoly = checkMonopoly(P, linkedCard);
-                
-                if (monopoly >= linkedCard->int(cardID[1])){
-                    rent = rent*2;
-                }
-            }
+        if (owner != nullptr && (isMortgaged == false)) {
+            int rent = linkedCard->baseRent;
+            int monopoly = checkMonopoly(P, linkedCard);
+
+            rent = rent * pow(2, monopoly);
+
+            checkBalance(P);
             P->money = P->money - rent;
             owner->money = owner->money + rent;
-        }
-        else{
+        } else {
             buyProperty(P);
         }
     }
-    };
-
-class RailRoadTile : Tile{
-public:
-    //impliment me!
 };
 
 class DrawCardTile : Tile{
