@@ -50,13 +50,13 @@ class RailRoadCard : Card{
 public:
     int baseRent; //railroad rent is doubled for each property owned
     int mortValue;
-    Tile * linkTile;
+    RailRoadTile * linkTile;
 
-    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID,Tile* link= nullptr):Card(name,cardID){
+    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID,RailRoadTile* linkTile=nullptr):Card(name,cardID){
         this->baseRent = baseRent;
         this->mortValue = mortValue;
         this->name = name;
-        this->linkTile = link;
+        this->linkTile = linkTile;
         this->cardID = cardID;
     }
 
@@ -72,9 +72,9 @@ public:
     int mort;
     int houseCost;
     int hotelCost;
-    Tile * linkTile;
+    PropertyTile * linkTile;
 
-    PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, Tile * linkTitle): Card(name,cardID){
+    PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, PropertyTile * linkTile): Card(name,cardID){
         this->saleValue = saleValue;
         this->baseRent = baseRent;
         this->houseRent = houseRent; //Test that this works!!!
@@ -82,7 +82,7 @@ public:
         this->mort = mort;
         this->houseCost = houseCost;
         this->hotelCost = hotelCost;
-        this->linkTile = linkTitle;
+        this->linkTile = linkTile;
         this->cardID = cardID;
     }
 };
@@ -93,12 +93,14 @@ public:
     int mort;
     int rentOneUtil;
     int rentTwoUtil;
+    UtilityTile * linkTile;
 
-    UtilityCard(std::string name, std::string cardID, int saleValue, int mort, int rentOneUtil, int rentTwoUtil): Card(name,cardID){
+    UtilityCard(std::string name, std::string cardID, int saleValue, int mort, int rentOneUtil, int rentTwoUtil, UtilityTile * linkTile): Card(name,cardID){
         this->saleValue = saleValue;
         this->mort = mort;
         this->rentOneUtil = rentOneUtil;
         this->rentTwoUtil = rentTwoUtil;
+        this->linkTile = linkTile;
         this->cardID = cardID;
     }
 };
@@ -126,13 +128,13 @@ public:
 
 class PropertyTile : Tile{
 public:
-    Card * linkedCard;
+    PropertyCard * linkedCard;
     int houseNum;
     int hotelNum;
     Player * owner;
     bool isMortgaged;
 
-PropertyTile(std::string name, Card * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false) : Tile(name){
+PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false) : Tile(name){
         this->linkedCard = linkedCard;
         this->houseNum = houseNum;
         this->hotelNum = hotelNum;
@@ -170,11 +172,11 @@ void doCardFunction(Player * P) {
 
 class RailRoadTile : Tile{
 public:
-    Card * linkedCard;
+    RailRoadCard * linkedCard;
     Player * owner;
     bool isMortgaged;
 
-    RailRoadTile(std::string name, Card * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
+    RailRoadTile(std::string name, RailRoadCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
         this->linkedCard = linkedCard;
         this->houseNum = houseNum;
         this->hotelNum = hotelNum;
@@ -215,11 +217,11 @@ public:
 
 class UtilityTile : Tile{
 public:
-    Card * linkedCard;
+    UtilityCard * linkedCard;
     Player * owner;
     bool isMortgaged;
 
-    UtilityTile(std::string name, Card * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
+    UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
             this->linkedCard = linkedCard;
             this->houseNum = houseNum;
             this->hotelNum = hotelNum;
