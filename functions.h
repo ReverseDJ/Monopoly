@@ -45,13 +45,33 @@ void checkBalance(Player * P, int money){
         
         std::cin >> playerResponse;
         
-        P->money = P->money + P->ownedCards[playerResponse]->mortValue;
+        if ((P->ownedCards[playerResponse]->type) == "RR")){
+             P->money = P->money + dynamic_cast<RailRoadCard*>(P->ownedCards[playerResponse])->mortValue;
+            
+             (dynamic_cast<RailRoadCard*>(P->ownedCards[playerResponse]))->linkedTile->isMortgaged = true;
         
-        (P->ownedCards[playerResponse])->linkedTile->isMortgaged = true;
+              P->mortCards[playerResponse] = P->ownedCards[playerResponse];
         
-        P->mortCards[playerResponse] = P->ownedCards[playerResponse];
+              P->ownedCards.erase("playerResponse");
+        }
+        else if ((P->ownedCards[playerResponse]->type) == "Property")){
+            P->money = P->money + dynamic_cast<PropertyCard*>(P->ownedCards[playerResponse])->mortValue;
+            
+             (dynamic_cast<PropertyCard*>(P->ownedCards[playerResponse]))->linkedTile->isMortgaged = true;
         
-        P->ownedCards.erase("playerResponse");
+              P->mortCards[playerResponse] = P->ownedCards[playerResponse];
+        
+              P->ownedCards.erase("playerResponse");
+        }
+        else if ((P->ownedCards[playerResponse]->type) == "Utility")){
+            P->money = P->money + dynamic_cast<UtilityCard*>(P->ownedCards[playerResponse])->mortValue;
+            
+            (dynamic_cast<UtilityCard*>(P->ownedCards[playerResponse]))->linkedTile->isMortgaged = true;
+        
+             P->mortCards[playerResponse] = P->ownedCards[playerResponse];
+        
+             P->ownedCards.erase("playerResponse");
+        }
         
         checkBalance(P,money);
     }
