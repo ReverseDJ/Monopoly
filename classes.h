@@ -16,6 +16,7 @@ class Card;
 class RailRoadCard;
 class PropertyCard;
 class DeckCard;
+class OwnableCard;
 class UtilityCard;
 class getMoneyCard;
 class RailRoadTile;
@@ -29,16 +30,16 @@ class Player{
 public:
     int money;
     //hash table of owned properties
-    std::unordered_map<std::string, Card*> ownedCards;
+    std::unordered_map<std::string, OwnableCard*> ownedCards;
     //hash table of mortgated properties
-    std::unordered_map<std::string, Card*> mortCards;
+    std::unordered_map<std::string, OwnableCard*> mortCards;
     //hash table of deck cards (get out of jail free)
     std::unordered_map<std::string, DeckCard*> DeckCards;
     std::string name;
     int location;
     bool inJail;
 
-    Player(int money = 1500, std::unordered_map<std::string, Card*> ownedCards = {}, std::unordered_map<std::string, Card*> mortCards = {}, std::string name = "", int location = 0, bool inJail = false){
+    Player(int money = 1500, std::unordered_map<std::string, OwnableCard*> ownedCards = {}, std::unordered_map<std::string, OwnableCard*> mortCards = {}, std::string name = "", int location = 0, bool inJail = false){
         this->ownedCards = ownedCards;
         this->money = money;
         this->mortCards = mortCards;
