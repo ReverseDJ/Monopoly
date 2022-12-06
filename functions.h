@@ -14,6 +14,11 @@ void displayProperties(Player * P); //Prints out all properties owned by the pla
 
 void Bankruptcy(Player* P, PlayerTurn* Turn); //Removes Player from Player Turn list and declares them bankrupt
 
+//Take a generic player and moves them to a generic space
+//dest will be a valid spot in the board array
+//inst determines if the code will be run to check if they pass go
+void movePlayer(Player *P, int dest, bool inst);
+
 void displayProperties(Player * P){
     std::cout << "You own the following properties:\n";
         
