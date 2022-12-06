@@ -28,15 +28,17 @@ void displayProperties(Player * P){
     }
 }
 
-void checkBalance(Player * P, int money){
+bool checkBalance(Player * P, int money){
     if (P->money >= money){
-        return;
+        return true;
     }
     else if(P->ownedCards.empty() == false){
         std::cout << "You don't have enough money to pay this balance.\n";
         std::cout << "current balance: " << P->money << "\n";
         std::cout << "amount due: " << money << "\n"; 
         
+        while((P->money < money) && (P->ownedCards.empty() == false)){
+            
         displayProperties(P);
         
         std::cout << "Which property would you like to mortgage?\n";
@@ -55,10 +57,13 @@ void checkBalance(Player * P, int money){
               P->ownedCards.erase("playerResponse");
         
         }
+        }
+        
         checkBalance(P,money);
     }
     else{
         Bankruptcy(P); //needs to reference a global PlayerTurn object, which will be in the game loop
+        return false;
     }
   }
     
