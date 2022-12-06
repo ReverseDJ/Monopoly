@@ -355,8 +355,9 @@ public:
     }
 
     void doCardFunction(Player * P) {
-        checkBalance(P);
-        P->money = P->money - taxValue;
+        if (checkBalance(P, taxValue) == true){
+            P->money = P->money - taxValue;
+        }
     }
 
 };
