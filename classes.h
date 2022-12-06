@@ -99,12 +99,12 @@ public:
 class RailRoadCard : public Card{
 public:
     int baseRent; //railroad rent is doubled for each property owned
-    int mortValue;
+    int mort;
     RailRoadTile * linkTile;
 
-    RailRoadCard(int baseRent=25, int mortValue = 100, std::string name="RR", std::string cardID="", RailRoadTile* linkTile=nullptr, std::string type="RR"):Card(name,cardID, type){
+    RailRoadCard(int baseRent=25, int mort = 100, std::string name="RR", std::string cardID="", RailRoadTile* linkTile=nullptr, std::string type="RR"):Card(name,cardID, type){
         this->baseRent = baseRent;
-        this->mortValue = mortValue;
+        this->mort = mort;
         this->name = name;
         this->linkTile = linkTile;
         this->cardID = cardID;
