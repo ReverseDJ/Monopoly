@@ -8,7 +8,6 @@
 #include <math.h>
 #include <queue>
 #include <list>
-#include "functions.h"
 
 
 class Tile;
@@ -96,63 +95,76 @@ public:
     }
 };
 
-class RailRoadCard : public Card{
+class OwnableCard : public Card{ // ABC for all property, rail road and utility cards, enables mortgage and sale values without casting
+    public:
+    
+    int mort;
+    int saleValue;
+
+    OwnableCard(std::string name, int mort, int saleValue, std::string cardID, std::string type): Card(name,cardID, type){
+        this->saleValue = saleValue;
+        this->mort = mort;
+    }
+    virtual void mortgage() = 0;
+    virtual void unmortgage() = 0;
+    virtual void buy(Player * P) = 0;
+    };
+
+class RailRoadCard : public OwnableCard{
 public:
     int baseRent; //railroad rent is doubled for each property owned
-    int mort;
     RailRoadTile * linkTile;
 
-    RailRoadCard(int baseRent=25, int mort = 100, std::string name="RR", std::string cardID="", RailRoadTile* linkTile=nullptr, std::string type="RR"):Card(name,cardID, type){
+    RailRoadCard(int baseRent=25, int mort = 100, int saleValue = 200, std::string name="RR", std::string cardID="", RailRoadTile* linkTile=nullptr, std::string type="RR"):OwnableCard(name,mort,saleValue,cardID, type){
         this->baseRent = baseRent;
-        this->mort = mort;
-        this->name = name;
         this->linkTile = linkTile;
-        this->cardID = cardID;
     }
+    
+    void mortgage(); //Defined after tile definition because it uses tile member variables
+    void unmortgage();
+    void buy(Player * P);
 
 };
 
-class PropertyCard : public Card{
+class PropertyCard : public OwnableCard{
 public:
     std::string color;
-    int saleValue;
     int baseRent;
     int * houseRent;
     int hotelRent;
-    int mort;
     int houseCost;
     int hotelCost;
     PropertyTile * linkTile;
 
-    PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, PropertyTile * linkTile, std::string type="Property"): Card(name,cardID,type){
-        this->saleValue = saleValue;
+    PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, PropertyTile * linkTile, std::string type="Property"):OwnableCard(name,mort,saleValue,cardID, type){
         this->baseRent = baseRent;
         this->houseRent = houseRent; //Test that this works!!!
         this->hotelRent = hotelRent;
-        this->mort = mort;
         this->houseCost = houseCost;
         this->hotelCost = hotelCost;
         this->linkTile = linkTile;
-        this->cardID = cardID;
     }
+    
+    void mortgage(); //Defined after tile definition because it uses tile member variables
+    void unmortgage();
+    void buy(Player * P);
 };
 
-class UtilityCard : public Card{
+class UtilityCard : public OwnableCard{
 public:
-    int saleValue;
-    int mort;
     int rentOneUtil;
     int rentTwoUtil;
     UtilityTile * linkTile;
 
-    UtilityCard(std::string name, std::string cardID, int saleValue, int mort, int rentOneUtil, int rentTwoUtil, UtilityTile * linkTile, std::string type="Utility"): Card(name,cardID, type){
-        this->saleValue = saleValue;
-        this->mort = mort;
+    UtilityCard(std::string name, std::string cardID, int saleValue, int mort, int rentOneUtil, int rentTwoUtil, UtilityTile * linkTile, std::string type="Utility"):OwnableCard(name,mort,saleValue,cardID, type){
         this->rentOneUtil = rentOneUtil;
         this->rentTwoUtil = rentTwoUtil;
         this->linkTile = linkTile;
-        this->cardID = cardID;
     }
+    
+    void mortgage(); //Defined after tile definition because it uses tile member variables
+    void unmortgage();
+    void buy(Player * P);
 };
 
 class DeckCard : public Card{ // ABC for all cards in chance/community chest queues
@@ -276,6 +288,16 @@ void doCardFunction(Player * P) {
 }
 };
 
+void PropertyCard::mortgage(){
+    linkTile->isMortgaged = true;
+}
+void PropertyCard::unmortgage(){
+    linkTile->isMortgaged = false;
+}
+void PropertyCard::buy(Player * P){
+    linkTile->owner = P;
+}
+
 class RailRoadTile : public Tile{
 public:
     RailRoadCard * linkedCard;
@@ -303,6 +325,16 @@ public:
         }
     }
 };
+
+void RailRoadCard::mortgage(){
+    linkTile->isMortgaged = true;
+}
+void RailRoadCard::unmortgage(){
+    linkTile->isMortgaged = false;
+}
+void RailRoadCard::buy(Player * P){
+    linkTile->owner = P;
+}
 
 class TaxTile : public Tile{
 public:
@@ -351,6 +383,16 @@ public:
     }
 };
 
+void UtilityCard::mortgage(){
+    linkTile->isMortgaged = true;
+}
+void UtilityCard::unmortgage(){
+    linkTile->isMortgaged = false;
+}
+void UtilityCard::buy(Player * P){
+    linkTile->owner = P;
+}
+
 class GoToJailTile : public Tile{
 public:
     int jailLocation;
@@ -390,6 +432,4 @@ public:
 
 //Free Parking, Jail, and Go will just be implementations of Card and do not have dervied classes.
 //Their functionality will be done in the game loop
-
-
 
