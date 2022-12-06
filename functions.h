@@ -72,3 +72,21 @@ bool checkBalance(Player * P, int money){
     std::cout << P->name << " has gone bankrupt!\n";
   }
 
+int checkMonopoly(Player * P, Card * C){
+    
+    std::string suitCard = C->cardID;
+    int numCards = int(C->cardID[2]);
+    int cardNum = int(C->cardID[3]);
+    int monopolyCount;
+    
+    for (int i = 0; i < numCards; i++){
+        if (i != cardNum){
+            suitCard[3] = char(cardNum);
+            if(P->ownedCards.find(suitCard) != P->ownedCards.end()){
+                monopolyCount = monopolyCount + 1;
+            }
+        }
+    }
+    return monopolyCount;
+}
+
