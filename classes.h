@@ -293,7 +293,9 @@ void doCardFunction(Player * P) {
         owner->money = owner->money + rent;
     }
     else{
-        buyProperty(P);
+        if (owner == nullptr){
+            buyProperty(P);
+        }
     }
 }
 };
@@ -331,7 +333,9 @@ public:
             P->money = P->money - rent;
             owner->money = owner->money + rent;
         } else {
-            buyProperty(P);
+            if (owner == nullptr){
+                buyProperty(P);
+            }
         }
     }
 };
@@ -389,7 +393,9 @@ public:
             P->money = P->money - rent;
             owner->money = owner->money + rent;
         } else {
-            buyProperty(P);
+            if (owner == nullptr){
+                buyProperty(P);
+            }
         }
     }
 };
