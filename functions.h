@@ -17,12 +17,12 @@ void Bankruptcy(Player* P, PlayerTurn* Turn); //Removes Player from Player Turn 
 void displayProperties(Player * P){
     std::cout << "You own the following properties:\n";
         
-        std::unordered_map<std::string, Card*>::iterator it = P->ownedCards.begin();
+        std::unordered_map<std::string, OwnableCard*>::iterator it = P->ownedCards.begin();
      
         while (it != P->ownedCards.end()){
             
         std::string propertyName = it->first;
-        int mortgageValue = it->second->mortValue;
+        int mortgageValue = it->second->mort;
         std::cout << propertyName << " : " << mortgageValue << "\n";
         it++;
     }
@@ -45,34 +45,16 @@ void checkBalance(Player * P, int money){
         
         std::cin >> playerResponse;
         
-        if ((P->ownedCards[playerResponse]->type) == "RR")){
-             P->money = P->money + dynamic_cast<RailRoadCard*>(P->ownedCards[playerResponse])->mortValue;
+        if (P->ownedCards.find(playerResponse) != P->ownedCards.end()){
+             P->money = P->money + (P->ownedCards[playerResponse])->mort;
             
-             (dynamic_cast<RailRoadCard*>(P->ownedCards[playerResponse]))->linkedTile->isMortgaged = true;
+             (P->ownedCards[playerResponse])->mortgage();
         
               P->mortCards[playerResponse] = P->ownedCards[playerResponse];
         
               P->ownedCards.erase("playerResponse");
+        
         }
-        else if ((P->ownedCards[playerResponse]->type) == "Property")){
-            P->money = P->money + dynamic_cast<PropertyCard*>(P->ownedCards[playerResponse])->mortValue;
-            
-             (dynamic_cast<PropertyCard*>(P->ownedCards[playerResponse]))->linkedTile->isMortgaged = true;
-        
-              P->mortCards[playerResponse] = P->ownedCards[playerResponse];
-        
-              P->ownedCards.erase("playerResponse");
-        }
-        else if ((P->ownedCards[playerResponse]->type) == "Utility")){
-            P->money = P->money + dynamic_cast<UtilityCard*>(P->ownedCards[playerResponse])->mortValue;
-            
-            (dynamic_cast<UtilityCard*>(P->ownedCards[playerResponse]))->linkedTile->isMortgaged = true;
-        
-             P->mortCards[playerResponse] = P->ownedCards[playerResponse];
-        
-             P->ownedCards.erase("playerResponse");
-        }
-        
         checkBalance(P,money);
     }
     else{
@@ -80,7 +62,8 @@ void checkBalance(Player * P, int money){
     }
   }
     
-    void Bankruptcy(Player* P, PlayerTurn* Turn){
-        Turn->RemovePlayer(P);
-        std::cout << P->name " has gone bankrupt!\n";
-    }
+ void Bankruptcy(Player* P, PlayerTurn* Turn){
+    Turn->RemovePlayer(P);
+    std::cout << P->name << " has gone bankrupt!\n";
+  }
+
