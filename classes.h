@@ -188,16 +188,22 @@ class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
     }
 
     void doDeckCardFunction(Player * P){
-        P->money = P->money + moneyAmount;
+        
+        if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount))){
+            P->money = P->money + moneyAmount;
+        }
+        else{
+            P->money = P->money + moneyAmount;
+        }
     }
 };
 
 class transferMoneyCard : public DeckCard{ //get money from other player(s) or pay money to other player(s)
     int moneyAmount; //negative if player pays money
-    std::list<Player*> playerList;
+    std::vector<Player*> playerList;
     std::string cardDesc;
 
-    transferMoneyCard(int moneyAmount, std::list<Player*> playerList, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
+    transferMoneyCard(int moneyAmount, std::vector<Player*> playerList, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount; // positive if player recieves money, negative if player pays money;
         this->cardDesc = cardDesc;
         this->playerList = playerList;
@@ -206,19 +212,22 @@ class transferMoneyCard : public DeckCard{ //get money from other player(s) or p
     void doDeckCardFunction(Player * P){
     
     int payAmount;
-    
-    for (auto it = playerList.begin(); it != playerList.end(); ++it){
-        if (moneyAmount > 0){
-            checkBalance(*it,moneyAmount);
-        }
-        (*it)->money = (*it)->money - moneyAmount;
-        payAmount = payAmount + moneyAmount;
-    }
-        if (moneyAmount < 0){
-            checkBalance(P,payAmount);
+     
+    if (moneyAmount >= 0){
+        for (int i = 0; i < playerList.size(); ++i){
+            if (checkBalance(playerList[i],moneyAmount) == true){
+                (playerList[i])->money = (playerList[i])->money - moneyAmount;
+                payAmount = payAmount + moneyAmount;
+            }
         }
         P->money = P->money + payAmount;
-        
+    }
+    else{
+        if (checkBalance(P,(-1*(playerList.size())*moneyAmount)) == true)
+            for (int i = 0; i < playerList.size(); ++i){
+                (playerList[i])->money = (playerList[i])->money - moneyAmount;
+            }
+        }
     }
     
 };
