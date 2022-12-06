@@ -58,7 +58,7 @@ void checkBalance(Player * P, int money){
         checkBalance(P,money);
     }
     else{
-        Bankruptcy(P);
+        Bankruptcy(P); //needs to reference a global PlayerTurn object, which will be in the game loop
     }
   }
     
