@@ -8,7 +8,7 @@ Ilena:
 - file i/o 
 - game loop
 - pay how
-    - suggest action to player (bot always says yes)
+    - suggest action to player (bot always says yes/True)
 
 
 Justin & Ethan:
@@ -18,4 +18,4 @@ Justin & Ethan:
     - constructors
     - do card function
     - go to jail tile
-- convert classes.cpp to header file
+- code main game loop
