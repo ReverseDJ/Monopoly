@@ -93,6 +93,7 @@ public:
     Card(std::string name="",std::string cardID="",std::string type=""){
         this->name = name;
         this->cardID = cardID;
+        this->type = type;
     }
 };
 
