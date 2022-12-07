@@ -28,7 +28,14 @@ void displayProperties(Player * P){
             
         std::string propertyName = it->first;
         int mortgageValue = it->second->mort;
+        
+        if (it->second->type == "Property"){
+            int numHouses = (dynamic_cast<PropertyCard*>(it->second))->linkTile->houseNum;
+            int numHotels = (dynamic_cast<PropertyCard*>(it->second))->linkTile->hotelNum;
+            std::cout << propertyName << " : " << mortgageValue << " houses: " << numHouses << " hotels: " << hotelNum << "\n";
+        }else{
         std::cout << propertyName << " : " << mortgageValue << "\n";
+        }
         it++;
     }
 }
@@ -46,13 +53,49 @@ bool checkBalance(Player * P, int money){
             
         displayProperties(P);
         
-        std::cout << "Which property would you like to mortgage?\n";
+        std::cout << "Which property would you like to mortgage or sell houses on?\n";
         
         std::string playerResponse;
         
         std::cin >> playerResponse;
         
         if (P->ownedCards.find(playerResponse) != P->ownedCards.end()){
+            
+            
+            if (P->ownedCards[playerResponse]->type == "Property"){
+                
+                PropertyCard* playerCard = dynamic_cast<PropertyCard*>(it->second);
+                
+                PropertyTile* playerTile = playerCard->linkTile; 
+                
+                if ((playerTile->hotelNum > 0) || (playerTile->hotelNum > 0)){
+                    
+                    if (playerTile->hotelNum > 0){
+                        cout << "Would you like to sell your hotel?\n";
+                        
+                        cin >> std::string sellHotel;
+                        
+                        if (sellHotel == "yes"){
+                            playerTile->hotelNum = 0;
+                            playerTile->houseNum = 4;
+                            P->money = P->money + (playerCard->hotelCost)*0.5;
+                            cout << "You have sold your hotel, worth " << (playerCard->hotelCost)*0.5 << "\n";
+                        }
+                    }
+                    
+                    cout << "How many houses would you like to sell?\n";
+                    cin >> int sellHouse;
+                    
+                    if ((sellHouse > 0) && (sellHouse < playerTile->houseNum)){
+                        playerTile->houseNum = playerTile->houseNum - sellHouse;
+                        P->money = P->money + (playerCard->houseCost)*sellHouse*0.5;
+                        cout << "You have sold " << sellHouse << " houses, worth " << (playerCard->houseCost)*sellHouse*0.5 << "\n";
+                    }
+                }
+                
+            }
+            else{
+            
              P->money = P->money + (P->ownedCards[playerResponse])->mort;
             
              (P->ownedCards[playerResponse])->mortgage();
@@ -60,6 +103,9 @@ bool checkBalance(Player * P, int money){
               P->mortCards[playerResponse] = P->ownedCards[playerResponse];
         
               P->ownedCards.erase("playerResponse");
+              
+              cout << playerResponse << " has been mortgaged.\n";
+            }
         
         }
         }
