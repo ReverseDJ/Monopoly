@@ -458,6 +458,7 @@ int main() {
 
 
     while(player_list.size !=1 /*temporary variable*/) {
+        displayProperties(Player * P);
         if (currentPlayer->injail == True) {
             //implement in jail function
             ;
@@ -470,7 +471,7 @@ int main() {
                     std::cout << "Would you like to buy this property? Type 1 for yes and 0 for no";
                     std::in >> answer;
                     if (answer = True) {
-                        PropertyCard::buy(currentPlayer);
+                        buyProperty(currentPlayer);
                     }
                 } else {
                     doCardFunction; //need help implementing this
@@ -483,7 +484,7 @@ int main() {
                     std::cout << "Would you like to buy this property? Type 1 for yes and 0 for no";
                     std::in >> answer;
                     if (answer = True) {
-                        UtilityCard::buy(currentPlayer);
+                        buyProperty(currentPlayer);
                     }
                 } else {
                     doCardFunction; //need help implementing this
