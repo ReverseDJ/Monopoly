@@ -215,9 +215,11 @@ public:
 class Tile{
 public:
     std::string name;
+    std::string type;
 
-    Tile(std::string name){
+    Tile(std::string name, std::string type = ""){
         this->name = name;
+        this->type = type;
     }
 
     virtual void doCardFunction() = 0;
@@ -231,7 +233,7 @@ public:
     Player * owner;
     bool isMortgaged;
 
-    PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false) : Tile(name){
+    PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false, std::string type="Property") : Tile(name, type){
             this->linkedCard = linkedCard;
             this->houseNum = houseNum;
             this->hotelNum = hotelNum;
@@ -248,7 +250,7 @@ public:
     Player * owner;
     bool isMortgaged;
 
-    RailRoadTile(std::string name, RailRoadCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
+    RailRoadTile(std::string name, RailRoadCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false, std::string type="RR") : Tile(name, type) {
         this->linkedCard = linkedCard;
         this->owner = owner;
         this->isMortgaged = isMortgaged;
@@ -261,7 +263,7 @@ class TaxTile : public Tile{
 public:
     int taxValue;
 
-    TaxTile(std::string name, int taxValue=0): Tile(name) {
+    TaxTile(std::string name, int taxValue=0, std::string type="Tax") : Tile(name, type){
         this->taxValue = taxValue;
     }
 
@@ -275,7 +277,7 @@ public:
     Player * owner;
     bool isMortgaged;
 
-    UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
+    UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false, std::string type="Utility") : Tile(name, type) {
             this->linkedCard = linkedCard;
             this->owner = owner;
             this->isMortgaged = isMortgaged;
@@ -288,7 +290,7 @@ class GoToJailTile : public Tile{
 public:
     int jailLocation;
     
-    GoToJailTile(std::string name, int jailLocation):Tile(name){
+    GoToJailTile(std::string name, int jailLocation, std::string type="GotoJail") : Tile(name, type){
         this->jailLocation = jailLocation;
     }
     
@@ -299,7 +301,7 @@ class DrawCardTile : public Tile{
 public:
     std::queue<DeckCard*> cardDeck;
     
-    DrawCardTile(std::queue<DeckCard*> cardDeck) : Tile(name) {
+    DrawCardTile(std::queue<DeckCard*> cardDeck, std::string type="DrawCard") : Tile(name, type) {
         this->cardDeck = cardDeck;
     }
     
