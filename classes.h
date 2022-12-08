@@ -245,9 +245,11 @@ class getOutOfJailCard : public DeckCard{
 class Tile{
 public:
     std::string name;
+    std::string type="";
 
-    Tile(std::string name){
+    Tile(std::string name,std::string type=""){
         this->name = name;
+        this->type = type;
     }
 
     virtual void doCardFunction() = 0;
@@ -261,7 +263,7 @@ public:
     Player * owner;
     bool isMortgaged;
 
-PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false) : Tile(name){
+PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false, std::string type="Property") : Tile(name,type){
         this->linkedCard = linkedCard;
         this->houseNum = houseNum;
         this->hotelNum = hotelNum;
@@ -317,7 +319,7 @@ public:
     Player * owner;
     bool isMortgaged;
 
-    RailRoadTile(std::string name, RailRoadCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
+    RailRoadTile(std::string name, RailRoadCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false,std::string type="RR") : Tile(name,type) {
         this->linkedCard = linkedCard;
         this->owner = owner;
         this->isMortgaged = isMortgaged;
@@ -373,7 +375,7 @@ public:
     Player * owner;
     bool isMortgaged;
 
-    UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
+    UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false,std::string type="Utility") : Tile(name,type) {
             this->linkedCard = linkedCard;
             this->owner = owner;
             this->isMortgaged = isMortgaged;
