@@ -30,7 +30,8 @@ void displayProperties(Player * P){
      
         while (it != P->ownedCards.end()){
             
-            std::string propertyName = it->first; //property name
+            std::string propertyID = it->first; //property ID
+            std::string propertyName = it->second->name;
             int mortgageValue = it->second->mort; //mortgage value
 
             if (it->second->type == "Property"){
@@ -38,7 +39,7 @@ void displayProperties(Player * P){
                 int numHotels = (dynamic_cast<PropertyCard*>(it->second))->linkTile->hotelNum; //gets number of hotels
                 std::cout << propertyName << " : " << mortgageValue << " houses: " << numHouses << " hotels: " << numHotels << "\n";
             }else{
-            std::cout << propertyName << " : " << mortgageValue << "\n";
+            std::cout << propertyName << " ID: " << propertyID << " Mortgage Value: " << mortgageValue << "\n";
         }
         it++;
     }
@@ -58,6 +59,7 @@ bool checkBalance(Player * P, int money){
             displayProperties(P);
 
             std::cout << "Which property would you like to mortgage or sell houses on?\n";
+            std::cout << "Enter the ID: ";
 
             std::string playerResponse;
 
@@ -65,7 +67,6 @@ bool checkBalance(Player * P, int money){
 
             if (P->ownedCards.find(playerResponse) != P->ownedCards.end()){
 
-                //ARE WE ACCESSING CARDS WITH NAMES OR CARD IDS!!!!!!!!
                 if (P->ownedCards[playerResponse]->type == "Property"){
 
                     PropertyCard* playerCard = dynamic_cast<PropertyCard*>(P->ownedCards[playerResponse]);
@@ -166,7 +167,7 @@ void buyProperty(Player * P){
         
         if ((P->money) > (purchaseCard->saleValue)){
             purchaseProperty->owner = P;
-            P->ownedCards[purchaseCard->name] = purchaseCard;
+            P->ownedCards[purchaseCard->cardID] = purchaseCard;
             std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
         }
         else{
@@ -180,7 +181,7 @@ void buyProperty(Player * P){
         
         if ((P->money) > (purchaseCard->saleValue)){
             purchaseProperty->owner = P;
-            P->ownedCards[purchaseCard->name] = purchaseCard;
+            P->ownedCards[purchaseCard->cardID] = purchaseCard;
             std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
         }
         else{
@@ -194,7 +195,7 @@ void buyProperty(Player * P){
         
         if ((P->money) > (purchaseCard->saleValue)){
             purchaseProperty->owner = P;
-            P->ownedCards[purchaseCard->name] = purchaseCard;
+            P->ownedCards[purchaseCard->cardID] = purchaseCard;
             std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
         }
         else{
