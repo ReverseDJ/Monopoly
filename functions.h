@@ -3,6 +3,7 @@
 #include <iostream>
 #include <list>
 extern PlayerTurn * activePlayers;
+extern Tile* Board[];
 
 //uses players location to determine tile to buy;
 void buyProperty(Player * P);
