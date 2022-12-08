@@ -147,3 +147,34 @@ int checkMonopoly(Player * P, Card * C){
     return monopolyCount;
 }
 
+void buyProperty(player * P){
+    Tile* purchaseTile = Board[P->location];
+    
+    cout << "Purchase property " << purchaseTile->name << "?\n"
+    
+    cin >> std::string playerResponse;
+    
+    if (playerResponse == "yes"){
+    
+    if (purchaseTile->type == "Property"){
+        PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile);
+    }
+    else if (purchaseTile->type == "RR"){
+        RailRoadTile* purchaseProperty = dynamic_cast<RailRoadTile*>(purchaseTile);
+    }
+    else if (purchaseTile->type == "Utility"){
+        UtilityTile* purchaseProperty = dynamic_cast<UtilityTile*>(purchaseTile);
+    }
+    
+     OwnableCard* purchaseCard = purchaseProperty->linkedCard;
+        
+        if ((P->money) > (purchaseCard->saleValue)){
+            purchaseProperty->owner = P;
+            P->ownedCards[purchaseCard->name] = purchaseCard;
+            cout << "You have successfully purchased " << purchaseCard->name << "\n";
+        }
+        else{
+            cout << "You do not have enough money to purchase this property.\n"
+        }
+}
+}
