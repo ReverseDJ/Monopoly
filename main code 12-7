@@ -1,7 +1,3 @@
-//
-// Created by mdeno on 11/28/2022.
-//
-
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -83,6 +79,7 @@ public:
 
 };
 
+
 class Card{
 public:
     std::string name;
@@ -92,13 +89,12 @@ public:
     Card(std::string name="",std::string cardID="",std::string type=""){
         this->name = name;
         this->cardID = cardID;
-        this->type = type;
     }
 };
 
 class OwnableCard : public Card{ // ABC for all property, rail road and utility cards, enables mortgage and sale values without casting
-    public:
-    
+public:
+
     int mort;
     int saleValue;
 
@@ -120,7 +116,7 @@ public:
         this->baseRent = baseRent;
         this->linkTile = linkTile;
     }
-    
+
     void mortgage(); //Defined after tile definition because it uses tile member variables
     void unmortgage();
     void buy(Player * P);
@@ -145,7 +141,7 @@ public:
         this->hotelCost = hotelCost;
         this->linkTile = linkTile;
     }
-    
+
     void mortgage(); //Defined after tile definition because it uses tile member variables
     void unmortgage();
     void buy(Player * P);
@@ -162,21 +158,21 @@ public:
         this->rentTwoUtil = rentTwoUtil;
         this->linkTile = linkTile;
     }
-    
+
     void mortgage(); //Defined after tile definition because it uses tile member variables
     void unmortgage();
     void buy(Player * P);
 };
 
 class DeckCard : public Card{ // ABC for all cards in chance/community chest queues
-    public:
+public:
     std::string cardDesc;
 
     DeckCard(std::string name, std::string cardDesc, std::string cardID, std::string type): Card(name,cardID, type){
         this->cardDesc = cardDesc;
     }
     virtual void doDeckCardFunction(Player * P) = 0;
-    };
+};
 
 class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
     int moneyAmount; //negative if player pays to bank
@@ -187,7 +183,15 @@ class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
         this->cardDesc = cardDesc;
     }
 
-    void doDeckCardFunction(Player * P);
+    void doDeckCardFunction(Player * P){
+
+        if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount))){
+            P->money = P->money + moneyAmount;
+        }
+        else{
+            P->money = P->money + moneyAmount;
+        }
+    }
 };
 
 class transferMoneyCard : public DeckCard{ //get money from other player(s) or pay money to other player(s)
@@ -201,14 +205,35 @@ class transferMoneyCard : public DeckCard{ //get money from other player(s) or p
         this->playerList = playerList;
     }
 
-    void doDeckCardFunction(Player * P);
-    
+    void doDeckCardFunction(Player * P){
+
+        int payAmount;
+
+        if (moneyAmount >= 0){
+            for (int i = 0; i < playerList.size(); ++i){
+                if (checkBalance(playerList[i],moneyAmount) == true){
+                    (playerList[i])->money = (playerList[i])->money - moneyAmount;
+                    payAmount = payAmount + moneyAmount;
+                }
+            }
+            P->money = P->money + payAmount;
+        }
+        else{
+            if (checkBalance(P,(-1*(playerList.size())*moneyAmount)) == true)
+                for (int i = 0; i < playerList.size(); ++i){
+                    (playerList[i])->money = (playerList[i])->money - moneyAmount;
+                }
+        }
+    }
+
 };
 
 class getOutOfJailCard : public DeckCard{
-public:
-    getOutOfJailCard(std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""):DeckCard(name, cardDesc, cardID, type ){}
-    void doDeckCardFunction(Player * P);
+
+    void doDeckCardFunction(Player * P){
+        P->inJail = false;
+        P->DeckCards.erase(name);
+    }
 };
 
 
@@ -232,15 +257,54 @@ public:
     bool isMortgaged;
 
     PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false) : Tile(name){
-            this->linkedCard = linkedCard;
-            this->houseNum = houseNum;
-            this->hotelNum = hotelNum;
-            this->owner = owner;
-            this->isMortgaged = isMortgaged;
+        this->linkedCard = linkedCard;
+        this->houseNum = houseNum;
+        this->hotelNum = hotelNum;
+        this->owner = owner;
+        this->isMortgaged = isMortgaged;
     }
 
-    void doCardFunction(Player * P);
+    void doCardFunction(Player * P) {
+        if (owner != nullptr && (isMortgaged == false)){
+            int rent;
+            std::string linkedID = linkedCard->cardID;
+            int numCardsInMonopoly = int(linkedID[1]);
+
+            if (hotelNum != 0){
+                rent = linkedCard->hotelRent;
+            }
+            else if ((hotelNum == 0) && (houseNum != 0)){
+                rent = linkedCard->houseRent[houseNum];
+            }
+            else{
+                rent = linkedCard->baseRent;
+                int monopoly = checkMonopoly(P, linkedCard);
+
+                if (monopoly >= numCardsInMonopoly){
+                    rent = rent*2;
+                }
+            }
+            checkBalance(P, rent);
+            P->money = P->money - rent;
+            owner->money = owner->money + rent;
+        }
+        else{
+            if (owner == nullptr){
+                buyProperty(P);
+            }
+        }
+    }
 };
+
+void PropertyCard::mortgage(){
+    linkTile->isMortgaged = true;
+}
+void PropertyCard::unmortgage(){
+    linkTile->isMortgaged = false;
+}
+void PropertyCard::buy(Player * P){
+    linkTile->owner = P;
+}
 
 class RailRoadTile : public Tile{
 public:
@@ -254,8 +318,33 @@ public:
         this->isMortgaged = isMortgaged;
     }
 
-    void doCardFunction(Player * P);
+    void doCardFunction(Player * P) {
+        if (owner != nullptr && (isMortgaged == false)) {
+            int rent = linkedCard->baseRent;
+            int monopoly = checkMonopoly(P, linkedCard);
+
+            rent = rent * pow(2, (monopoly - 1));
+
+            checkBalance(P, rent);
+            P->money = P->money - rent;
+            owner->money = owner->money + rent;
+        } else {
+            if (owner == nullptr){
+                buyProperty(P);
+            }
+        }
+    }
 };
+
+void RailRoadCard::mortgage(){
+    linkTile->isMortgaged = true;
+}
+void RailRoadCard::unmortgage(){
+    linkTile->isMortgaged = false;
+}
+void RailRoadCard::buy(Player * P){
+    linkTile->owner = P;
+}
 
 class TaxTile : public Tile{
 public:
@@ -265,7 +354,11 @@ public:
         this->taxValue = taxValue;
     }
 
-    void doCardFunction(Player * P);
+    void doCardFunction(Player * P) {
+        if (checkBalance(P, taxValue) == true){
+            P->money = P->money - taxValue;
+        }
+    }
 
 };
 
@@ -276,36 +369,146 @@ public:
     bool isMortgaged;
 
     UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
-            this->linkedCard = linkedCard;
-            this->owner = owner;
-            this->isMortgaged = isMortgaged;
+        this->linkedCard = linkedCard;
+        this->owner = owner;
+        this->isMortgaged = isMortgaged;
     }
 
-    void doCardFunction(Player * P);
+    void doCardFunction(Player * P) {
+        if (owner != nullptr && (isMortgaged == false)) {
+            int rent;
+            int monopoly = checkMonopoly(P, linkedCard);
+
+            if (monopoly == 2){
+                rent = linkedCard->rentTwoUtil;
+            }
+            else{
+                rent = linkedCard->rentOneUtil;
+            }
+            checkBalance(P,rent);
+            P->money = P->money - rent;
+            owner->money = owner->money + rent;
+        } else {
+            if (owner == nullptr){
+                buyProperty(P);
+            }
+        }
+    }
 };
+
+void UtilityCard::mortgage(){
+    linkTile->isMortgaged = true;
+}
+void UtilityCard::unmortgage(){
+    linkTile->isMortgaged = false;
+}
+void UtilityCard::buy(Player * P){
+    linkTile->owner = P;
+}
 
 class GoToJailTile : public Tile{
 public:
     int jailLocation;
-    
+
     GoToJailTile(std::string name, int jailLocation):Tile(name){
         this->jailLocation = jailLocation;
     }
-    
-    void doCardFunction(Player * P);
+
+    void doCardFunction(Player * P) {
+        P->inJail = true;
+        P->location = jailLocation;
+    }
 };
 
 class DrawCardTile : public Tile{
 public:
     std::queue<DeckCard*> cardDeck;
-    
+
     DrawCardTile(std::queue<DeckCard*> cardDeck) : Tile(name) {
         this->cardDeck = cardDeck;
     }
-    
-    void doCardFunction(Player * P);
+
+    void doCardFunction(Player * P){
+        DeckCard * frontCard = cardDeck.front();
+        cardDeck.pop();
+
+        if (frontCard->type == "GetOutOfJail"){
+            P->DeckCards[frontCard->name] = frontCard;
+        }
+        else{
+            cardDeck.push(frontCard);
+            frontCard->doDeckCardFunction(P);
+        }
+
+    }
 };
 
 //Free Parking, Jail, and Go will just be implementations of Card and do not have dervied classes.
 //Their functionality will be done in the game loop
 
+//At this point, most of main is pseudo code. Feel free to adjust variable names to allow for proper implementation
+//Still need to discuss how to initialize the players and set up the mid game set up.
+
+int main() {
+    std::cout<<"Welcome to Monopoly!\n";
+    int players;
+    std::cout<<"How many players?\n";
+    std::cin>>players;
+    bool answer;
+
+
+    while(player_list.size !=1 /*temporary variable*/) {
+        displayProperties(Player * P);
+        if (currentPlayer->injail == True) {
+            //implement in jail function
+            ;
+        }
+        /*implement dice roll function*/
+        /*implement move player function*/
+        if (currentPlayer->location == property_tile) { //if the player lands on a property tile
+            if (currentPlayer != property_tile.player->owner) {
+                if (property_tile.player->owner == nullptr) {
+                    std::cout << "Would you like to buy this property? Type 1 for yes and 0 for no";
+                    std::in >> answer;
+                    if (answer = True) {
+                        buyProperty(currentPlayer);
+                    }
+                } else {
+                    doCardFunction; //need help implementing this
+                    //this includes playing rent, with or without houses and hotels
+                }
+            }
+        } else if (currentPlayer->location == utility_tile) { //if the player lands on a utility tile
+            if (currentPlayer != utility_tile.player->owner) {
+                if (utility_tile.player->owner == nullptr) {
+                    std::cout << "Would you like to buy this property? Type 1 for yes and 0 for no";
+                    std::in >> answer;
+                    if (answer = True) {
+                        buyProperty(currentPlayer);
+                    }
+                } else {
+                    doCardFunction; //need help implementing this
+                    //this includes playing rent, with or without houses and hotel
+                }
+            }
+        } else if (currentPlayer->location == chance_tile) {
+            //implement chance and c/c cards
+        }
+        else if (currentPlayer->location == jail_tile) {
+            currentPlayer->location = injail_tile;
+            currentPlayer->injail = True;
+        }
+
+        std::cout<<"Would you like to buy and houses or hotels before the end of your turn? Type 1 for yes and 0 for no";
+        std::cin>>answer;
+        if (answer==True){
+            //implement buy house or hotel
+        }
+        //End Turn, switch to next player as currentPlayer
+
+    }
+
+
+
+    return 0;
+}
