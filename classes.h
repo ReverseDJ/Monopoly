@@ -52,17 +52,17 @@ public:
 };
 
 class PlayerTurn{
-    public:
+public:
     std::list<Player*> playerList;
     std::list<Player*>::iterator it;
     Player* currentPlayer;
-    
+
     PlayerTurn(std::list<Player*> playerList){
         this->playerList = playerList;
         it = playerList.begin();
         currentPlayer = *it;
     }
-    
+
     void next_player(){
         if (it == playerList.end()){
             it = playerList.begin();
@@ -72,17 +72,16 @@ class PlayerTurn{
         }
         currentPlayer = *it;
     }
-    
-    void RemovePlayer(Player* P){  
-        
+
+    void RemovePlayer(Player* P){
+
         if (P == currentPlayer){
             next_player();
         }
         playerList.remove(P);
     }
-    
-};
 
+};
 
 class Card{
 public:
@@ -110,7 +109,7 @@ class OwnableCard : public Card{ // ABC for all property, rail road and utility 
     virtual void mortgage() = 0;
     virtual void unmortgage() = 0;
     virtual void buy(Player * P) = 0;
-    };
+};
 
 class RailRoadCard : public OwnableCard{
 public:
@@ -188,15 +187,7 @@ class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
         this->cardDesc = cardDesc;
     }
 
-    void doDeckCardFunction(Player * P){
-        
-        if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount))){
-            P->money = P->money + moneyAmount;
-        }
-        else{
-            P->money = P->money + moneyAmount;
-        }
-    }
+    void doDeckCardFunction(Player * P);
 };
 
 class transferMoneyCard : public DeckCard{ //get money from other player(s) or pay money to other player(s)
@@ -210,46 +201,23 @@ class transferMoneyCard : public DeckCard{ //get money from other player(s) or p
         this->playerList = playerList;
     }
 
-    void doDeckCardFunction(Player * P){
-    
-    int payAmount;
-     
-    if (moneyAmount >= 0){
-        for (int i = 0; i < playerList.size(); ++i){
-            if (checkBalance(playerList[i],moneyAmount) == true){
-                (playerList[i])->money = (playerList[i])->money - moneyAmount;
-                payAmount = payAmount + moneyAmount;
-            }
-        }
-        P->money = P->money + payAmount;
-    }
-    else{
-        if (checkBalance(P,(-1*(playerList.size())*moneyAmount)) == true)
-            for (int i = 0; i < playerList.size(); ++i){
-                (playerList[i])->money = (playerList[i])->money - moneyAmount;
-            }
-        }
-    }
+    void doDeckCardFunction(Player * P);
     
 };
 
 class getOutOfJailCard : public DeckCard{
-    
-    void doDeckCardFunction(Player * P){
-        P->inJail = false;
-        P->DeckCards.erase(name);
-    }
+public:
+    getOutOfJailCard(std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""):DeckCard(name, cardDesc, cardID, type ){}
+    void doDeckCardFunction(Player * P);
 };
 
 
 class Tile{
 public:
     std::string name;
-    std::string type="";
 
-    Tile(std::string name,std::string type=""){
+    Tile(std::string name){
         this->name = name;
-        this->type = type;
     }
 
     virtual void doCardFunction() = 0;
@@ -263,55 +231,16 @@ public:
     Player * owner;
     bool isMortgaged;
 
-PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false, std::string type="Property") : Tile(name,type){
-        this->linkedCard = linkedCard;
-        this->houseNum = houseNum;
-        this->hotelNum = hotelNum;
-        this->owner = owner;
-        this->isMortgaged = isMortgaged;
-}
-
-void doCardFunction(Player * P) {
-    if (owner != nullptr && (isMortgaged == false)){
-        int rent;
-        std::string linkedID = linkedCard->cardID;
-        int numCardsInMonopoly = int(linkedID[1]);
-
-        if (hotelNum != 0){
-            rent = linkedCard->hotelRent;
-        }
-        else if ((hotelNum == 0) && (houseNum != 0)){
-            rent = linkedCard->houseRent[houseNum];
-        }
-        else{
-            rent = linkedCard->baseRent;
-            int monopoly = checkMonopoly(P, linkedCard);
-
-            if (monopoly >= numCardsInMonopoly){
-                rent = rent*2;
-            }
-        }
-        checkBalance(P, rent);
-        P->money = P->money - rent;
-        owner->money = owner->money + rent;
+    PropertyTile(std::string name, PropertyCard * linkedCard, int houseNum = 0, int hotelNum = 0, Player * owner = nullptr, bool isMortgaged = false) : Tile(name){
+            this->linkedCard = linkedCard;
+            this->houseNum = houseNum;
+            this->hotelNum = hotelNum;
+            this->owner = owner;
+            this->isMortgaged = isMortgaged;
     }
-    else{
-        if (owner == nullptr){
-            buyProperty(P);
-        }
-    }
-}
+
+    void doCardFunction(Player * P);
 };
-
-void PropertyCard::mortgage(){
-    linkTile->isMortgaged = true;
-}
-void PropertyCard::unmortgage(){
-    linkTile->isMortgaged = false;
-}
-void PropertyCard::buy(Player * P){
-    linkTile->owner = P;
-}
 
 class RailRoadTile : public Tile{
 public:
@@ -319,39 +248,14 @@ public:
     Player * owner;
     bool isMortgaged;
 
-    RailRoadTile(std::string name, RailRoadCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false,std::string type="RR") : Tile(name,type) {
+    RailRoadTile(std::string name, RailRoadCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
         this->linkedCard = linkedCard;
         this->owner = owner;
         this->isMortgaged = isMortgaged;
     }
 
-    void doCardFunction(Player * P) {
-        if (owner != nullptr && (isMortgaged == false)) {
-            int rent = linkedCard->baseRent;
-            int monopoly = checkMonopoly(P, linkedCard);
-
-            rent = rent * pow(2, (monopoly - 1));
-
-            checkBalance(P, rent);
-            P->money = P->money - rent;
-            owner->money = owner->money + rent;
-        } else {
-            if (owner == nullptr){
-                buyProperty(P);
-            }
-        }
-    }
+    void doCardFunction(Player * P);
 };
-
-void RailRoadCard::mortgage(){
-    linkTile->isMortgaged = true;
-}
-void RailRoadCard::unmortgage(){
-    linkTile->isMortgaged = false;
-}
-void RailRoadCard::buy(Player * P){
-    linkTile->owner = P;
-}
 
 class TaxTile : public Tile{
 public:
@@ -361,11 +265,7 @@ public:
         this->taxValue = taxValue;
     }
 
-    void doCardFunction(Player * P) {
-        if (checkBalance(P, taxValue) == true){
-            P->money = P->money - taxValue;
-        }
-    }
+    void doCardFunction(Player * P);
 
 };
 
@@ -375,43 +275,14 @@ public:
     Player * owner;
     bool isMortgaged;
 
-    UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false,std::string type="Utility") : Tile(name,type) {
+    UtilityTile(std::string name, UtilityCard * linkedCard, Player * owner = nullptr, bool isMortgaged = false) : Tile(name) {
             this->linkedCard = linkedCard;
             this->owner = owner;
             this->isMortgaged = isMortgaged;
     }
 
-    void doCardFunction(Player * P) {
-        if (owner != nullptr && (isMortgaged == false)) {
-            int rent;
-            int monopoly = checkMonopoly(P, linkedCard);
-            
-            if (monopoly == 2){
-                rent = linkedCard->rentTwoUtil;
-            }
-            else{
-                rent = linkedCard->rentOneUtil;
-            }
-            checkBalance(P,rent);
-            P->money = P->money - rent;
-            owner->money = owner->money + rent;
-        } else {
-            if (owner == nullptr){
-                buyProperty(P);
-            }
-        }
-    }
+    void doCardFunction(Player * P);
 };
-
-void UtilityCard::mortgage(){
-    linkTile->isMortgaged = true;
-}
-void UtilityCard::unmortgage(){
-    linkTile->isMortgaged = false;
-}
-void UtilityCard::buy(Player * P){
-    linkTile->owner = P;
-}
 
 class GoToJailTile : public Tile{
 public:
@@ -421,10 +292,7 @@ public:
         this->jailLocation = jailLocation;
     }
     
-    void doCardFunction(Player * P) {
-        P->inJail = true;
-        P->location = jailLocation;
-    }
+    void doCardFunction(Player * P);
 };
 
 class DrawCardTile : public Tile{
@@ -435,19 +303,7 @@ public:
         this->cardDeck = cardDeck;
     }
     
-    void doCardFunction(Player * P){
-        DeckCard * frontCard = cardDeck.front();
-        cardDeck.pop();
-        
-        if (frontCard->type == "GetOutOfJail"){
-            P->DeckCards[frontCard->name] = frontCard;
-        }
-        else{
-            cardDeck.push(frontCard);
-            frontCard->doDeckCardFunction(P);
-        }
-        
-    }
+    void doCardFunction(Player * P);
 };
 
 //Free Parking, Jail, and Go will just be implementations of Card and do not have dervied classes.
