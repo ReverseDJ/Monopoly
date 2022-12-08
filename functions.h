@@ -204,3 +204,14 @@ void buyProperty(Player * P){
     
 }
 }
+
+void movePlayer(Player *P, int dest, bool inst){
+    int originalLocation = P->location;
+    P->location = dest;
+    
+    if (inst && (dest < originalLocation)){
+        P->money = P->money + 200;
+        std::cout << P->name << " passed Go and collected $200.\n";
+    }
+    
+}
