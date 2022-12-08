@@ -10,7 +10,7 @@
 #include <list>
 
 
-class Tile;
+class Tile; //class prototypes, allows other classes to reference before definition.
 class Player;
 class Card;
 class RailRoadCard;
@@ -51,9 +51,9 @@ public:
 
 };
 
-class PlayerTurn{
+class PlayerTurn{ //will be instantiated as a global object that keeps track of which player is currently moving. 
 public:
-    std::list<Player*> playerList;
+    std::list<Player*> playerList;  //list of all players in the game
     std::list<Player*>::iterator it;
     Player* currentPlayer;
 
@@ -63,17 +63,17 @@ public:
         currentPlayer = *it;
     }
 
-    void next_player(){
-        if (it == playerList.end()){
+    void next_player(){ 
+        if (it == playerList.end()){ //if we have reached the end of the list, start over. The player turns should be circular.
             it = playerList.begin();
         }
         else{
-            std::advance(it,1);
+            std::advance(it,1); //iterates to the next item on the list, which moved current player to the next player
         }
         currentPlayer = *it;
     }
 
-    void RemovePlayer(Player* P){
+    void RemovePlayer(Player* P){ //removes a player from the list when they go bankrupt
 
         if (P == currentPlayer){
             next_player();
@@ -86,7 +86,7 @@ public:
 class Card{
 public:
     std::string name;
-    std::string cardID;
+    std::string cardID; //systematicly assigned by suit. This allows us to check for monopolies in ownedCards.
     std::string type; //note: Allow constructor to use default value for derived classes
 
     Card(std::string name="",std::string cardID="",std::string type=""){
@@ -121,7 +121,7 @@ public:
         this->linkTile = linkTile;
     }
     
-    void mortgage(); //Defined after tile definition because it uses tile member variables
+    void mortgage(); //Defined after tile definition because it uses tile member variables. 
     void unmortgage();
     void buy(Player * P);
 
@@ -135,11 +135,11 @@ public:
     int hotelRent;
     int houseCost;
     int hotelCost;
-    PropertyTile * linkTile;
+    PropertyTile * linkTile; //links to a property tile
 
     PropertyCard(std::string color, std::string name, std::string cardID, int saleValue, int baseRent, int houseRent[4], int hotelRent, int mort, int houseCost, int hotelCost, PropertyTile * linkTile, std::string type="Property"):OwnableCard(name,mort,saleValue,cardID, type){
         this->baseRent = baseRent;
-        this->houseRent = houseRent; //Test that this works!!!
+        this->houseRent = houseRent; 
         this->hotelRent = hotelRent;
         this->houseCost = houseCost;
         this->hotelCost = hotelCost;
@@ -155,7 +155,7 @@ class UtilityCard : public OwnableCard{
 public:
     int rentOneUtil;
     int rentTwoUtil;
-    UtilityTile * linkTile;
+    UtilityTile * linkTile; //links to a utility tile
 
     UtilityCard(std::string name, std::string cardID, int saleValue, int mort, int rentOneUtil, int rentTwoUtil, UtilityTile * linkTile, std::string type="Utility"):OwnableCard(name,mort,saleValue,cardID, type){
         this->rentOneUtil = rentOneUtil;
@@ -170,7 +170,7 @@ public:
 
 class DeckCard : public Card{ // ABC for all cards in chance/community chest queues
     public:
-    std::string cardDesc;
+    std::string cardDesc; //will be printed during the game
 
     DeckCard(std::string name, std::string cardDesc, std::string cardID, std::string type): Card(name,cardID, type){
         this->cardDesc = cardDesc;
@@ -212,7 +212,7 @@ public:
 };
 
 
-class Tile{
+class Tile{ //Abstract base class for all tile types. Allows us to store every tile in a common board array for player traversal
 public:
     std::string name;
     std::string type;
@@ -222,7 +222,7 @@ public:
         this->type = type;
     }
 
-    virtual void doCardFunction() = 0;
+    virtual void doCardFunction() = 0; //will allow each tile to perform actions when players land on it. 
 };
 
 class PropertyTile : public Tile{
