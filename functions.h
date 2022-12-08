@@ -148,36 +148,59 @@ int checkMonopoly(Player * P, Card * C){
     return monopolyCount;
 }
 
-void buyProperty(Player * P, Tile * Board[]){
+void buyProperty(Player * P){
     Tile* purchaseTile = Board[P->location];
-
+    
     std::cout << "Purchase property " << purchaseTile->name << "?\n";
-
+    
     std::string playerResponse;
-
+    
     std::cin >> playerResponse;
-
+    
     if (playerResponse == "yes"){
-
-        if (purchaseTile->type == "Property"){
-            PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile);
-        }
-        else if (purchaseTile->type == "RR"){
-            RailRoadTile* purchaseProperty = dynamic_cast<RailRoadTile*>(purchaseTile);
-        }
-        else if (purchaseTile->type == "Utility"){
-            UtilityTile* purchaseProperty = dynamic_cast<UtilityTile*>(purchaseTile);
-        }
-
+    
+    if (purchaseTile->type == "Property"){
+        PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile);
+        
         OwnableCard* purchaseCard = purchaseProperty->linkedCard;
-
+        
         if ((P->money) > (purchaseCard->saleValue)){
             purchaseProperty->owner = P;
             P->ownedCards[purchaseCard->name] = purchaseCard;
-            cout << "You have successfully purchased " << purchaseCard->name << "\n";
+            std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
         }
         else{
-            cout << "You do not have enough money to purchase this property.\n"
+            std::cout << "You do not have enough money to purchase this property.\n";
         }
     }
+    else if (purchaseTile->type == "RR"){
+        RailRoadTile* purchaseProperty = dynamic_cast<RailRoadTile*>(purchaseTile);
+        
+        OwnableCard* purchaseCard = purchaseProperty->linkedCard;
+        
+        if ((P->money) > (purchaseCard->saleValue)){
+            purchaseProperty->owner = P;
+            P->ownedCards[purchaseCard->name] = purchaseCard;
+            std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
+        }
+        else{
+            std::cout << "You do not have enough money to purchase this property.\n";
+        }
+    }
+    else if (purchaseTile->type == "Utility"){
+        UtilityTile* purchaseProperty = dynamic_cast<UtilityTile*>(purchaseTile);
+        
+        OwnableCard* purchaseCard = purchaseProperty->linkedCard;
+        
+        if ((P->money) > (purchaseCard->saleValue)){
+            purchaseProperty->owner = P;
+            P->ownedCards[purchaseCard->name] = purchaseCard;
+            std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
+        }
+        else{
+            std::cout << "You do not have enough money to purchase this property.\n";
+        }
+    }
+    
+}
 }
