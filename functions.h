@@ -26,16 +26,16 @@ void movePlayer(Player *P, int dest, bool inst);
 void displayProperties(Player * P){
     std::cout << "You own the following properties:\n";
         
-        std::unordered_map<std::string, OwnableCard*>::iterator it = P->ownedCards.begin();
+        std::unordered_map<std::string, OwnableCard*>::iterator it = P->ownedCards.begin(); //iterates over all cards player owns
      
         while (it != P->ownedCards.end()){
             
-            std::string propertyName = it->first;
-            int mortgageValue = it->second->mort;
+            std::string propertyName = it->first; //property name
+            int mortgageValue = it->second->mort; //mortgage value
 
             if (it->second->type == "Property"){
-                int numHouses = (dynamic_cast<PropertyCard*>(it->second))->linkTile->houseNum;
-                int numHotels = (dynamic_cast<PropertyCard*>(it->second))->linkTile->hotelNum;
+                int numHouses = (dynamic_cast<PropertyCard*>(it->second))->linkTile->houseNum; //gets number of houses
+                int numHotels = (dynamic_cast<PropertyCard*>(it->second))->linkTile->hotelNum; //gets number of hotels
                 std::cout << propertyName << " : " << mortgageValue << " houses: " << numHouses << " hotels: " << numHotels << "\n";
             }else{
             std::cout << propertyName << " : " << mortgageValue << "\n";
@@ -45,15 +45,15 @@ void displayProperties(Player * P){
 }
 
 bool checkBalance(Player * P, int money){
-    if (P->money >= money){
+    if (P->money >= money){ //if player has enough money to pay rent
         return true;
     }
-    else if(!(P->ownedCards.empty())){
+    else if(!(P->ownedCards.empty())){ //if player does not have enough money but can mortgage properties or sell houses
         std::cout << "You don't have enough money to pay this balance.\n";
         std::cout << "current balance: " << P->money << "\n";
         std::cout << "amount due: " << money << "\n"; 
         
-        while((P->money < money) && (P->ownedCards.empty() == false)){
+        while((P->money < money) && (P->ownedCards.empty() == false)){ //while player can sell houses/mortgage properties
             
             displayProperties(P);
 
