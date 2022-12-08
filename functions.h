@@ -65,15 +65,15 @@ bool checkBalance(Player * P, int money){
 
             std::cin >> playerResponse;
 
-            if (P->ownedCards.find(playerResponse) != P->ownedCards.end()){
+            if (P->ownedCards.find(playerResponse) != P->ownedCards.end()){ //if the player's choice is in their ownedProperties deck
 
-                if (P->ownedCards[playerResponse]->type == "Property"){
+                if (P->ownedCards[playerResponse]->type == "Property"){ //if property type, check if there are houses/hotels to sell
 
-                    PropertyCard* playerCard = dynamic_cast<PropertyCard*>(P->ownedCards[playerResponse]);
+                    PropertyCard* playerCard = dynamic_cast<PropertyCard*>(P->ownedCards[playerResponse]); //casts to type PropertyCard to use linkTile member
 
                     PropertyTile* playerTile = playerCard->linkTile;
 
-                    if ((playerTile->hotelNum > 0) || (playerTile->hotelNum > 0)){
+                    if ((playerTile->houseNum > 0) || (playerTile->hotelNum > 0)){ //if player has houses or hotels to sell
 
                         if (playerTile->hotelNum > 0){
                             std::cout << "Would you like to sell your hotel?\n";
@@ -83,7 +83,7 @@ bool checkBalance(Player * P, int money){
                             std::cin >> sellHotel;
 
                             if (sellHotel == "yes"){
-                                playerTile->hotelNum = 0;
+                                playerTile->hotelNum = 0; //removes hotel and adds four houses
                                 playerTile->houseNum = 4;
                                 P->money = P->money + (playerCard->hotelCost)*0.5;
                                 std::cout << "You have sold your hotel, worth " << (playerCard->hotelCost)*0.5 << "\n";
@@ -94,15 +94,15 @@ bool checkBalance(Player * P, int money){
                         int sellHouse;
                         std::cin >> sellHouse;
 
-                        if ((sellHouse > 0) && (sellHouse < playerTile->houseNum)){
+                        if ((sellHouse > 0) && (sellHouse < playerTile->houseNum)){ //if player wants to sell houses
                             playerTile->houseNum = playerTile->houseNum - sellHouse;
-                            P->money = P->money + (playerCard->houseCost)*sellHouse*0.5;
+                            P->money = P->money + (playerCard->houseCost)*sellHouse*0.5; //gives the player back half the house purchase value
                             std::cout << "You have sold " << sellHouse << " houses, worth " << (playerCard->houseCost)*sellHouse*0.5 << "\n";
                         }
                     }
 
                 }
-                else{
+                else{ //if not a property type (cannot have houses and hotels), mortgages property.
 
                  P->money = P->money + (P->ownedCards[playerResponse])->mort;
 
@@ -116,9 +116,14 @@ bool checkBalance(Player * P, int money){
                 }
 
             }
+            
+         if (P->money >= money){ //checks if player now has enough money to pay rent. If not, continues loop
+            return true;
+          }
+            
         }
-        
-        checkBalance(P,money);
+        Bankruptcy(P, activePlayers); //if value of houses/properties cannot cover rent, player goes bankrupt.
+         return false; 
     }
     else{
         Bankruptcy(P, activePlayers); //needs to reference a global PlayerTurn object, which will be in the game loop
@@ -127,18 +132,18 @@ bool checkBalance(Player * P, int money){
   }
 
   void Bankruptcy(Player* P, PlayerTurn* Turn){
-    Turn->RemovePlayer(P);
+    Turn->RemovePlayer(P);  //removes player from playerTurn object
     std::cout << P->name << " has gone bankrupt!\n";
 }
 
 int checkMonopoly(Player * P, Card * C){
     
-    std::string suitCard = C->cardID;
-    int numCards = int(C->cardID[2]);
-    int cardNum = int(C->cardID[3]);
+    std::string suitCard = C->cardID; //gets ID of current card
+    int numCards = int(C->cardID[2]); //the third letter of the cardID is the total number of cards in the suit
+    int cardNum = int(C->cardID[3]); //the fourth letter is the number of the card in the suit (0, 1, 2, 3, etc.)
     int monopolyCount;
     
-    for (int i = 0; i < numCards; i++){
+    for (int i = 0; i < numCards; i++){ //Searches ownedProperties for other cards in the suit. We can find their cardIDs systematically.
         if (i != cardNum){
             suitCard[3] = char(cardNum);
             if(P->ownedCards.find(suitCard) != P->ownedCards.end()){
@@ -146,11 +151,11 @@ int checkMonopoly(Player * P, Card * C){
             }
         }
     }
-    return monopolyCount;
+    return monopolyCount; //returns the number of other cards in the suit the player owns
 }
 
 void buyProperty(Player * P){
-    Tile* purchaseTile = Board[P->location];
+    Tile* purchaseTile = Board[P->location]; //gets the tils to purchase from the player's location.
     
     std::cout << "Purchase property " << purchaseTile->name << "?\n";
     
@@ -161,13 +166,13 @@ void buyProperty(Player * P){
     if (playerResponse == "yes"){
     
     if (purchaseTile->type == "Property"){
-        PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile);
+        PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile); //casts to PropertyTile to use the linkedCard member
         
-        OwnableCard* purchaseCard = purchaseProperty->linkedCard;
+        OwnableCard* purchaseCard = purchaseProperty->linkedCard; //gets the linked card to insert to ownedProperties
         
-        if ((P->money) > (purchaseCard->saleValue)){
+        if ((P->money) > (purchaseCard->saleValue)){ //if player has enough money to buy property
             purchaseProperty->owner = P;
-            P->ownedCards[purchaseCard->cardID] = purchaseCard;
+            P->ownedCards[purchaseCard->cardID] = purchaseCard; //adds linked card to ownedCards
             std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
         }
         else{
@@ -175,7 +180,7 @@ void buyProperty(Player * P){
         }
     }
     else if (purchaseTile->type == "RR"){
-        RailRoadTile* purchaseProperty = dynamic_cast<RailRoadTile*>(purchaseTile);
+        RailRoadTile* purchaseProperty = dynamic_cast<RailRoadTile*>(purchaseTile); //same code as for properties. It needs to be separate because linkedCard points to a different type
         
         OwnableCard* purchaseCard = purchaseProperty->linkedCard;
         
@@ -189,7 +194,7 @@ void buyProperty(Player * P){
         }
     }
     else if (purchaseTile->type == "Utility"){
-        UtilityTile* purchaseProperty = dynamic_cast<UtilityTile*>(purchaseTile);
+        UtilityTile* purchaseProperty = dynamic_cast<UtilityTile*>(purchaseTile); //same code as for properties. It needs to be separate because linkedCard points to a different type
         
         OwnableCard* purchaseCard = purchaseProperty->linkedCard;
         
@@ -206,11 +211,11 @@ void buyProperty(Player * P){
 }
 }
 
-void movePlayer(Player *P, int dest, bool inst){
+void movePlayer(Player *P, int dest, bool inst){ 
     int originalLocation = P->location;
-    P->location = dest;
+    P->location = dest; //updates player location to destination
     
-    if (inst && (dest < originalLocation)){
+    if (inst && (dest < originalLocation)){ //if needed, checks to see if player passed GO and adds $200
         P->money = P->money + 200;
         std::cout << P->name << " passed Go and collected $200.\n";
     }
