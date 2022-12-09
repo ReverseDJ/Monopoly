@@ -2,6 +2,9 @@
 // Created by mdeno on 11/28/2022.
 //
 
+#ifndef CLASSES_H
+#define CLASSES_H
+
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -311,3 +314,4 @@ public:
 //Free Parking, Jail, and Go will just be implementations of Card and do not have dervied classes.
 //Their functionality will be done in the game loop
 
+#endif
