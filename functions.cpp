@@ -207,7 +207,7 @@ void movePlayer(Player *P, int dest, bool inst){
     dest = dest%40;
     P->location = dest; //updates player location to destination
     
-    if (inst && (dest < originalLocation)){ //if needed, checks to see if player passed GO and adds $200
+    if (!inst && (dest < originalLocation)){ //if needed, checks to see if player passed GO and adds $200
         P->money = P->money + 200;
         std::cout << P->name << " passed Go and collected $200.\n";
     }
