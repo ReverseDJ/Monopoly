@@ -4,8 +4,9 @@
 
 #include "functions.h"
 
-PlayerTurn * activePlayers;
 Tile * Board[40];
+
+Player * curP;
 
 /*
 int main(){
@@ -20,8 +21,19 @@ int main() {
     std::cout<<"How many players?\n";
     std::cin>>players;
     bool answer;
-
-    Player * curP;
+    
+    std::list<Player*> playerList;
+    
+    for (int i = 1; i <= players; i++){    
+        std::string playerName;
+        std::cout << "\nEnter player " << i << " name: ";
+        std::cin >> playerName;
+        Player * P = new Player();
+        P->name = playerName;
+        playerList.push_back(P);
+    }
+        
+    PlayerTurn * activePlayers = new PlayerTurn(playerList);
 
 
     while(activePlayers->playerList.size() !=1 /*temporary variable*/) {
