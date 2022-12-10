@@ -7,6 +7,9 @@
 #include "classes.h"
 #include "functions.h"
 
+extern PlayerTurn * activePlayers;
+extern Tile * Board[];
+
 void PropertyCard::mortgage(){
     linkTile->isMortgaged = true;
 }
@@ -35,36 +38,6 @@ void UtilityCard::unmortgage(){
 }
 void UtilityCard::buy(Player * P){
     linkTile->owner = P;
-}
-
-void getMoneyCard::doDeckCardFunction(Player * P){
-
-    if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount))){ //if player needs to pay money, check their balance (returns true if they can pay) and subtract the money.
-        P->money = P->money + moneyAmount; //moneyAmount will be negative if this branch is active.
-    }
-    else{
-        P->money = P->money + moneyAmount;
-    }
-}
-
-void transferMoneyCard::doDeckCardFunction(Player * P){
-    int payAmount;
-
-    if (moneyAmount >= 0){ //called if player recieves money from other players
-        for (int i = 0; i < playerList.size(); ++i){  //iterates over a list of all players and checks their balance. If they can pay, subtracts the amount.
-            if (checkBalance(playerList[i],moneyAmount) == true){
-                (playerList[i])->money = (playerList[i])->money - moneyAmount;
-                payAmount = payAmount + moneyAmount; //sum of amount payed by other players.
-            }
-        }
-        P->money = P->money + payAmount;
-    }
-    else{ //called if player pays money to others.
-        if (checkBalance(P,(-1*(playerList.size())*moneyAmount)) == true) //checks if player can pay balance to all other players
-            for (int i = 0; i < playerList.size(); ++i){
-                (playerList[i])->money = (playerList[i])->money - moneyAmount; //loops over list of players and pays correct amount to all.
-            }
-    }
 }
 
 void getOutOfJailCard::doDeckCardFunction(Player * P){ //runs if player uses get out of jail card
@@ -167,4 +140,62 @@ void DrawCardTile::doCardFunction(Player * P){
 
 }
 
+void movePlayerCard::doDeckCardFunction(Player * P){
+    std::cout<<cardDesc<<std::endl;
+    if(dest < 0){
+        movePlayer(P, (P->location)+dest, true);
+        Board[P->location]
+    }
+    else{
+        movePlayer(P, dest, false);
+    }
+};
+
+void getMoneyCard::doDeckCardFunction(Player * P){
+    std::cout<<cardDesc<<std::endl;
+    if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount))){ //if player needs to pay money, check their balance (returns true if they can pay) and subtract the money.
+        P->money = P->money + moneyAmount; //moneyAmount will be negative if this branch is active.
+    }
+    else{
+        P->money = P->money + moneyAmount;
+    }
+}
+
+void transferMoneyCard::doDeckCardFunction(Player * P){
+    int payAmount;
+    //backs up current player
+    Player * curPlayerBackup = activePlayers->currentPlayer;
+    //updates to next player since we don't want to subtract money from the player who is paying
+    activePlayers->next_player();
+    //sets next player to temp;
+    Player * tempPlayer = activePlayers->currentPlayer;
+
+    while(tempPlayer != curPlayerBackup){
+
+        //Needs to be implimented, this loop should run until all players have been iterated through
+
+        activePlayers->next_player();
+        tempPlayer = activePlayers->currentPlayer;
+    }
+
+    /*
+    if (moneyAmount >= 0){ //called if player recieves money from other players
+        for (int i = 0; i < playerList.size(); ++i){  //iterates over a list of all players and checks their balance. If they can pay, subtracts the amount.
+            if (checkBalance(playerList[i],moneyAmount) == true){
+                (playerList[i])->money = (playerList[i])->money - moneyAmount;
+                payAmount = payAmount + moneyAmount; //sum of amount payed by other players.
+            }
+        }
+        P->money = P->money + payAmount;
+    }
+    else{ //called if player pays money to others.
+        if (checkBalance(P,(-1*(playerList.size())*moneyAmount)) == true) //checks if player can pay balance to all other players
+            for (int i = 0; i < playerList.size(); ++i){
+                (playerList[i])->money = (playerList[i])->money - moneyAmount; //loops over list of players and pays correct amount to all.
+            }
+    }
+     */
+
+
+}
 

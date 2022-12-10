@@ -183,25 +183,19 @@ class DeckCard : public Card{ // ABC for all cards in chance/community chest que
 
 class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
     int moneyAmount; //negative if player pays to bank
-    std::string cardDesc;
 
     getMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount;
-        this->cardDesc = cardDesc;
     }
 
-    void doDeckCardFunction(Player * P);
+    void doDeckCardFunction(Player * P) override;
 };
 
 class transferMoneyCard : public DeckCard{ //get money from other player(s) or pay money to other player(s)
     int moneyAmount; //negative if player pays money
-    std::vector<Player*> playerList;
-    std::string cardDesc;
 
-    transferMoneyCard(int moneyAmount, std::vector<Player*> playerList, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
+    transferMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount; // positive if player recieves money, negative if player pays money;
-        this->cardDesc = cardDesc;
-        this->playerList = playerList;
     }
 
     void doDeckCardFunction(Player * P);
@@ -211,9 +205,17 @@ class transferMoneyCard : public DeckCard{ //get money from other player(s) or p
 class getOutOfJailCard : public DeckCard{
 public:
     getOutOfJailCard(std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""):DeckCard(name, cardDesc, cardID, type ){}
-    void doDeckCardFunction(Player * P);
+    void doDeckCardFunction(Player * P) override;
 };
 
+class movePlayerCard : public DeckCard{
+public:
+    int dest;
+    movePlayerCard(int dest, std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""): DeckCard(name, cardDesc, cardID, type){
+        this->dest = dest;
+    }
+    void doDeckCardFunction(Player * P) override;
+};
 
 class Tile{ //Abstract base class for all tile types. Allows us to store every tile in a common board array for player traversal
 public:
