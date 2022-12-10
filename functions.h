@@ -19,10 +19,10 @@ void displayProperties(Player * P); //Prints out all properties owned by the pla
 void Bankruptcy(Player* P, PlayerTurn* Turn); //Removes Player from Player Turn list and declares them bankrupt
 
 //Take a generic player and moves them to a generic space
-//dest will be a valid spot in the board array
-//inst determines if the code will be run to check if they pass go
+//dest can be an out-of-bounds location, uses % to make it a valid spot in the board array
+//if inst = true then the player "teleports", doesn't pass go, doesn't collect 200
 void movePlayer(Player *P, int dest, bool inst);
 
 //used to make a single dice roll
-int diceRoll()
+int diceRoll();
 #endif 
