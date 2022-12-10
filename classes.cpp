@@ -9,6 +9,7 @@
 
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];
+extern std::unordered_map<std::string,OwnableCard*> * bankCards;
 
 void PropertyCard::mortgage(){
     linkTile->isMortgaged = true;
