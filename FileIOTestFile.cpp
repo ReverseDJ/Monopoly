@@ -19,8 +19,12 @@
 // csv MUST be sorted by tile number
 
 Tile * Board[40];
-
 Player * curP;
+std::unordered_map<std::string,OwnableCard*> bankCards;
+
+std::deque<DeckCard*> chanceCards;
+std::deque<DeckCard*> communityChestCards;
+
 PlayerTurn * activePlayers;
 
 int main(void) {
@@ -32,6 +36,9 @@ int main(void) {
     std::cout << dynamic_cast<TaxTile*>(Board[38])->name << std::endl;
     std::cout << dynamic_cast<UtilityTile*>(Board[28])->linkedCard->mort << std::endl;
 
+    makeChance();
+    makeCommunityChest();
+    
     return 0;
 }
 

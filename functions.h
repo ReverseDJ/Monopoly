@@ -24,7 +24,9 @@ void Bankruptcy(Player* P, PlayerTurn* Turn); //Removes Player from Player Turn 
 void movePlayer(Player *P, int dest, bool inst);
 
 void makeBoard(std::string filename, Tile ** Board);
+void makeChance();
+void makeCommunityChest();
 
 //used to make a single dice roll
-int diceRoll()
+int diceRoll();
 #endif 

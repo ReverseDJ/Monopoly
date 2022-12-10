@@ -8,7 +8,6 @@
 #include <chrono>
 #include <thread>
 
-
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];
 extern std::unordered_map<std::string,OwnableCard*> * bankCards;

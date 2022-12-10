@@ -127,15 +127,19 @@ void GoToJailTile::doCardFunction(Player * P) {
     P->location = 10;
 }
 
+void CornerTile::doCardFunction(Player * P) {
+    std::cout << P->name << "is on tile: " << this->name << std::endl;
+}
+
 void DrawCardTile::doCardFunction(Player * P){
-    DeckCard * frontCard = cardDeck.front(); //gets card from top of deck
-    cardDeck.pop(); //removes card from deck
+    DeckCard * frontCard = cardDeck->front(); //gets card from top of deck
+    cardDeck->pop_front(); //removes card from deck
 
     if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
         P->DeckCards[frontCard->name] = frontCard; //gives get out of jail card to player
     }
     else{
-        cardDeck.push(frontCard);
+        cardDeck->push_back(frontCard);
         frontCard->doDeckCardFunction(P); //runs appropriate card function
     }
 
@@ -145,7 +149,7 @@ void movePlayerCard::doDeckCardFunction(Player * P){
     std::cout<<cardDesc<<std::endl;
     if(dest < 0){
         movePlayer(P, (P->location)+dest, true);
-        Board[P->location]
+        // Board[P->location]                           // ??
     }
     else{
         movePlayer(P, dest, false);

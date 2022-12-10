@@ -4,27 +4,35 @@
 #include "classes.h"
 #include <sstream>
 
-#define OTHER (1)
+#define CORNER (1)
 #define PROPERTY (2)
 #define RAILROAD (3)
 #define TAX (4)
 #define DRAWCARD (5)
 #define UTILITY (6)
+#define GOTOJAIL (7)
 
 #define COMMUNITY_CHEST (1)
 #define CHANCE (2)
 
 extern std::unordered_map<std::string,OwnableCard*> bankCards;
+extern std::deque<DeckCard*> chanceCards;
+extern std::deque<DeckCard*> communityChestCards;
 
 // read property tiles
 // MUST have global Board variable before calling this function!
 // csv MUST be sorted by tile number
 void makeBoard(std::string filename, Tile ** Board) {
+    
     std::fstream fin;
     fin.open(filename);
 
     std::vector<std::string> row;
     std::string line, word;
+
+    // make the chance, community chest tiles
+    DrawCardTile * tempChance = new DrawCardTile("Chance", &chanceCards);
+    DrawCardTile * tempChest = new DrawCardTile("Community Chest", &communityChestCards);
 
     for (int i=0; i<40; i++) {
         row.clear();
@@ -79,8 +87,31 @@ void makeBoard(std::string filename, Tile ** Board) {
                 break;
             }
 
-            // DRAWCARD case
+            case DRAWCARD: {
+                // making 1 chance card, 1 community chest card, and pointing multiple tile locations to them
+                if (stoi(row[1]) == CHANCE) {
+                    Board[i] = dynamic_cast<Tile*>(tempChance);
+                }
+                else if (std::stoi(row[1]) == COMMUNITY_CHEST) {
+                    Board[i] = dynamic_cast<Tile*>(tempChest);
+                }
+                else {
+                    std::cout << "Bad chance/community chest input at " << i << std::endl;
+                }
+            }
+
             // OTHER case
+            case CORNER: {
+                CornerTile * tempCornerTile = new CornerTile(row[1]);
+                Board[i] = dynamic_cast<Tile*>(tempCornerTile);
+                break;
+            }
+
+            case GOTOJAIL: {
+                GoToJailTile * tempGTJTile = new GoToJailTile(row[1], i);
+                Board[i] = dynamic_cast<GoToJailTile*>(tempGTJTile);
+                break;
+            }
 
             case UTILITY: {
                 UtilityTile * tempUTile = new UtilityTile(row[1], nullptr);
@@ -98,7 +129,7 @@ void makeBoard(std::string filename, Tile ** Board) {
             }
 
             default: {
-                // std::cout << i << " " << row[1] << std::endl; // for testing as functionality is added later
+                std::cout << "Bad tile type in input at " << i << std::endl;
                 break;
             }
         } 

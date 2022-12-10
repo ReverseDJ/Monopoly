@@ -11,10 +11,12 @@
 #include <math.h>
 #include <queue>
 #include <list>
+#include <deque>
 
 
 class Tile; //class prototypes, allows other classes to reference before definition.
 class Player;
+class PlayerTurn;
 class Card;
 class RailRoadCard;
 class PropertyCard;
@@ -186,6 +188,7 @@ class DeckCard : public Card{ // ABC for all cards in chance/community chest que
 class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
     int moneyAmount; //negative if player pays to bank
 
+public:
     getMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount;
     }
@@ -196,6 +199,7 @@ class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
 class transferMoneyCard : public DeckCard{ //get money from other player(s) or pay money to other player(s)
     int moneyAmount; //negative if player pays money
 
+public:
     transferMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount; // positive if player recieves money, negative if player pays money;
     }
@@ -230,6 +234,7 @@ public:
     }
 
     virtual void doCardFunction(Player * P) = 0; //will allow each tile to perform actions when players land on it. 
+
 };
 
 class PropertyTile : public Tile{
@@ -304,11 +309,20 @@ public:
     void doCardFunction(Player * P);
 };
 
+class CornerTile : public Tile{
+public:
+
+    CornerTile(std::string name, std::string type = "Corner") : Tile(name, type) { }
+    void doCardFunction(Player * P);
+
+};
+
 class DrawCardTile : public Tile{
 public:
-    std::queue<DeckCard*> cardDeck;
+    std::string name;
+    std::deque<DeckCard*> * cardDeck;
     
-    DrawCardTile(std::queue<DeckCard*> cardDeck, std::string type="DrawCard") : Tile(name, type) {
+    DrawCardTile(std::string name, std::deque<DeckCard*>* cardDeck, std::string type="DrawCard") : Tile(name, type) {
         this->cardDeck = cardDeck;
     }
     
