@@ -3,6 +3,8 @@
 #include "functions.h"
 #include <iostream>
 #include <list>
+#include <cstdlib>
+#include <time.h>
 
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];
