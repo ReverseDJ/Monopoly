@@ -5,6 +5,11 @@
 #include <list>
 #include <cstdlib>
 #include <time.h>
+#include <chrono>
+#include <thread>
+using namespace std::this_thread;     // sleep_for, sleep_until
+using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
+using std::chrono::system_clock;
 
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];
