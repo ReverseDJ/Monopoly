@@ -204,6 +204,7 @@ void buyProperty(Player * P){
 
 void movePlayer(Player *P, int dest, bool inst){ 
     int originalLocation = P->location;
+    dest = dest%40;
     P->location = dest; //updates player location to destination
     
     if (inst && (dest < originalLocation)){ //if needed, checks to see if player passed GO and adds $200
