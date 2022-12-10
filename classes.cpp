@@ -9,7 +9,7 @@
 
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];
-extern std::unordered_map<std::string,OwnableCard*> * bankCards;
+extern std::unordered_map<std::string,OwnableCard*> bankCards;
 
 void PropertyCard::mortgage(){
     linkTile->isMortgaged = true;
@@ -142,7 +142,6 @@ void DrawCardTile::doCardFunction(Player * P){
         cardDeck->push_back(frontCard);
         frontCard->doDeckCardFunction(P); //runs appropriate card function
     }
-
 }
 
 void movePlayerCard::doDeckCardFunction(Player * P){
@@ -153,6 +152,7 @@ void movePlayerCard::doDeckCardFunction(Player * P){
     }
     else{
         movePlayer(P, dest, false);
+        Board[P->location]->doCardFunction();
     }
 };
 
@@ -200,7 +200,9 @@ void transferMoneyCard::doDeckCardFunction(Player * P){
             }
     }
      */
+}
 
-
+void payPerBuildingCard::doDeckCardFunction(Player *P) {
+    int totalToPay;
 }
 
