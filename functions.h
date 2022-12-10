@@ -25,4 +25,6 @@ void movePlayer(Player *P, int dest, bool inst);
 
 void makeBoard(std::string filename, Tile ** Board);
 
+//used to make a single dice roll
+int diceRoll()
 #endif 

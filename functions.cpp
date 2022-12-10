@@ -3,6 +3,11 @@
 #include "functions.h"
 #include <iostream>
 #include <list>
+#include <cstdlib>
+#include <time.h>
+#include <chrono>
+#include <thread>
+
 
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];
@@ -204,4 +209,10 @@ void movePlayer(Player *P, int dest, bool inst){
         std::cout << P->name << " passed Go and collected $200.\n";
     }
     
+}
+
+int diceRoll(){
+    srand(time(0));
+    int roll=(rand()%6) +1;
+    return roll;
 }
