@@ -1,14 +1,23 @@
 #include <vector>
-#include <iostream>
+#include <fstream>
 #include <string>
 #include "classes.h"
+#include <sstream>
 
-Tile * Board[40];
+#define OTHER (1)
+#define PROPERTY (2)
+#define RAILROAD (3)
+#define TAX (4)
+#define DRAWCARD (5)
+#define UTILITY (6)
+
+#define COMMUNITY_CHEST (1)
+#define CHANCE (2)
 
 // read property tiles
 // MUST have global Board variable before calling this function!
 // csv MUST be sorted by tile number
-void makeBoard(std::string filename) {
+void makeBoard(std::string filename, Tile ** Board) {
     std::fstream fin;
     fin.open(filename);
 
@@ -23,37 +32,69 @@ void makeBoard(std::string filename) {
             row.push_back(word);
         }
 
-        switch (row[0]) {
-            case "Property":
-                Board[i] = new PropertyTile(    row[1], // name 
-                                                nullptr // linkedcard
-                )
-                int * a = new int[4] {stoi(row[6]), stoi(row[7]), stoi(row[8]), stoi(row[9])};
-                Board[i]->linkedCard = new PropertyCard(    row[3],  // color
-                                                            row[1],  // name
-                                                            row[2],  // cardID
-                                                            stoi(row[4]),  // saleValue int
-                                                            stoi(row[5]),  // baseRent int
-                                                            a,       // houseRent[4]
-                                                            stoi(row[10]), // hotelRent
-                                                            stoi(row[11]), // mort
-                                                            stoi(row[12]), // houseCost
-                                                            stoi(row[13]), // hotelCost
-                                                            Board[i]// linkTitle 
-                                                        );
-                
-                default:
-                    std::cout << i << " " << row[0] << std::endl;
-        }
+        //std::cout << std::stoi(row[0]) << std::endl;
+
+        switch (std::stoi(row[0])) {
+            case PROPERTY: {
+                PropertyTile *tempPropTile;
+                //row[1] = name
+                //nullptr = linked card
+                tempPropTile = new PropertyTile(row[1], nullptr);
+                int *a = new int[4]{std::stoi(row[6]), std::stoi(row[7]), std::stoi(row[8]), std::stoi(row[9])};
+
+                PropertyCard * tempPropCard = new PropertyCard(row[3],  // color
+                                                              row[1],  // name
+                                                              row[2],  // cardID
+                                                              std::stoi(row[4]),  // saleValue int
+                                                              std::stoi(row[5]),  // baseRent int
+                                                              a,       // houseRent[4]
+                                                              std::stoi(row[10]), // hotelRent
+                                                              std::stoi(row[11]), // mort
+                                                              std::stoi(row[12]), // houseCost
+                                                              std::stoi(row[13]), // hotelCost
+                                                              tempPropTile// linkTitle
+                );
+                tempPropTile->linkedCard = tempPropCard;
+                Board[i] = dynamic_cast<Tile*>(tempPropTile);
+                break;
+            }
+
+            case RAILROAD: {
+                RailRoadTile * tempRRTile = new RailRoadTile(row[1], nullptr);
+                RailRoadCard * tempRRCard = new RailRoadCard(row[1], row[2], tempRRTile);
+                tempRRTile->linkedCard = tempRRCard;
+                Board[i] = dynamic_cast<Tile*>(tempRRTile);
+                break;
+            }
+
+            case TAX: {
+                TaxTile * tempTTile = new TaxTile(row[1], std::stoi(row[2]));
+                Board[i] = dynamic_cast<Tile*>(tempTTile);
+                break;
+            }
+
+            // DRAWCARD case
+            // OTHER case
+
+            case UTILITY: {
+                UtilityTile * tempUTile = new UtilityTile(row[1], nullptr);
+                UtilityCard * tempUCard = new UtilityCard(  row[1], // name
+                                                            row[2], // ID
+                                                            stoi(row[3]), // sale
+                                                            stoi(row[4]), // mort
+                                                            stoi(row[5]), // rent1
+                                                            stoi(row[6]), // rent2
+                                                            tempUTile);       // linkedTile
+                tempUTile->linkedCard = tempUCard;
+                Board[i] = dynamic_cast<Tile*>(tempUTile);
+                break;                                      
+            }
+
+            default: {
+                // std::cout << i << " " << row[1] << std::endl; // for testing as functionality is added later
+                break;
+            }
+        } 
     }
 }
 
-int main(void) {
-    Tile* Board[40];
-    makeBoard("makeboard.csv");
-
-    std::cout << Board[1]->name << std::endl;
-    std::cout << Board[39]->linkedCard->saleValue << std::endl;
-
-    return 0;
-}

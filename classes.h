@@ -123,6 +123,8 @@ public:
         this->baseRent = baseRent;
         this->linkTile = linkTile;
     }
+
+    RailRoadCard(std::string name, std::string cardID, RailRoadTile* linkTile):RailRoadCard(25, 100, 200, name, cardID, linkTile, "RR") {}
     
     void mortgage(); //Defined after tile definition because it uses tile member variables. 
     void unmortgage();
@@ -225,7 +227,7 @@ public:
         this->type = type;
     }
 
-    virtual void doCardFunction() = 0; //will allow each tile to perform actions when players land on it. 
+    virtual void doCardFunction(Player * P) = 0; //will allow each tile to perform actions when players land on it. 
 };
 
 class PropertyTile : public Tile{

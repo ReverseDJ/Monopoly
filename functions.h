@@ -23,4 +23,6 @@ void Bankruptcy(Player* P, PlayerTurn* Turn); //Removes Player from Player Turn 
 //inst determines if the code will be run to check if they pass go
 void movePlayer(Player *P, int dest, bool inst);
 
+void makeBoard(std::string filename, Tile ** Board);
+
 #endif 
