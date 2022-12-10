@@ -205,3 +205,9 @@ void movePlayer(Player *P, int dest, bool inst){
     }
     
 }
+
+int diceRoll(){
+    srand(time(0));
+    int roll=(rand()%6) +1;
+    return roll;
+}
