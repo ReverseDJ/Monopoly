@@ -156,50 +156,50 @@ void buyProperty(Player * P){
     
     if (playerResponse == "yes"){
     
-    if (purchaseTile->type == "Property"){
-        PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile); //casts to PropertyTile to use the linkedCard member
-        
-        OwnableCard* purchaseCard = purchaseProperty->linkedCard; //gets the linked card to insert to ownedProperties
-        
-        if ((P->money) > (purchaseCard->saleValue)){ //if player has enough money to buy property
-            purchaseProperty->owner = P;
-            P->ownedCards[purchaseCard->cardID] = purchaseCard; //adds linked card to ownedCards
-            std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
+        if (purchaseTile->type == "Property"){
+            PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile); //casts to PropertyTile to use the linkedCard member
+
+            OwnableCard* purchaseCard = purchaseProperty->linkedCard; //gets the linked card to insert to ownedProperties
+
+            if ((P->money) > (purchaseCard->saleValue)){ //if player has enough money to buy property
+                purchaseProperty->owner = P;
+                P->ownedCards[purchaseCard->cardID] = purchaseCard; //adds linked card to ownedCards
+                std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
+            }
+            else{
+                std::cout << "You do not have enough money to purchase this property.\n";
+            }
         }
-        else{
-            std::cout << "You do not have enough money to purchase this property.\n";
+        else if (purchaseTile->type == "RR"){
+            RailRoadTile* purchaseProperty = dynamic_cast<RailRoadTile*>(purchaseTile); //same code as for properties. It needs to be separate because linkedCard points to a different type
+
+            OwnableCard* purchaseCard = purchaseProperty->linkedCard;
+
+            if ((P->money) > (purchaseCard->saleValue)){
+                purchaseProperty->owner = P;
+                P->ownedCards[purchaseCard->cardID] = purchaseCard;
+                std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
+            }
+            else{
+                std::cout << "You do not have enough money to purchase this property.\n";
+            }
         }
+        else if (purchaseTile->type == "Utility"){
+            UtilityTile* purchaseProperty = dynamic_cast<UtilityTile*>(purchaseTile); //same code as for properties. It needs to be separate because linkedCard points to a different type
+
+            OwnableCard* purchaseCard = purchaseProperty->linkedCard;
+
+            if ((P->money) > (purchaseCard->saleValue)){
+                purchaseProperty->owner = P;
+                P->ownedCards[purchaseCard->cardID] = purchaseCard;
+                std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
+            }
+            else{
+                std::cout << "You do not have enough money to purchase this property.\n";
+            }
+        }
+
     }
-    else if (purchaseTile->type == "RR"){
-        RailRoadTile* purchaseProperty = dynamic_cast<RailRoadTile*>(purchaseTile); //same code as for properties. It needs to be separate because linkedCard points to a different type
-        
-        OwnableCard* purchaseCard = purchaseProperty->linkedCard;
-        
-        if ((P->money) > (purchaseCard->saleValue)){
-            purchaseProperty->owner = P;
-            P->ownedCards[purchaseCard->cardID] = purchaseCard;
-            std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
-        }
-        else{
-            std::cout << "You do not have enough money to purchase this property.\n";
-        }
-    }
-    else if (purchaseTile->type == "Utility"){
-        UtilityTile* purchaseProperty = dynamic_cast<UtilityTile*>(purchaseTile); //same code as for properties. It needs to be separate because linkedCard points to a different type
-        
-        OwnableCard* purchaseCard = purchaseProperty->linkedCard;
-        
-        if ((P->money) > (purchaseCard->saleValue)){
-            purchaseProperty->owner = P;
-            P->ownedCards[purchaseCard->cardID] = purchaseCard;
-            std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
-        }
-        else{
-            std::cout << "You do not have enough money to purchase this property.\n";
-        }
-    }
-    
-}
 }
 
 void movePlayer(Player *P, int dest, bool inst){ 

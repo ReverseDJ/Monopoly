@@ -14,6 +14,8 @@
 #define COMMUNITY_CHEST (1)
 #define CHANCE (2)
 
+extern std::unordered_map<std::string,OwnableCard*> bankCards;
+
 // read property tiles
 // MUST have global Board variable before calling this function!
 // csv MUST be sorted by tile number
@@ -54,6 +56,9 @@ void makeBoard(std::string filename, Tile ** Board) {
                                                               std::stoi(row[13]), // hotelCost
                                                               tempPropTile// linkTitle
                 );
+
+                bankCards.insert(std::make_pair(row[2], tempPropCard));
+
                 tempPropTile->linkedCard = tempPropCard;
                 Board[i] = dynamic_cast<Tile*>(tempPropTile);
                 break;
@@ -62,6 +67,7 @@ void makeBoard(std::string filename, Tile ** Board) {
             case RAILROAD: {
                 RailRoadTile * tempRRTile = new RailRoadTile(row[1], nullptr);
                 RailRoadCard * tempRRCard = new RailRoadCard(row[1], row[2], tempRRTile);
+                bankCards.insert(std::make_pair(row[2], tempRRCard));
                 tempRRTile->linkedCard = tempRRCard;
                 Board[i] = dynamic_cast<Tile*>(tempRRTile);
                 break;
@@ -86,6 +92,7 @@ void makeBoard(std::string filename, Tile ** Board) {
                                                             stoi(row[6]), // rent2
                                                             tempUTile);       // linkedTile
                 tempUTile->linkedCard = tempUCard;
+                bankCards.insert(std::make_pair(row[2], tempUCard));
                 Board[i] = dynamic_cast<Tile*>(tempUTile);
                 break;                                      
             }
