@@ -53,7 +53,7 @@ int main() {
         if (answer==true){
             //implement buy house or hotel
         }
-        //End Turn, switch to next player as currentPlayer
+        activePlayers->next_player();
 
     }
 
