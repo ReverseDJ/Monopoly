@@ -44,6 +44,7 @@ int main() {
             ;
         }
         /*implement dice roll function*/
+        
         /*implement move player function*/
 
         Board[curP->location]->doCardFunction();
