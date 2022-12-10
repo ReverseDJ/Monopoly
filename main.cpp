@@ -44,14 +44,41 @@ int main() {
             ;
         }
         /*implement dice roll function*/
+        int jailCount;
         int dice1=diceRoll();
-        sleep_for(1s);
+        sleep_for(2s);
         int dice2=diceRoll();
-        int totalRoll=dice1+dice2; //STILL IN PROGRESS, waiting for movePlayer update for doubles implementation
-        
-        /*implement move player function*/
-
+        int totalRoll=dice1+dice2;
+        std::cout<<"Dice 1: "<<dice1<<" Dice 2: "<<dice2<<"\n";
+        movePlayer(curP,curp->location + totalRoll,false);
         Board[curP->location]->doCardFunction();
+        jailCount=1;
+        
+        while(dice1==dice2){
+            sleep_for(1s);
+            dice1=diceRoll();
+            sleep_for(1s);
+            dice2=diceRoll();
+            totalRoll=dice1+dice2;
+            std::cout<<"Dice 1: "<<dice1<<" Dice 2: "<<dice2<<"\n";
+   
+             /*implement move player function*/
+            movePlayer(curP,curp->location + totalRoll,false);
+            Board[curP->location]->doCardFunction();
+            jailCount++;
+            
+
+            if(jailCount==3){//send player to jail if they roll doubles 3 times in a row
+                
+                movePlayer(curP,10,True);
+                std::cout<<"You have rolled doubles 3 times in a row! You must be sent to jail\n";
+                break;
+            }
+        }
+        
+       
+
+      
 
         std::cout<<"Would you like to buy and houses or hotels before the end of your turn? Type 1 for yes and 0 for no";
         std::cin>>answer;
