@@ -11,7 +11,7 @@
 
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];
-extern std::unordered_map<std::string,OwnableCard*> * bankCards;
+extern std::unordered_map<std::string,OwnableCard*> bankCards;
 
 
 void displayProperties(Player * P){

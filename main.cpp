@@ -6,7 +6,7 @@
 
 Tile * Board[40];
 Player * curP;
-std::unordered_map<std::string,OwnableCard*> * bankCards;
+std::unordered_map<std::string,OwnableCard*> bankCards;
 
 /*
 int main(){

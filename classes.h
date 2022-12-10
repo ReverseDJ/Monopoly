@@ -217,6 +217,18 @@ public:
     void doDeckCardFunction(Player * P) override;
 };
 
+class payPerBuildingCard : public DeckCard{
+public:
+    int amtPerHouse;
+    int amtPerHotel;
+
+    payPerBuildingCard(int amtPerHouse, int amtPerHotel, std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""): DeckCard(name, cardDesc, cardID, type){
+        this->amtPerHotel = amtPerHotel;
+        this->amtPerHouse = amtPerHouse;
+    }
+    void doDeckCardFunction(Player * P) override;
+};
+
 class Tile{ //Abstract base class for all tile types. Allows us to store every tile in a common board array for player traversal
 public:
     std::string name;
