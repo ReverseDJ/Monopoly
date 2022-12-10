@@ -28,18 +28,28 @@ void makeBoard(std::string filename, Tile ** Board) {
     fin.open(filename);
 
     std::vector<std::string> row;
-    std::string line, word;
 
     // make the chance, community chest tiles
     DrawCardTile * tempChance = new DrawCardTile("Chance", &chanceCards);
     DrawCardTile * tempChest = new DrawCardTile("Community Chest", &communityChestCards);
 
+    char templine[80];
+    char temp[30];
+
     for (int i=0; i<40; i++) {
         row.clear();
-        getline(fin, line);
+        //getline(fin, line);
+        fin.getline(templine, 80, '\n');
+        std::string line(templine);
         std::stringstream s(line);
-        while (getline(s, word, ',')) {
-            row.push_back(word);
+
+        // while (getline(s, word, ',')) {
+        //     row.push_back(word);
+        // }
+
+        while (s.getline(temp, 30, ',')) {
+            std::string stemp(temp);
+            row.push_back(temp);
         }
 
         //std::cout << std::stoi(row[0]) << std::endl;

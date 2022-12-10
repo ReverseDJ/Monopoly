@@ -152,7 +152,7 @@ void movePlayerCard::doDeckCardFunction(Player * P){
     }
     else{
         movePlayer(P, dest, false);
-        Board[P->location]->doCardFunction();
+        Board[P->location]->doCardFunction(P);
     }
 };
 

@@ -31,6 +31,7 @@ class TaxTile;
 class GoToJailTile;
 class DrawCardTile;
 
+// PLAYER CLASSES
 class Player{
 public:
     int money;
@@ -88,6 +89,8 @@ public:
 
 };
 
+
+// CARD CLASSES
 class Card{
 public:
     std::string name;
@@ -175,6 +178,8 @@ public:
     void buy(Player * P);
 };
 
+
+// DECK CARDS
 class DeckCard : public Card{ // ABC for all cards in chance/community chest queues
     public:
     std::string cardDesc; //will be printed during the game
@@ -235,6 +240,8 @@ public:
     void doDeckCardFunction(Player * P) override;
 };
 
+
+// TILE CLASSES
 class Tile{ //Abstract base class for all tile types. Allows us to store every tile in a common board array for player traversal
 public:
     std::string name;
