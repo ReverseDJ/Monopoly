@@ -44,6 +44,10 @@ int main() {
             ;
         }
         /*implement dice roll function*/
+        int dice1=diceRoll();
+        sleep_for(1s);
+        int dice2=diceRoll();
+        int totalRoll=dice1+dice2; //STILL IN PROGRESS, waiting for movePlayer update for doubles implementation
         
         /*implement move player function*/
 
