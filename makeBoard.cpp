@@ -1,8 +1,5 @@
-#include <vector>
-#include <fstream>
-#include <string>
+
 #include "classes.h"
-#include <sstream>
 
 #define CORNER (1)
 #define PROPERTY (2)

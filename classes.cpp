@@ -2,9 +2,6 @@
 // Created by mdeno on 12/7/2022.
 //
 
-#include <string>
-#include <math.h>
-#include "classes.h"
 #include "functions.h"
 
 extern PlayerTurn * activePlayers;

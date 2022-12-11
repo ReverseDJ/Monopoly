@@ -12,6 +12,13 @@
 #include <queue>
 #include <list>
 #include <deque>
+#include <cstdlib>
+#include <time.h>
+#include <chrono>
+#include <thread>
+#include <vector>
+#include <fstream>
+#include <sstream>
 
 
 class Tile; //class prototypes, allows other classes to reference before definition.

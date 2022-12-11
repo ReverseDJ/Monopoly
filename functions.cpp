@@ -1,12 +1,6 @@
 // functions.cpp -- function implementations
 
 #include "functions.h"
-#include <iostream>
-#include <list>
-#include <cstdlib>
-#include <time.h>
-#include <chrono>
-#include <thread>
 
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];

@@ -10,6 +10,7 @@ std::unordered_map<std::string,OwnableCard*> bankCards;
 
 std::deque<DeckCard*> chanceCards;
 std::deque<DeckCard*> communityChestCards;
+PlayerTurn * activePlayers;
 
 /*
 int main(){
@@ -18,6 +19,11 @@ int main(){
 */
 
 int main() {
+
+    makeBoard("makeboard.csv", Board);
+    makeDrawCards("makechance.tsv", &chanceCards);
+    makeDrawCards("makechest.tsv", &communityChestCards);
+
     // Tile * Board[40];
     std::cout<<"Welcome to Monopoly!\n";
     int players;
@@ -36,10 +42,7 @@ int main() {
         playerList.push_back(P);
     }
         
-    PlayerTurn * activePlayers = new PlayerTurn(playerList);
-
-
-
+    activePlayers = new PlayerTurn(playerList);
 
     while(activePlayers->playerList.size() !=1 /*temporary variable*/) {
         curP = activePlayers->currentPlayer;
@@ -51,31 +54,31 @@ int main() {
         /*implement dice roll function*/
         int jailCount;
         int dice1=diceRoll();
-        sleep_for(2s);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         int dice2=diceRoll();
         int totalRoll=dice1+dice2;
         std::cout<<"Dice 1: "<<dice1<<" Dice 2: "<<dice2<<"\n";
-        movePlayer(curP,curp->location + totalRoll,false);
-        Board[curP->location]->doCardFunction();
+        movePlayer(curP, curP->location + totalRoll,false);
+        Board[curP->location]->doCardFunction(curP);
         jailCount=1;
         
         while(dice1==dice2){
-            sleep_for(1s);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             dice1=diceRoll();
-            sleep_for(1s);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             dice2=diceRoll();
             totalRoll=dice1+dice2;
             std::cout<<"Dice 1: "<<dice1<<" Dice 2: "<<dice2<<"\n";
    
              /*implement move player function*/
-            movePlayer(curP,curp->location + totalRoll,false);
-            Board[curP->location]->doCardFunction();
+            movePlayer(curP,curP->location + totalRoll,false);
+            Board[curP->location]->doCardFunction(curP);
             jailCount++;
             
 
             if(jailCount==3){//send player to jail if they roll doubles 3 times in a row
                 
-                movePlayer(curP,10,True);
+                movePlayer(curP,10,true);
                 std::cout<<"You have rolled doubles 3 times in a row! You must be sent to jail\n";
                 break;
             }
