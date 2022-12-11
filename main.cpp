@@ -7,10 +7,6 @@
 Tile * Board[40];
 Player * curP;
 std::unordered_map<std::string,OwnableCard*> bankCards;
-PlayerTurn * activePlayers;
-
-std::deque<DeckCard*> chanceCards;
-std::deque<DeckCard*> communityChestCards;
 
 /*
 int main(){
@@ -19,7 +15,7 @@ int main(){
 */
 
 int main() {
-    // Tile * Board[40];
+    Tile * Board[40];
     std::cout<<"Welcome to Monopoly!\n";
     int players;
     std::cout<<"How many players?\n";
@@ -37,9 +33,7 @@ int main() {
         playerList.push_back(P);
     }
         
-    activePlayers = new PlayerTurn(playerList);
-
-
+    PlayerTurn * activePlayers = new PlayerTurn(playerList);
 
 
     while(activePlayers->playerList.size() !=1 /*temporary variable*/) {
