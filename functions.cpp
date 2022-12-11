@@ -7,34 +7,36 @@ extern Tile * Board[];
 extern std::unordered_map<std::string,OwnableCard*> bankCards;
 
 
-void displayProperties(Player * P){
+void displayProperties(Player * P) {
     std::cout << "You own the following properties:\n";
-        
-        std::unordered_map<std::string, OwnableCard*>::iterator it = P->ownedCards.begin(); //iterates over all cards player owns
 
-    std::cout<<std::setw(25)<< std::left <<"Card Name";
-    std::cout<<std::setw(10)<< std::left <<"Card ID";
-    std::cout<<std::setw(15)<< std::left <<"Mortgage Value";
-    std::cout<<std::setw(10)<< std::left << "Houses";
-    std::cout<<std::setw(10)<< std::left << "Hotels"<<std::endl;
-        while (it != P->ownedCards.end()){
-            
-            std::string propertyID = it->first; //property ID
-            std::string propertyName = it->second->name;
-            int mortgageValue = it->second->mort; //mortgage value
+    std::unordered_map<std::string, OwnableCard *>::iterator it = P->ownedCards.begin(); //iterates over all cards player owns
 
-            if (it->second->type == "Property"){
-                int numHouses = (dynamic_cast<PropertyCard*>(it->second))->linkTile->houseNum; //gets number of houses
-                int numHotels = (dynamic_cast<PropertyCard*>(it->second))->linkTile->hotelNum; //gets number of hotels
-                std::cout << std::setw(25) << std::left << propertyName;
-                std::cout << std::setw(10) << std::left << propertyID;
-                std::cout << std::setw(15) << std::left << mortgageValue;
-                std::cout << std::setw(10) << std::left << numHouses;
-                std::cout << std::setw(10) << std::left << numHotels << std::endl;
-            }else{
-                std::cout << std::setw(25) << std::left << propertyName;
-                std::cout << std::setw(10) << std::left << propertyID;
-                std::cout << std::setw(15) << std::left << mortgageValue << std::endl;
+    std::cout << std::setw(25) << std::left << "Card Name";
+    std::cout << std::setw(10) << std::left << "Card ID";
+    std::cout << std::setw(15) << std::left << "Mortgage Value";
+    std::cout << std::setw(10) << std::left << "Houses";
+    std::cout << std::setw(10) << std::left << "Hotels" << std::endl;
+    while (it != P->ownedCards.end()) {
+
+        std::string propertyID = it->first; //property ID
+        std::string propertyName = it->second->name;
+        int mortgageValue = it->second->mort; //mortgage value
+
+        if (it->second->type == "Property") {
+            int numHouses = (dynamic_cast<PropertyCard *>(it->second))->linkTile->houseNum; //gets number of houses
+            int numHotels = (dynamic_cast<PropertyCard *>(it->second))->linkTile->hotelNum; //gets number of hotels
+            std::cout << std::setw(25) << std::left << propertyName;
+            std::cout << std::setw(10) << std::left << propertyID;
+            std::cout << std::setw(15) << std::left << mortgageValue;
+            std::cout << std::setw(10) << std::left << numHouses;
+            std::cout << std::setw(10) << std::left << numHotels << std::endl;
+        } else {
+            std::cout << std::setw(25) << std::left << propertyName;
+            std::cout << std::setw(10) << std::left << propertyID;
+            std::cout << std::setw(15) << std::left << mortgageValue << std::endl;
+
+        }
         it++;
     }
 }
@@ -46,10 +48,10 @@ bool checkBalance(Player * P, int money){
     else if(!(P->ownedCards.empty())){ //if player does not have enough money but can mortgage properties or sell houses
         std::cout << "You don't have enough money to pay this balance.\n";
         std::cout << "current balance: " << P->money << "\n";
-        std::cout << "amount due: " << money << "\n"; 
-        
+        std::cout << "amount due: " << money << "\n";
+
         while((P->money < money) && (P->ownedCards.empty() == false)){ //while player can sell houses/mortgage properties
-            
+
             displayProperties(P);
 
             std::cout << "Which property would you like to mortgage or sell houses on?\n";
@@ -110,14 +112,14 @@ bool checkBalance(Player * P, int money){
                 }
 
             }
-            
+
          if (P->money >= money){ //checks if player now has enough money to pay rent. If not, continues loop
             return true;
           }
-            
+
         }
         Bankruptcy(P, activePlayers); //if value of houses/properties cannot cover rent, player goes bankrupt.
-         return false; 
+         return false;
     }
     else{
         Bankruptcy(P, activePlayers); //needs to reference a global PlayerTurn object, which will be in the game loop
@@ -131,12 +133,12 @@ bool checkBalance(Player * P, int money){
 }
 
 int checkMonopoly(Player * P, Card * C){
-    
+
     std::string suitCard = C->cardID; //gets ID of current card
     int numCards = int(C->cardID[2]); //the third letter of the cardID is the total number of cards in the suit
     int cardNum = int(C->cardID[3]); //the fourth letter is the number of the card in the suit (0, 1, 2, 3, etc.)
     int monopolyCount;
-    
+
     for (int i = 0; i < numCards; i++){ //Searches ownedProperties for other cards in the suit. We can find their cardIDs systematically.
         if (i != cardNum){
             suitCard[3] = char(cardNum);
@@ -150,15 +152,15 @@ int checkMonopoly(Player * P, Card * C){
 
 void buyProperty(Player * P){
     Tile* purchaseTile = Board[P->location]; //gets the tils to purchase from the player's location.
-    
+
     std::cout << "Purchase property " << purchaseTile->name << "?\n";
-    
+
     std::string playerResponse;
-    
+
     std::cin >> playerResponse;
-    
+
     if (playerResponse == "yes"){
-    
+
         if (purchaseTile->type == "Property"){
             PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile); //casts to PropertyTile to use the linkedCard member
 
@@ -205,18 +207,18 @@ void buyProperty(Player * P){
     }
 }
 
-void movePlayer(Player *P, int dest, bool inst){ 
+void movePlayer(Player *P, int dest, bool inst){
     int originalLocation = P->location;
     dest = dest%40;
     P->location = dest; //updates player location to destination
-    
+
     if (!inst && (dest < originalLocation)){ //if needed, checks to see if player passed GO and adds $200
         P->money = P->money + 200;
         std::cout << P->name << " passed Go and collected $200.\n";
     }
 
     std::cout << P->name << " moved to tile# " << P->location << ": " << Board[P->location]->name << std::endl;
-    
+
 }
 
 int diceRoll(){

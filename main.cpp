@@ -20,9 +20,9 @@ int main(){
 
 int main() {
 
-    makeBoard("makeboard.csv", Board);
-    makeDrawCards("makechance.tsv", &chanceCards);
-    makeDrawCards("makechest.tsv", &communityChestCards);
+    makeBoard("C:\\Users\\mdeno\\Desktop\\ECE-309-Monopoly\\makeboard.csv", Board);
+    makeDrawCards("C:\\Users\\mdeno\\Desktop\\ECE-309-Monopoly\\makechance.tsv", &chanceCards);
+    makeDrawCards("C:\\Users\\mdeno\\Desktop\\ECE-309-Monopoly\\makechest.tsv", &communityChestCards);
 
     // Tile * Board[40];
     std::cout<<"Welcome to Monopoly!\n";

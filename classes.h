@@ -19,7 +19,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-
+#include <iomanip>
 
 class Tile; //class prototypes, allows other classes to reference before definition.
 class Player;
