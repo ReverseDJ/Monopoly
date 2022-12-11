@@ -7,6 +7,7 @@
 Tile * Board[40];
 Player * curP;
 std::unordered_map<std::string,OwnableCard*> bankCards;
+PlayerTurn * activePlayers;
 
 /*
 int main(){
@@ -33,7 +34,7 @@ int main() {
         playerList.push_back(P);
     }
         
-    PlayerTurn * activePlayers = new PlayerTurn(playerList);
+    activePlayers = new PlayerTurn(playerList);
 
 
     while(activePlayers->playerList.size() !=1 /*temporary variable*/) {
