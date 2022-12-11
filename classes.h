@@ -11,10 +11,12 @@
 #include <math.h>
 #include <queue>
 #include <list>
+#include <deque>
 
 
 class Tile; //class prototypes, allows other classes to reference before definition.
 class Player;
+class PlayerTurn;
 class Card;
 class RailRoadCard;
 class PropertyCard;
@@ -29,6 +31,7 @@ class TaxTile;
 class GoToJailTile;
 class DrawCardTile;
 
+// PLAYER CLASSES
 class Player{
 public:
     int money;
@@ -86,6 +89,8 @@ public:
 
 };
 
+
+// CARD CLASSES
 class Card{
 public:
     std::string name;
@@ -123,6 +128,8 @@ public:
         this->baseRent = baseRent;
         this->linkTile = linkTile;
     }
+
+    RailRoadCard(std::string name, std::string cardID, RailRoadTile* linkTile):RailRoadCard(25, 100, 200, name, cardID, linkTile, "RR") {}
     
     void mortgage(); //Defined after tile definition because it uses tile member variables. 
     void unmortgage();
@@ -171,6 +178,8 @@ public:
     void buy(Player * P);
 };
 
+
+// DECK CARDS
 class DeckCard : public Card{ // ABC for all cards in chance/community chest queues
     public:
     std::string cardDesc; //will be printed during the game
@@ -184,6 +193,7 @@ class DeckCard : public Card{ // ABC for all cards in chance/community chest que
 class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
     int moneyAmount; //negative if player pays to bank
 
+public:
     getMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount;
     }
@@ -194,6 +204,7 @@ class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
 class transferMoneyCard : public DeckCard{ //get money from other player(s) or pay money to other player(s)
     int moneyAmount; //negative if player pays money
 
+public:
     transferMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount; // positive if player recieves money, negative if player pays money;
     }
@@ -229,6 +240,8 @@ public:
     void doDeckCardFunction(Player * P) override;
 };
 
+
+// TILE CLASSES
 class Tile{ //Abstract base class for all tile types. Allows us to store every tile in a common board array for player traversal
 public:
     std::string name;
@@ -239,7 +252,8 @@ public:
         this->type = type;
     }
 
-    virtual void doCardFunction() = 0; //will allow each tile to perform actions when players land on it. 
+    virtual void doCardFunction(Player * P) = 0; //will allow each tile to perform actions when players land on it. 
+
 };
 
 class PropertyTile : public Tile{
@@ -314,11 +328,20 @@ public:
     void doCardFunction(Player * P);
 };
 
+class CornerTile : public Tile{
+public:
+
+    CornerTile(std::string name, std::string type = "Corner") : Tile(name, type) { }
+    void doCardFunction(Player * P);
+
+};
+
 class DrawCardTile : public Tile{
 public:
-    std::queue<DeckCard*> cardDeck;
+    std::string name;
+    std::deque<DeckCard*> * cardDeck;
     
-    DrawCardTile(std::queue<DeckCard*> cardDeck, std::string type="DrawCard") : Tile(name, type) {
+    DrawCardTile(std::string name, std::deque<DeckCard*>* cardDeck, std::string type="DrawCard") : Tile(name, type) {
         this->cardDeck = cardDeck;
     }
     

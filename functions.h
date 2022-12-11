@@ -23,6 +23,11 @@ void Bankruptcy(Player* P, PlayerTurn* Turn); //Removes Player from Player Turn 
 //if inst = true then the player "teleports", doesn't pass go, doesn't collect 200
 void movePlayer(Player *P, int dest, bool inst);
 
+void makeBoard(std::string filename, Tile ** Board);
+void makeChance();
+void makeCommunityChest();
+void makeDrawCards(std::string filename, std::deque<DeckCard*> * deck);
+
 //used to make a single dice roll
 int diceRoll();
 #endif 

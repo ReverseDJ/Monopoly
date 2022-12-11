@@ -127,15 +127,19 @@ void GoToJailTile::doCardFunction(Player * P) {
     P->location = 10;
 }
 
+void CornerTile::doCardFunction(Player * P) {
+    std::cout << P->name << "is on tile: " << this->name << std::endl;
+}
+
 void DrawCardTile::doCardFunction(Player * P){
-    DeckCard * frontCard = cardDeck.front(); //gets card from top of deck
-    cardDeck.pop(); //removes card from deck
+    DeckCard * frontCard = cardDeck->front(); //gets card from top of deck
+    cardDeck->pop_front(); //removes card from deck
 
     if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
         P->DeckCards[frontCard->name] = frontCard; //gives get out of jail card to player
     }
     else{
-        cardDeck.push(frontCard);
+        cardDeck->push_back(frontCard);
         frontCard->doDeckCardFunction(P); //runs appropriate card function
     }
 }
@@ -144,11 +148,11 @@ void movePlayerCard::doDeckCardFunction(Player * P){
     std::cout<<cardDesc<<std::endl;
     if(dest < 0){
         movePlayer(P, (P->location)+dest, true);
-        Board[P->location]->doCardFunction();
+        Board[P->location]->doCardFunction(P);                          
     }
     else{
         movePlayer(P, dest, false);
-        Board[P->location]->doCardFunction();
+        Board[P->location]->doCardFunction(P);
     }
 };
 
@@ -157,7 +161,7 @@ void getMoneyCard::doDeckCardFunction(Player * P){
     if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount))){ //if player needs to pay money, check their balance (returns true if they can pay) and subtract the money.
         P->money = P->money + moneyAmount; //moneyAmount will be negative if this branch is active.
     }
-    else{
+    else {
         P->money = P->money + moneyAmount;
     }
 }
@@ -173,7 +177,21 @@ void transferMoneyCard::doDeckCardFunction(Player * P){
 
     while(tempPlayer != curPlayerBackup){
 
-        //Needs to be implimented, this loop should run until all players have been iterated through
+        // + pay amount = card drawer receives money, else card drawer pays to all other players
+        // if card drawer is paying, check balance at each loop iteration
+
+        if (payAmount > 0) {
+            if (checkBalance(tempPlayer, payAmount)) {
+                tempPlayer->money -= payAmount;
+                curPlayerBackup->money += payAmount;
+            }
+        }
+        else {
+            if (checkBalance(curPlayerBackup, payAmount)) {
+                curPlayerBackup->money += payAmount; // payAmount < 0
+                tempPlayer->money -= payAmount;
+            }
+        }
 
         activePlayers->next_player();
         tempPlayer = activePlayers->currentPlayer;
@@ -200,5 +218,19 @@ void transferMoneyCard::doDeckCardFunction(Player * P){
 
 void payPerBuildingCard::doDeckCardFunction(Player *P) {
     int totalToPay;
+    PropertyCard * tempCard;
+
+    // traverse map OwnedCards
+    for (auto it = P->ownedCards.begin(); it != P->ownedCards.end(); it++) {
+        if (it->second->type == "Property") {
+            tempCard = dynamic_cast<PropertyCard*>(it->second);
+            totalToPay += tempCard->linkTile->houseNum * this->amtPerHouse;
+            totalToPay += tempCard->linkTile->hotelNum * this->amtPerHotel;
+        }
+    }
+
+    if (checkBalance(P, totalToPay)) {
+        P->money -= totalToPay;
+    }
 }
 
