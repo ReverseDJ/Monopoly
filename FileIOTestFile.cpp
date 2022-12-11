@@ -36,8 +36,7 @@ int main(void) {
     std::cout << dynamic_cast<TaxTile*>(Board[38])->name << std::endl;
     std::cout << dynamic_cast<UtilityTile*>(Board[28])->linkedCard->mort << std::endl;
 
-    makeChance();
-    makeCommunityChest();
+    makeDrawCards("makechance.tsv", &chanceCards);
     
     return 0;
 }
