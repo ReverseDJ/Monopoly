@@ -204,6 +204,8 @@ void movePlayer(Player *P, int dest, bool inst){
         P->money = P->money + 200;
         std::cout << P->name << " passed Go and collected $200.\n";
     }
+
+    std::cout << P->name << " moved to tile# " << P->location << ": " << Board[P->location]->name << std::endl;
     
 }
 

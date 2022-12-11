@@ -53,6 +53,10 @@ void makeDrawCards(std::string filename, std::deque<DeckCard*> * deck) {
             }
             
             case TRANSFER_MONEY: {
+                transferMoneyCard * tempCard = new transferMoneyCard(   std::stoi(row[2]), // amount
+                                                                        row[1],
+                                                                        "", "");
+                deck->push_back(tempCard);
                 break;
             }
 

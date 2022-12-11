@@ -212,7 +212,7 @@ class transferMoneyCard : public DeckCard{ //get money from other player(s) or p
     int moneyAmount; //negative if player pays money
 
 public:
-    transferMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="getMoney"):DeckCard(name,cardDesc,cardID,type){
+    transferMoneyCard(int moneyAmount, std::string cardDesc, std::string name, std::string cardID, std::string type="transferMoney"):DeckCard(name,cardDesc,cardID,type){
         this->moneyAmount = moneyAmount; // positive if player recieves money, negative if player pays money;
     }
 
@@ -229,8 +229,10 @@ public:
 class movePlayerCard : public DeckCard{
 public:
     int dest;
-    movePlayerCard(int dest, std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""): DeckCard(name, cardDesc, cardID, type){
+    bool inst;
+    movePlayerCard(int dest, bool inst, std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""): DeckCard(name, cardDesc, cardID, type){
         this->dest = dest;
+        this->inst = inst;
     }
     void doDeckCardFunction(Player * P) override;
 };

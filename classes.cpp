@@ -141,17 +141,41 @@ void DrawCardTile::doCardFunction(Player * P){
     }
 }
 
+
+#define BACK_3  (-3)
+#define NEXT_RR (-5)
+#define NEXT_U  (-10)
+
 void movePlayerCard::doDeckCardFunction(Player * P){
     std::cout<<cardDesc<<std::endl;
-    if(dest < 0){
-        movePlayer(P, (P->location)+dest, true);
-        Board[P->location]->doCardFunction(P);                          
+    if (dest < 0) {
+        switch (dest) {
+            case BACK_3: {
+                movePlayer(P, P->location + dest, true);
+                break;
+            }
+            case NEXT_RR: {
+                movePlayer(P, ((5 + ((P->location + 5) / 10) * 10) % 40), false);
+                break;
+            }
+            case NEXT_U: {
+                int i = ((P->location < 28) && (P->location > 12)) ? 28 : 12;
+                movePlayer(P, i, false);
+                break;
+            }
+            default: {
+                std::cout << "Bad card destination" << std::endl;
+                break;
+            }
+        }
     }
-    else{
-        movePlayer(P, dest, false);
-        Board[P->location]->doCardFunction(P);
+
+    else {
+        movePlayer(P, dest, inst);
     }
-};
+
+    Board[P->location]->doCardFunction(P);
+}
 
 void getMoneyCard::doDeckCardFunction(Player * P){
     std::cout<<cardDesc<<std::endl;
