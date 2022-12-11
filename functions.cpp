@@ -11,7 +11,12 @@ void displayProperties(Player * P){
     std::cout << "You own the following properties:\n";
         
         std::unordered_map<std::string, OwnableCard*>::iterator it = P->ownedCards.begin(); //iterates over all cards player owns
-     
+
+    std::cout<<std::setw(25)<< std::left <<"Card Name";
+    std::cout<<std::setw(10)<< std::left <<"Card ID";
+    std::cout<<std::setw(15)<< std::left <<"Mortgage Value";
+    std::cout<<std::setw(10)<< std::left << "Houses";
+    std::cout<<std::setw(10)<< std::left << "Hotels"<<std::endl;
         while (it != P->ownedCards.end()){
             
             std::string propertyID = it->first; //property ID
@@ -21,10 +26,15 @@ void displayProperties(Player * P){
             if (it->second->type == "Property"){
                 int numHouses = (dynamic_cast<PropertyCard*>(it->second))->linkTile->houseNum; //gets number of houses
                 int numHotels = (dynamic_cast<PropertyCard*>(it->second))->linkTile->hotelNum; //gets number of hotels
-                std::cout << propertyName << " : " << mortgageValue << " houses: " << numHouses << " hotels: " << numHotels << "\n";
+                std::cout << std::setw(25) << std::left << propertyName;
+                std::cout << std::setw(10) << std::left << propertyID;
+                std::cout << std::setw(15) << std::left << mortgageValue;
+                std::cout << std::setw(10) << std::left << numHouses;
+                std::cout << std::setw(10) << std::left << numHotels << std::endl;
             }else{
-            std::cout << propertyName << " ID: " << propertyID << " Mortgage Value: " << mortgageValue << "\n";
-        }
+                std::cout << std::setw(25) << std::left << propertyName;
+                std::cout << std::setw(10) << std::left << propertyID;
+                std::cout << std::setw(15) << std::left << mortgageValue << std::endl;
         it++;
     }
 }
