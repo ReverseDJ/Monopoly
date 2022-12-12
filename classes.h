@@ -195,7 +195,7 @@ class DeckCard : public Card{ // ABC for all cards in chance/community chest que
         this->cardDesc = cardDesc;
     }
     virtual void doDeckCardFunction(Player * P) = 0;
-    };
+};
 
 class getMoneyCard : public DeckCard{ //get money from bank or pay money to bank
     int moneyAmount; //negative if player pays to bank
@@ -222,7 +222,7 @@ public:
 
 class getOutOfJailCard : public DeckCard{
 public:
-    getOutOfJailCard(std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""):DeckCard(name, cardDesc, cardID, type ){}
+    getOutOfJailCard(std::string cardDesc, std::string name, std::string cardID, std::string type="GOOJ"):DeckCard(name, cardDesc, cardID, type ){}
     void doDeckCardFunction(Player * P) override;
 };
 
@@ -230,7 +230,7 @@ class movePlayerCard : public DeckCard{
 public:
     int dest;
     bool inst;
-    movePlayerCard(int dest, bool inst, std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""): DeckCard(name, cardDesc, cardID, type){
+    movePlayerCard(int dest, bool inst, std::string cardDesc, std::string name="",std::string cardID="", std::string type="movePlayer"): DeckCard(name, cardDesc, cardID, type){
         this->dest = dest;
         this->inst = inst;
     }
@@ -242,7 +242,7 @@ public:
     int amtPerHouse;
     int amtPerHotel;
 
-    payPerBuildingCard(int amtPerHouse, int amtPerHotel, std::string name="",std::string cardID="", std::string type="", std::string cardDesc=""): DeckCard(name, cardDesc, cardID, type){
+    payPerBuildingCard(int amtPerHouse, int amtPerHotel, std::string cardDesc, std::string name="",std::string cardID="", std::string type="payPerBuilding"): DeckCard(name, cardDesc, cardID, type){
         this->amtPerHotel = amtPerHotel;
         this->amtPerHouse = amtPerHouse;
     }

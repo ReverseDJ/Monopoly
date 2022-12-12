@@ -25,6 +25,7 @@ void movePlayer(Player *P, int dest, bool inst);
 
 void makeBoard(std::string filename, Tile ** Board);
 void makeDrawCards(std::string filename, std::deque<DeckCard*> * deck);
+void printDeck(std::deque<DeckCard*> * deck);
 
 //used to make a single dice roll
 int diceRoll();

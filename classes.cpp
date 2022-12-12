@@ -7,6 +7,8 @@
 extern PlayerTurn * activePlayers;
 extern Tile * Board[];
 extern std::unordered_map<std::string,OwnableCard*> bankCards;
+extern std::deque<DeckCard*> chanceCards;
+extern std::deque<DeckCard*> communityChestCards;
 
 void PropertyCard::mortgage(){
     linkTile->isMortgaged = true;
@@ -40,7 +42,13 @@ void UtilityCard::buy(Player * P){
 
 void getOutOfJailCard::doDeckCardFunction(Player * P){ //runs if player uses get out of jail card
     P->inJail = false;
-    P->DeckCards.erase(name); 
+    if (cardID == "CH") {
+        chanceCards.push_back(P->DeckCards[cardID]);
+    }
+    else if (cardID == "CH") {
+        communityChestCards.push_back(P->DeckCards[cardID]);
+    }
+    P->DeckCards.erase(cardID);
 }
 
 void PropertyTile::doCardFunction(Player * P) {
@@ -133,7 +141,7 @@ void DrawCardTile::doCardFunction(Player * P){
     cardDeck->pop_front(); //removes card from deck
 
     if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
-        P->DeckCards[frontCard->name] = frontCard; //gives get out of jail card to player
+        P->DeckCards[frontCard->cardID] = frontCard; //gives get out of jail card to player
     }
     else{
         cardDeck->push_back(frontCard);

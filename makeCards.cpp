@@ -61,14 +61,26 @@ void makeDrawCards(std::string filename, std::deque<DeckCard*> * deck) {
             }
 
             case GOOJ: {
+                getOutOfJailCard * tempCard = new getOutOfJailCard( row[1], 
+                                                                    "",
+                                                                    row[2]);
+                deck->push_back(tempCard);            
                 break;
             }
 
             case MOVE: {
+                movePlayerCard * tempCard = new movePlayerCard( std::stoi(row[2]),
+                                                                bool(std::stoi(row[3])),
+                                                                row[1]);
+                deck->push_back(tempCard);
                 break;
             }
 
             case PAY_BUILDING: {
+                payPerBuildingCard * tempCard = new payPerBuildingCard( std::stoi(row[2]),  // per house
+                                                                        std::stoi(row[3]),  // per hotel
+                                                                        row[1]);            // description
+                deck->push_back(tempCard);
                 break;
             }
 
@@ -77,5 +89,11 @@ void makeDrawCards(std::string filename, std::deque<DeckCard*> * deck) {
                 break;
         }
 
+    }
+}
+
+void printDeck(std::deque<DeckCard*> * deck) {
+    for (auto it = deck->begin(); it != deck->end(); it++) {
+        std::cout << (*it)->cardDesc << std::endl;
     }
 }
