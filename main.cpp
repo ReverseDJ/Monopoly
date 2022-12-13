@@ -3,6 +3,7 @@
 //
 
 #include "functions.h"
+#include "filepath.h" // ADD THIS FILE TO YOUR WORKING DIRECTORY
 
 Tile * Board[40];
 Player * curP;
@@ -21,9 +22,9 @@ int main(){
 
 int main() {
 
-    makeBoard(R"(C:\Users\ilena\Documents\ece309\finalproject\ECE-309-Monopoly\makeboard.csv)", Board);
-    makeDrawCards(R"(C:\Users\ilena\Documents\ece309\finalproject\ECE-309-Monopoly\makechance.tsv)", &chanceCards);
-    makeDrawCards(R"(C:\Users\ilena\Documents\ece309\finalproject\ECE-309-Monopoly\makechest.tsv)", &communityChestCards);
+    makeBoard(MAKEBOARD_CSV, Board);
+    makeDrawCards(MAKECHANCE_TSV, &chanceCards);
+    makeDrawCards(MAKECHEST_TSV, &communityChestCards);
 
     // Tile * Board[40];
     std::cout<<"Welcome to Monopoly!\n";
