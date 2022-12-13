@@ -56,6 +56,14 @@ int main() {
     activePlayers.it = activePlayers.playerList.begin();
     activePlayers.currentPlayer = *(activePlayers.it);
 
+    bool test;
+    std::cout << "Test or run game with dice rolls? 1: input board index manually, 0: roll dice." << std::endl;
+    std::cin >> test;
+    if (test) {
+        std::cout << "Test mode. Rolling doubles is disabled." << std::endl;
+    }
+
+
     while(activePlayers.playerList.size() !=1 /*temporary variable*/) {
         curP = activePlayers.currentPlayer;
         displayProperties(curP);
@@ -64,37 +72,51 @@ int main() {
         }
         else {
             /*implement dice roll function*/
-            int jailCount;
-            int dice1 = diceRoll();
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            int dice2 = diceRoll();
-            int totalRoll = dice1 + dice2;
-            std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
-            movePlayer(curP, curP->location + totalRoll, false);
-            Board[curP->location]->doTileFunction(curP);
-            jailCount = 1;
 
-            while (dice1 == dice2) {
-                std::cout << "You rolled doubles, rolling again" << std::endl;
-                jailCount = 1;
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                dice1 = diceRoll();
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                dice2 = diceRoll();
-                totalRoll = dice1 + dice2;
-                std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
-
-                /*implement move player function*/
-                movePlayer(curP, curP->location + totalRoll, false);
+            if (test) {
+                int totalRoll;
+                std::cout << "Player " << curP->name << " is on tile # " << curP->location << std::endl;
+                std::cout << "Enter board index to move current player to." << std::endl;
+                std::cin >> totalRoll;
+                movePlayer(curP, totalRoll, false);
                 Board[curP->location]->doTileFunction(curP);
-                jailCount++;
+            }
+
+            else {
+                int dice1 = diceRoll();
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                int dice2 = diceRoll();
+                int totalRoll = dice1 + dice2;
+                std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
+                movePlayer(curP, curP->location + totalRoll, false);
+
+                int jailCount;
+
+                Board[curP->location]->doTileFunction(curP);
+                jailCount = 1;
+
+                while (dice1 == dice2) {
+                    std::cout << "You rolled doubles, rolling again" << std::endl;
+                    jailCount = 1;
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    dice1 = diceRoll();
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    dice2 = diceRoll();
+                    totalRoll = dice1 + dice2;
+                    std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
+
+                    /*implement move player function*/
+                    movePlayer(curP, curP->location + totalRoll, false);
+                    Board[curP->location]->doTileFunction(curP);
+                    jailCount++;
 
 
-                if (jailCount == 3) {//send player to jail if they roll doubles 3 times in a row
+                    if (jailCount == 3) {//send player to jail if they roll doubles 3 times in a row
 
-                    movePlayer(curP, 10, true);
-                    std::cout << "You have rolled doubles 3 times in a row! You must be sent to jail\n";
-                    break;
+                        movePlayer(curP, 10, true);
+                        std::cout << "You have rolled doubles 3 times in a row! You must be sent to jail\n";
+                        break;
+                    }
                 }
             }
 

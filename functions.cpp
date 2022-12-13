@@ -147,13 +147,13 @@ bool checkBalance(Player * P, int money, bool optional){
 int checkMonopoly(Player * P, Card * C){
 
     std::string suitCard = C->cardID; //gets ID of current card
-    int numCards = int(C->cardID[2]); //the third letter of the cardID is the total number of cards in the suit
-    int cardNum = int(C->cardID[3]); //the fourth letter is the number of the card in the suit (0, 1, 2, 3, etc.)
-    int monopolyCount;
+    int numCards = int(C->cardID[2]) - 48; //the third letter of the cardID is the total number of cards in the suit
+    int cardNum = int(C->cardID[3]) - 48; //the fourth letter is the number of the card in the suit (0, 1, 2, 3, etc.)
+    int monopolyCount = 0;
 
     for (int i = 0; i < numCards; i++){ //Searches ownedProperties for other cards in the suit. We can find their cardIDs systematically.
-        if (i != cardNum){
-            suitCard[3] = char(cardNum);
+        if (i != cardNum) {
+            suitCard[3] = char(i + 48);
             if(P->ownedCards.find(suitCard) != P->ownedCards.end()){
                 monopolyCount = monopolyCount + 1;
             }
