@@ -101,8 +101,16 @@ int main() {
         std::cout<<"Money: $"<<curP->money<<std::endl;
         std::cout<<"Would you like to buy and houses or hotels before the end of your turn? (y/n)";
         std::cin>>answer;
+        
         if (answer=='y'){
-            //implement buy house or hotel
+            
+            while (answer == 'y'){
+                buyHouses(Player * P);
+                 std::cout<<"Money: $"<<curP->money<<std::endl;
+                 std::cout<<"Would you like to buy more houses or hotels? (y/n)";
+                  std::cin>>answer;
+            }
+            
         }
         activePlayers.next_player();
 
