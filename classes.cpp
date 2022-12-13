@@ -40,7 +40,7 @@ void UtilityCard::buy(Player * P){
     linkTile->owner = P;
 }
 
-void getOutOfJailCard::doDeckCardFunction(Player * P){ //runs if player uses get out of jail card
+void getOutOfJailCard::doDeckCardFunction(Player *P){ //runs if player uses get out of jail card
     P->inJail = false;
     if (cardID == "CH") {
         chanceCards.push_back(P->DeckCards[cardID]);
@@ -74,6 +74,7 @@ void PropertyTile::doTileFunction(Player * P) {
         checkBalance(P, rent); //makes sure player can pay rent.
         P->money = P->money - rent;
         owner->money = owner->money + rent;
+        std::cout<<"You paid $"<<rent<<" to "<<owner->name<<", you have $"<<P->money<<" left"<<std::endl;
     }
     else{
         if (owner == nullptr){ //if property is unowned, offer property to player

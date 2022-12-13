@@ -78,7 +78,7 @@ public:
 
     void next_player(){
 
-        if (std::next(it) == playerList.end()){ //if we have reached the end of the list, start over. The player turns should be circular.
+        if (++it == playerList.end()){ //if we have reached the end of the list, start over. The player turns should be circular.
             it = playerList.begin();
         }
         //else{

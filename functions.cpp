@@ -159,7 +159,7 @@ void buyProperty(Player * P){
 
     std::cin >> playerResponse;
 
-    if (playerResponse == "yes"){
+    if (playerResponse == "y"){
 
         if (purchaseTile->type == "Property"){
             PropertyTile* purchaseProperty = dynamic_cast<PropertyTile*>(purchaseTile); //casts to PropertyTile to use the linkedCard member

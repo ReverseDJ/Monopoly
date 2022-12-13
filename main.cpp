@@ -67,6 +67,8 @@ int main() {
         jailCount=1;
         
         while(dice1==dice2){
+            std::cout<<"You rolled doubles, rolling again"<<std::endl;
+            jailCount=1;
             std::this_thread::sleep_for(std::chrono::seconds(1));
             dice1=diceRoll();
             std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -94,7 +96,7 @@ int main() {
 
         std::cout<<"Would you like to buy and houses or hotels before the end of your turn? Type 1 for yes and 0 for no";
         std::cin>>answer;
-        if (answer==true){
+        if (answer=='y'){
             //implement buy house or hotel
         }
         activePlayers.next_player();
