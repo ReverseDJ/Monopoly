@@ -41,7 +41,7 @@ void displayProperties(Player * P) {
     }
 }
 
-bool checkBalance(Player * P, int money){
+bool checkBalance(Player * P, int money, bool optional){
     if (P->money >= money){ //if player has enough money to pay rent
         return true;
     }
@@ -58,8 +58,16 @@ bool checkBalance(Player * P, int money){
             std::cout << "Enter the ID: ";
 
             std::string playerResponse;
+            
+            if (optional){
+                std::cout << "\nOr enter q to exit.\n";
+            }
 
             std::cin >> playerResponse;
+            
+             if (optional && (playerResponde == "q"){
+               return false;
+            }
 
             if (P->ownedCards.find(playerResponse) != P->ownedCards.end()){ //if the player's choice is in their ownedProperties deck
 
@@ -118,11 +126,15 @@ bool checkBalance(Player * P, int money){
           }
 
         }
-        Bankruptcy(P, activePlayers); //if value of houses/properties cannot cover rent, player goes bankrupt.
+        if (optional == false){
+            Bankruptcy(P, activePlayers); //if value of houses/properties cannot cover rent, player goes bankrupt.
+        }
          return false;
     }
     else{
-        Bankruptcy(P, activePlayers); //needs to reference a global PlayerTurn object, which will be in the game loop
+        if (optional == false){
+            Bankruptcy(P, activePlayers); //needs to reference a global PlayerTurn object, which will be in the game loop
+        }
         return false;
     }
   }
