@@ -98,6 +98,7 @@ void makeBoard(std::string filename, Tile ** Board) {
                 else {
                     std::cout << "Bad chance/community chest input at " << i << std::endl;
                 }
+                break;
             }
 
             // OTHER case
