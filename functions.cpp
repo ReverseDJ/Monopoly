@@ -65,7 +65,7 @@ bool checkBalance(Player * P, int money, bool optional){
 
             std::cin >> playerResponse;
             
-             if (optional && (playerResponde == "q"){
+             if (optional && (playerResponse == "q")){
                return false;
             }
 
