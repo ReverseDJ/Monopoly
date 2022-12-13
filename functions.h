@@ -29,4 +29,8 @@ void printDeck(std::deque<DeckCard*> * deck);
 
 //used to make a single dice roll
 int diceRoll();
+
+//called at the end of player turn so player can buy houses
+void buyHouses(Player * P);
+
 #endif 
