@@ -26,6 +26,9 @@ int main() {
     makeDrawCards(MAKECHANCE_TSV, &chanceCards);
     makeDrawCards(MAKECHEST_TSV, &communityChestCards);
 
+    printDeck(&chanceCards);
+    printDeck(&communityChestCards);
+
     for(auto i : chanceCards){
         std::cout<<i->cardDesc<<std::endl;
     }
@@ -105,7 +108,7 @@ int main() {
         if (answer=='y'){
             
             while (answer == 'y'){
-                buyHouses(Player * P);
+                buyHouses(curP);
                  std::cout<<"Money: $"<<curP->money<<std::endl;
                  std::cout<<"Would you like to buy more houses or hotels? (y/n)";
                   std::cin>>answer;

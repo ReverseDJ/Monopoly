@@ -86,9 +86,10 @@ void PropertyTile::doTileFunction(Player * P) {
 void RailRoadTile::doTileFunction(Player * P) {
     if (owner != nullptr && (!isMortgaged)) { // if owned and not mortgaged
         int rent = linkedCard->baseRent;
-        int monopoly = checkMonopoly(P, linkedCard); //determine how many rail roads owner has
-
-        rent = rent * pow(2, (monopoly - 1)); //rent is doubled for every additional rail road owner has.
+        std::cout<<"Base Rent "<<rent<<std::endl;
+        int monopoly = checkMonopoly(owner, linkedCard); //determine how many rail roads owner has
+        std::cout<<"Num of Cards "<<monopoly<<std::endl;
+        rent *= int(pow(2, (monopoly - 1))); //rent is doubled for every additional rail road owner has.
 
         checkBalance(P, rent,false); //makes sure player can pay rent.
         P->money = P->money - rent;
