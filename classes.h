@@ -261,7 +261,7 @@ public:
         this->type = type;
     }
 
-    virtual void doCardFunction(Player * P) = 0; //will allow each tile to perform actions when players land on it. 
+    virtual void doTileFunction(Player * P) = 0; //will allow each tile to perform actions when players land on it. 
 
 };
 
@@ -281,7 +281,7 @@ public:
             this->isMortgaged = isMortgaged;
     }
 
-    void doCardFunction(Player * P);
+    void doTileFunction(Player * P);
 };
 
 class RailRoadTile : public Tile{
@@ -296,7 +296,7 @@ public:
         this->isMortgaged = isMortgaged;
     }
 
-    void doCardFunction(Player * P);
+    void doTileFunction(Player * P);
 };
 
 class TaxTile : public Tile{
@@ -307,7 +307,7 @@ public:
         this->taxValue = taxValue;
     }
 
-    void doCardFunction(Player * P);
+    void doTileFunction(Player * P);
 
 };
 
@@ -323,7 +323,7 @@ public:
             this->isMortgaged = isMortgaged;
     }
 
-    void doCardFunction(Player * P);
+    void doTileFunction(Player * P);
 };
 
 class GoToJailTile : public Tile{
@@ -334,14 +334,14 @@ public:
         this->jailLocation = jailLocation;
     }
     
-    void doCardFunction(Player * P);
+    void doTileFunction(Player * P);
 };
 
 class CornerTile : public Tile{
 public:
 
     CornerTile(std::string name, std::string type = "Corner") : Tile(name, type) { }
-    void doCardFunction(Player * P);
+    void doTileFunction(Player * P);
 
 };
 
@@ -354,7 +354,7 @@ public:
         this->cardDeck = cardDeck;
     }
     
-    void doCardFunction(Player * P);
+    void doTileFunction(Player * P);
 };
 
 //Free Parking, Jail, and Go will just be implementations of Card and do not have dervied classes.

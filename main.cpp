@@ -20,9 +20,9 @@ int main(){
 
 int main() {
 
-    makeBoard("C:\\Users\\mdeno\\Desktop\\ECE-309-Monopoly\\makeboard.csv", Board);
-    makeDrawCards("C:\\Users\\mdeno\\Desktop\\ECE-309-Monopoly\\makechance.tsv", &chanceCards);
-    makeDrawCards("C:\\Users\\mdeno\\Desktop\\ECE-309-Monopoly\\makechest.tsv", &communityChestCards);
+    makeBoard(R"(C:\Users\ilena\Documents\ece309\finalproject\ECE-309-Monopoly\makeboard.csv)", Board);
+    makeDrawCards(R"(C:\Users\ilena\Documents\ece309\finalproject\ECE-309-Monopoly\makechance.tsv)", &chanceCards);
+    makeDrawCards(R"(C:\Users\ilena\Documents\ece309\finalproject\ECE-309-Monopoly\makechest.tsv)", &communityChestCards);
 
     // Tile * Board[40];
     std::cout<<"Welcome to Monopoly!\n";
@@ -49,7 +49,6 @@ int main() {
         displayProperties(curP);
         if (curP->inJail) {
             //implement in jail function
-            ;
         }
         /*implement dice roll function*/
         int jailCount;
@@ -59,7 +58,7 @@ int main() {
         int totalRoll=dice1+dice2;
         std::cout<<"Dice 1: "<<dice1<<" Dice 2: "<<dice2<<"\n";
         movePlayer(curP, curP->location + totalRoll,false);
-        Board[curP->location]->doCardFunction(curP);
+        Board[curP->location]->doTileFunction(curP);
         jailCount=1;
         
         while(dice1==dice2){
@@ -72,7 +71,7 @@ int main() {
    
              /*implement move player function*/
             movePlayer(curP,curP->location + totalRoll,false);
-            Board[curP->location]->doCardFunction(curP);
+            Board[curP->location]->doTileFunction(curP);
             jailCount++;
             
 

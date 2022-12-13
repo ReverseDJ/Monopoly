@@ -51,7 +51,7 @@ void getOutOfJailCard::doDeckCardFunction(Player * P){ //runs if player uses get
     P->DeckCards.erase(cardID);
 }
 
-void PropertyTile::doCardFunction(Player * P) {
+void PropertyTile::doTileFunction(Player * P) {
     if (owner != nullptr && (!isMortgaged)){ //if tile is owned and not mortgaged
         int rent;
         std::string linkedID = linkedCard->cardID;
@@ -82,7 +82,7 @@ void PropertyTile::doCardFunction(Player * P) {
     }
 }
 
-void RailRoadTile::doCardFunction(Player * P) {
+void RailRoadTile::doTileFunction(Player * P) {
     if (owner != nullptr && (!isMortgaged)) { // if owned and not mortgaged
         int rent = linkedCard->baseRent;
         int monopoly = checkMonopoly(P, linkedCard); //determine how many rail roads owner has
@@ -99,13 +99,13 @@ void RailRoadTile::doCardFunction(Player * P) {
     }
 }
 
-void TaxTile::doCardFunction(Player * P) { //if player can pay tax, subtract from balance
+void TaxTile::doTileFunction(Player * P) { //if player can pay tax, subtract from balance
     if (checkBalance(P, taxValue)){
         P->money = P->money - taxValue;
     }
 }
 
-void UtilityTile::doCardFunction(Player * P) {
+void UtilityTile::doTileFunction(Player * P) {
     if (owner != nullptr && (!isMortgaged)) { // if owned and not mortgaged
         int rent;
         int monopoly = checkMonopoly(P, linkedCard); //check if player owns both utilities
@@ -126,17 +126,17 @@ void UtilityTile::doCardFunction(Player * P) {
     }
 }
 
-void GoToJailTile::doCardFunction(Player * P) {
+void GoToJailTile::doTileFunction(Player * P) {
     int jailLocation = 10; //jail is the 11th space on the board, or Board[10]
     P->inJail = jailLocation;
     P->location = 10;
 }
 
-void CornerTile::doCardFunction(Player * P) {
+void CornerTile::doTileFunction(Player * P) {
     std::cout << P->name << "is on tile: " << this->name << std::endl;
 }
 
-void DrawCardTile::doCardFunction(Player * P){
+void DrawCardTile::doTileFunction(Player * P){
     DeckCard * frontCard = cardDeck->front(); //gets card from top of deck
     cardDeck->pop_front(); //removes card from deck
 
@@ -182,7 +182,7 @@ void movePlayerCard::doDeckCardFunction(Player * P){
         movePlayer(P, dest, inst);
     }
 
-    Board[P->location]->doCardFunction(P);
+    Board[P->location]->doTileFunction(P);
 }
 
 void getMoneyCard::doDeckCardFunction(Player * P){
