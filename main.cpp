@@ -10,7 +10,8 @@ std::unordered_map<std::string,OwnableCard*> bankCards;
 
 std::deque<DeckCard*> chanceCards;
 std::deque<DeckCard*> communityChestCards;
-PlayerTurn * activePlayers;
+//PlayerTurn * activePlayers;
+PlayerTurn activePlayers({});
 
 /*
 int main(){
@@ -42,10 +43,13 @@ int main() {
         playerList.push_back(P);
     }
         
-    activePlayers = new PlayerTurn(playerList);
+    // activePlayers = new PlayerTurn(playerList);
+    activePlayers.playerList = playerList;
+    activePlayers.it = activePlayers.playerList.begin();
+    activePlayers.currentPlayer = *(activePlayers.it);
 
-    while(activePlayers->playerList.size() !=1 /*temporary variable*/) {
-        curP = activePlayers->currentPlayer;
+    while(activePlayers.playerList.size() !=1 /*temporary variable*/) {
+        curP = activePlayers.currentPlayer;
         displayProperties(curP);
         if (curP->inJail) {
             //implement in jail function
@@ -92,7 +96,7 @@ int main() {
         if (answer==true){
             //implement buy house or hotel
         }
-        activePlayers->next_player();
+        activePlayers.next_player();
 
     }
 

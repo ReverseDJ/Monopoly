@@ -76,14 +76,15 @@ public:
         currentPlayer = *it;
     }
 
-    void next_player(){ 
-        if (it == playerList.end()){ //if we have reached the end of the list, start over. The player turns should be circular.
+    void next_player(){
+
+        if (std::next(it) == playerList.end()){ //if we have reached the end of the list, start over. The player turns should be circular.
             it = playerList.begin();
         }
-        else{
-            std::advance(it,1); //iterates to the next item on the list, which moved current player to the next player
-        }
-        currentPlayer = *it;
+        //else{
+        //    std::advance(it,1); //iterates to the next item on the list, which moved current player to the next player
+        //}
+        currentPlayer = dynamic_cast<Player*>(*it);
     }
 
     void RemovePlayer(Player* P){ //removes a player from the list when they go bankrupt
