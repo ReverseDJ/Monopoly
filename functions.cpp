@@ -152,8 +152,8 @@ int checkMonopoly(Player * P, Card * C){
 
 void buyProperty(Player * P){
     Tile* purchaseTile = Board[P->location]; //gets the tils to purchase from the player's location.
-
-    std::cout << "Purchase property " << purchaseTile->name << "?\n";
+    std::cout<<"Money: $"<<P->money<<std::endl;
+    std::cout << "Purchase property " << purchaseTile->name << "? (y/n)\n";
 
     std::string playerResponse;
 

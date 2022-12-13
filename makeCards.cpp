@@ -33,6 +33,7 @@ void makeDrawCards(std::string filename, std::deque<DeckCard*> * deck) {
         row.clear();
         //fin.getline(templine, 170, '\n');
         std::string line(templine);
+
         std::stringstream s(line);
 
         while (s.getline(temp, 160, '\t')) {

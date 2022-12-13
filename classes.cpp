@@ -93,6 +93,7 @@ void RailRoadTile::doTileFunction(Player * P) {
         checkBalance(P, rent); //makes sure player can pay rent.
         P->money = P->money - rent;
         owner->money = owner->money + rent;
+        std::cout<<"You paid $"<<rent<<" to "<<owner->name<<", you have $"<<P->money<<" left"<<std::endl;
     } else {
         if (owner == nullptr){ //if property is unowned, offer to player.
             buyProperty(P);
@@ -134,13 +135,13 @@ void GoToJailTile::doTileFunction(Player * P) {
 }
 
 void CornerTile::doTileFunction(Player * P) {
-    std::cout << P->name << "is on tile: " << this->name << std::endl;
+    //std::cout << P->name << "is on tile: " << this->name << std::endl;
 }
 
 void DrawCardTile::doTileFunction(Player * P){
     DeckCard * frontCard = cardDeck->front(); //gets card from top of deck
     cardDeck->pop_front(); //removes card from deck
-
+    std::cout<<frontCard->cardDesc<<std::endl;
     if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
         P->DeckCards[frontCard->cardID] = frontCard; //gives get out of jail card to player
     }

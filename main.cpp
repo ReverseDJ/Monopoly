@@ -26,12 +26,16 @@ int main() {
     makeDrawCards(MAKECHANCE_TSV, &chanceCards);
     makeDrawCards(MAKECHEST_TSV, &communityChestCards);
 
+    for(auto i : chanceCards){
+        std::cout<<i->cardDesc<<std::endl;
+    }
+
     // Tile * Board[40];
     std::cout<<"Welcome to Monopoly!\n";
     int players;
     std::cout<<"How many players?\n";
     std::cin>>players;
-    bool answer;
+    char answer;
     
     std::list<Player*> playerList;
     
@@ -53,48 +57,49 @@ int main() {
         curP = activePlayers.currentPlayer;
         displayProperties(curP);
         if (curP->inJail) {
-            //implement in jail function
+            std::cout<<"You are in Jail"<<std::endl;
         }
-        /*implement dice roll function*/
-        int jailCount;
-        int dice1=diceRoll();
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        int dice2=diceRoll();
-        int totalRoll=dice1+dice2;
-        std::cout<<"Dice 1: "<<dice1<<" Dice 2: "<<dice2<<"\n";
-        movePlayer(curP, curP->location + totalRoll,false);
-        Board[curP->location]->doTileFunction(curP);
-        jailCount=1;
-        
-        while(dice1==dice2){
-            std::cout<<"You rolled doubles, rolling again"<<std::endl;
-            jailCount=1;
+        else {
+            /*implement dice roll function*/
+            int jailCount;
+            int dice1 = diceRoll();
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            dice1=diceRoll();
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            dice2=diceRoll();
-            totalRoll=dice1+dice2;
-            std::cout<<"Dice 1: "<<dice1<<" Dice 2: "<<dice2<<"\n";
-   
-             /*implement move player function*/
-            movePlayer(curP,curP->location + totalRoll,false);
+            int dice2 = diceRoll();
+            int totalRoll = dice1 + dice2;
+            std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
+            movePlayer(curP, curP->location + totalRoll, false);
             Board[curP->location]->doTileFunction(curP);
-            jailCount++;
-            
+            jailCount = 1;
 
-            if(jailCount==3){//send player to jail if they roll doubles 3 times in a row
-                
-                movePlayer(curP,10,true);
-                std::cout<<"You have rolled doubles 3 times in a row! You must be sent to jail\n";
-                break;
+            while (dice1 == dice2) {
+                std::cout << "You rolled doubles, rolling again" << std::endl;
+                jailCount = 1;
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                dice1 = diceRoll();
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                dice2 = diceRoll();
+                totalRoll = dice1 + dice2;
+                std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
+
+                /*implement move player function*/
+                movePlayer(curP, curP->location + totalRoll, false);
+                Board[curP->location]->doTileFunction(curP);
+                jailCount++;
+
+
+                if (jailCount == 3) {//send player to jail if they roll doubles 3 times in a row
+
+                    movePlayer(curP, 10, true);
+                    std::cout << "You have rolled doubles 3 times in a row! You must be sent to jail\n";
+                    break;
+                }
             }
+
+
         }
-        
-       
-
       
-
-        std::cout<<"Would you like to buy and houses or hotels before the end of your turn? Type 1 for yes and 0 for no";
+        std::cout<<"Money: $"<<curP->money<<std::endl;
+        std::cout<<"Would you like to buy and houses or hotels before the end of your turn? (y/n)";
         std::cin>>answer;
         if (answer=='y'){
             //implement buy house or hotel
