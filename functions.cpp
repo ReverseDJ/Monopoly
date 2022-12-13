@@ -238,3 +238,82 @@ int diceRoll(){
     int roll=(rand()%6) +1;
     return roll;
 }
+
+void buyHouses(Player * P){ //called at the end of player turn
+    
+    std::unordered_map<std::string, PropertyCard*> houseCards; //a new map of cards that the player can buy houses on
+    
+    std::cout << "You can buy houses/hotels on the following properties:\n";
+
+    std::unordered_map<std::string, OwnableCard *>::iterator it = P->ownedCards.begin(); //iterates over all cards player owns
+
+    std::cout << std::setw(25) << std::left << "Card Name";
+    std::cout << std::setw(10) << std::left << "Card ID";
+    std::cout << std::setw(10) << std::left << "Houses";
+    std::cout << std::setw(10) << std::left << "Hotels" << std::endl;
+    
+    
+    while (it != P->ownedCards.end()) { //iterates over all owned cards
+
+        std::string propertyID = it->first; //property ID
+        std::string propertyName = it->second->name;
+        int mortgageValue = it->second->mort; //mortgage value
+        
+
+        if (it->second->type == "Property") { //only cares about property cards
+            int numHouses = (dynamic_cast<PropertyCard *>(it->second))->linkTile->houseNum; //gets number of houses
+            int numHotels = (dynamic_cast<PropertyCard *>(it->second))->linkTile->hotelNum; //gets number of hotels
+            
+            if ((numHotels == 0) && (checkMonopoly(P,dynamic_cast<Card *>(it->second)) == dynamic_cast<Card *>(it->second)->cardID[1])){
+                std::cout << std::setw(25) << std::left << propertyName;
+                std::cout << std::setw(10) << std::left << propertyID;
+                std::cout << std::setw(15) << std::left << mortgageValue;
+                std::cout << std::setw(10) << std::left << numHouses;
+                std::cout << std::setw(10) << std::left << numHotels << std::endl;
+                
+                houseCards[it->first] = dynamic_cast<PropertyCard *>(it->second);
+            }
+        } 
+        it++;
+    }
+    
+    std::string playerResponse;
+    
+    std::cout << "Which property would you like to buy a house/hotel on?\n";
+    
+    std::cin >> playerResponse;
+    
+    if (houseCards.find(playerResponse) != houseCards.end()){ //if the player's choice is in their ownedProperties deck
+
+                    PropertyCard* playerCard = houseCards[playerResponse]; //gets correct property card based on player response
+
+                    PropertyTile* playerTile = playerCard->linkTile; //gets linked tile
+ 
+                        if (playerTile->houseNum == 4){ //if player can buy a hotel
+                            std::cout << "Would you like to buy a hotel?\nEnter yes or no: ";
+
+                            std::string buyHotel;
+                            std::cin >> buyHotel;
+
+                            if ((buyHotel == "yes") && checkBalance(P,playerCard->hotelCost,true)){
+                                playerTile->hotelNum = 1; 
+                                playerTile->houseNum = 0;
+                                P->money = P->money - (playerCard->hotelCost);
+                                std::cout << "You have bought a hotel";
+                            }
+                        }
+
+                        else{ std::cout << "How many houses would you like to buy?\n"; //if player cant buy a hotel but can buy houses
+                        
+                        int buyHouse;
+                        std::cin >> buyHouse;
+
+                        if ((buyHouse > 0) && (buyHouse < (4 - playerTile->houseNum)) && checkBalance(P,((playerCard->houseCost)*buyHouse),true)){ //if player wants to and can buy houses
+                            playerTile->houseNum = playerTile->houseNum + buyHouse;
+                            P->money = P->money - (playerCard->houseCost)*buyHouse; //deducts the house purchase value from player balance
+                            std::cout << "You have bought " << buyHouse << " houses.";
+                        }
+                        }
+
+}
+}
