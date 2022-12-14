@@ -45,7 +45,7 @@ bool checkBalance(Player * P, int money, bool optional){
     if (P->money >= money){ //if player has enough money to pay rent
         return true;
     }
-    else if(!(P->ownedCards.empty())){ //if player does not have enough money but can mortgage properties or sell houses
+    else if(!(P->ownedCards.empty())) { //if player does not have enough money but can mortgage properties or sell houses
         std::cout << "You don't have enough money to pay this balance.\n";
         std::cout << "current balance: " << P->money << "\n";
         std::cout << "amount due: " << money << "\n";
@@ -121,17 +121,24 @@ bool checkBalance(Player * P, int money, bool optional){
 
             }
 
+        std::cout << "current balance: " << P->money << "\n";
+        std::cout << "amount due: " << money << "\n";
+
          if (P->money >= money){ //checks if player now has enough money to pay rent. If not, continues loop
             return true;
           }
 
+        std::cout << "You don't have enough money to pay this balance.\n";
+
         }
+
         if (optional == false){
             Bankruptcy(P, activePlayers); //if value of houses/properties cannot cover rent, player goes bankrupt.
         }
          return false;
     }
-    else{
+
+    else{                   // can't mortgage or sell anything
         if (optional == false){
             Bankruptcy(P, activePlayers); //needs to reference a global PlayerTurn object, which will be in the game loop
         }
@@ -239,7 +246,7 @@ int diceRoll(){
     return roll;
 }
 
-void buyHouses(Player * P){ //called at the end of player turn
+void buyHouses(Player * P) { //called at the end of player turn
     
     std::unordered_map<std::string, PropertyCard*> houseCards; //a new map of cards that the player can buy houses on
     
@@ -305,7 +312,8 @@ void buyHouses(Player * P){ //called at the end of player turn
                     P->money = P->money - (playerCard->hotelCost);
                     std::cout << "You have bought a hotel";
                 }
-            } else {
+            } 
+            else {
                 std::cout << "How many houses would you like to buy? (1-4)\n"; //if player cant buy a hotel but can buy houses
 
                 int buyHouse;
@@ -322,7 +330,15 @@ void buyHouses(Player * P){ //called at the end of player turn
                     std::cout<<"Invalid House Number"<<std::endl;
                 }
             }
-
         }
     }
+}
+
+
+void printStartTurn(Player * P) {
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << "PLAYER " << P->name << "'S TURN" << std::endl;
+    std::cout << "Player " << P->name << " is on tile # " << P->location << std::endl;
+    displayProperties(P);
 }

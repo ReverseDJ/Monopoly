@@ -33,4 +33,6 @@ int diceRoll();
 //called at the end of player turn so player can buy houses
 void buyHouses(Player * P);
 
+void printStartTurn(Player * P);
+
 #endif 

@@ -58,7 +58,8 @@ int main() {
 
     while(activePlayers.playerList.size() !=1 /*temporary variable*/) {
         curP = activePlayers.currentPlayer;
-        displayProperties(curP);
+        printStartTurn(curP);
+        
         if (curP->inJail) {
             std::cout<<"You are in Jail"<<std::endl;
             //STILL NEEDS TO BE IMPLEMENTED!!!
@@ -68,7 +69,6 @@ int main() {
 
             if (test) {
                 int totalRoll;
-                std::cout << "Player " << curP->name << " is on tile # " << curP->location << std::endl;
                 std::cout << "Enter board index to move current player to." << std::endl;
                 std::cin >> totalRoll;
                 movePlayer(curP, totalRoll, false);
