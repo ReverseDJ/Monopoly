@@ -52,7 +52,10 @@ void getOutOfJailCard::doDeckCardFunction(Player *P){ //runs if player uses get 
 }
 
 void PropertyTile::doTileFunction(Player * P) {
-    if (owner != nullptr && (!isMortgaged)){ //if tile is owned and not mortgaged
+    if(P==owner){
+        std::cout<<"You own this property"<<std::endl;
+    }
+    else if (owner != nullptr && (!isMortgaged)){ //if tile is owned and not mortgaged
         int rent;
         std::string linkedID = linkedCard->cardID;
         int numCardsInMonopoly = int(linkedID[2]-48); //uses the cardID field of the linked card to determine how many properties are in the set.
