@@ -445,9 +445,9 @@ bool inJail(Player * P){
     } */
     
     std::cout<<"Rolling to get out of Jail"<<std::endl;
-    
+    std::this_thread::sleep_for(std::chrono::seconds(5));
      int dice1 = diceRoll();
-     std::this_thread::sleep_for(std::chrono::seconds(1));
+     std::this_thread::sleep_for(std::chrono::seconds(4));
      int dice2 = diceRoll();
      int totalRoll = dice1 + dice2;
      std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
