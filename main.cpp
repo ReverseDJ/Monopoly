@@ -8,6 +8,7 @@
 Tile * Board[40];
 Player * curP;
 std::unordered_map<std::string,OwnableCard*> bankCards;
+bool curPisBankrupt=false;
 
 std::deque<DeckCard*> chanceCards;
 std::deque<DeckCard*> communityChestCards;
@@ -60,8 +61,11 @@ int main() {
         mixCards(chanceCards);
         mixCards(communityChestCards);
     }
-
+    if(activePlayers.playerList.size() == 1){
+        std::cout<<"Player "<<curP->name<<" Has Won"<<std::endl;
+    }
     while(activePlayers.playerList.size() !=1 /*temporary variable*/) {
+        curPisBankrupt = false;
         curP = activePlayers.currentPlayer;
         printStartTurn(curP);
         
@@ -91,6 +95,9 @@ int main() {
                 int jailCount;
 
                 Board[curP->location]->doTileFunction(curP);
+                if(curPisBankrupt == true){
+                    break;
+                }
                 jailCount = 1;
 
                 while (dice1 == dice2) {
@@ -121,43 +128,49 @@ int main() {
 
         }
 
-        std::cout<<"Money: $"<<curP->money<<std::endl;
-        std::cout<<"Would you like to unmortgage a property? (y/n)";
-        std::cin>>answer;
-        std::string unmortID;
-        if (answer=='y'){
+        if(curPisBankrupt){
+            break;
+        }
+        else{
+            std::cout<<"Money: $"<<curP->money<<std::endl;
+            std::cout<<"Would you like to unmortgage a property? (y/n)";
+            std::cin>>answer;
+            std::string unmortID;
+            if (answer=='y'){
 
-            while (answer == 'y'){
-                displayMortgaged(curP);
-                std::cout<<"Which Property would you like to unmortgage "<<std::endl;
-                std::cin>>unmortID;
+                while (answer == 'y'){
+                    displayMortgaged(curP);
+                    std::cout<<"Which Property would you like to unmortgage "<<std::endl;
+                    std::cin>>unmortID;
 
-                if(curP->mortCards.find(unmortID) != curP->mortCards.end()){
-                    curP->mortCards[unmortID]->unmortgage();
+                    if(curP->mortCards.find(unmortID) != curP->mortCards.end()){
+                        curP->mortCards[unmortID]->unmortgage();
+                    }
+                    else{
+                        std::cout<<"Card not found"<<std::endl;
+                    }
+                    std::cout<<"Would you like to unmortgage another property? (y/n)";
+                    std::cin>>answer;
                 }
-                else{
-                    std::cout<<"Card not found"<<std::endl;
-                }
-                std::cout<<"Would you like to unmortgage another property? (y/n)";
-                std::cin>>answer;
+
             }
 
+            std::cout<<"Money: $"<<curP->money<<std::endl;
+            std::cout<<"Would you like to buy and houses or hotels before the end of your turn? (y/n)";
+            std::cin>>answer;
+
+            if (answer=='y'){
+
+                while (answer == 'y'){
+                    buyHouses(curP);
+                    std::cout<<"Money: $"<<curP->money<<std::endl;
+                    std::cout<<"Would you like to buy more houses or hotels? (y/n)";
+                    std::cin>>answer;
+                }
+
+            }
         }
 
-        std::cout<<"Money: $"<<curP->money<<std::endl;
-        std::cout<<"Would you like to buy and houses or hotels before the end of your turn? (y/n)";
-        std::cin>>answer;
-        
-        if (answer=='y'){
-            
-            while (answer == 'y'){
-                buyHouses(curP);
-                 std::cout<<"Money: $"<<curP->money<<std::endl;
-                 std::cout<<"Would you like to buy more houses or hotels? (y/n)";
-                  std::cin>>answer;
-            }
-            
-        }
         activePlayers.next_player();
 
     }

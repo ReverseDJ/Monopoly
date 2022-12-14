@@ -5,6 +5,7 @@
 extern PlayerTurn activePlayers;
 extern Tile * Board[];
 extern std::unordered_map<std::string,OwnableCard*> bankCards;
+extern bool curPisBankrupt;
 
 
 void displayProperties(Player * P) {
@@ -175,7 +176,8 @@ bool checkBalance(Player * P, int money, bool optional, Player * debtor = nullpt
 
     else{                   // can't mortgage or sell anything
         if (optional == false){
-            Bankruptcy(P, activePlayers); //needs to reference a global PlayerTurn object, which will be in the game loop
+            Bankruptcy(P, activePlayers, debtor); //needs to reference a global PlayerTurn object, which will be in the game loop
+            curPisBankrupt = true;
         }
         return false;
     }

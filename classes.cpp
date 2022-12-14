@@ -101,10 +101,15 @@ void PropertyTile::doTileFunction(Player * P) {
                 rent = rent*2; //doubles rent if player has monopoly.
             }
         }
-        checkBalance(P, rent,false,owner); //makes sure player can pay rent.
-        P->money = P->money - rent;
-        owner->money = owner->money + rent;
-        std::cout<<"You paid $"<<rent<<" to "<<owner->name<<", you have $"<<P->money<<" left"<<std::endl;
+        if(checkBalance(P, rent,false,owner)){
+            P->money = P->money - rent;
+            owner->money = owner->money + rent;
+            std::cout<<"You paid $"<<rent<<" to "<<owner->name<<", you have $"<<P->money<<" left"<<std::endl;
+        }
+        else{
+
+        }//makes sure player can pay rent.
+
     }
     else{
         if (owner == nullptr){ //if property is unowned, offer property to player
