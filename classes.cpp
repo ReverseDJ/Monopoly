@@ -12,6 +12,11 @@ extern std::deque<DeckCard*> communityChestCards;
 
 void PropertyCard::mortgage(){
     linkTile->isMortgaged = true;
+    // add to owner's mortCards
+    linkTile->owner->mortCards[cardID] = linkTile->linkedCard;
+    // remove from owner's ownedCards
+    linkTile->owner->ownedCards.erase(cardID);
+    linkTile->owner->money += mort;
 }
 void PropertyCard::unmortgage(){
     linkTile->isMortgaged = false;
@@ -22,6 +27,11 @@ void PropertyCard::buy(Player * P){
 
 void RailRoadCard::mortgage(){
     linkTile->isMortgaged = true;
+    // add to owner's mortCards
+    linkTile->owner->mortCards[cardID] = linkTile->linkedCard;
+    // remove from owner's ownedCards
+    linkTile->owner->ownedCards.erase(cardID);
+    linkTile->owner->money += mort;
 }
 void RailRoadCard::unmortgage(){
     linkTile->isMortgaged = false;
@@ -32,6 +42,11 @@ void RailRoadCard::buy(Player * P){
 
 void UtilityCard::mortgage(){
     linkTile->isMortgaged = true;
+    // add to owner's mortCards
+    linkTile->owner->mortCards[cardID] = linkTile->linkedCard;
+    // remove from owner's ownedCards
+    linkTile->owner->ownedCards.erase(cardID);
+    linkTile->owner->money += mort;
 }
 void UtilityCard::unmortgage(){
     linkTile->isMortgaged = false;
