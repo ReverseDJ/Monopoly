@@ -136,10 +136,28 @@ void UtilityTile::doTileFunction(Player * P) {
 }
 
 void GoToJailTile::doTileFunction(Player * P) {
-    int jailLocation = 10; //jail is the 11th space on the board, or Board[10]
-    P->inJail = jailLocation;
+    //static int jailLocation = 10; //jail is the 11th space on the board, or Board[10]
+    P->inJail = true;
     P->location = 10;
     std::cout<<"Player "<<P->name<<" has gone to Jail"<<std::endl;
+
+    if (P->DeckCards.size()) {
+        std::cout << "Would you like to use a Get Out Of Jail Free card? (y/n)" << std::endl;
+        char useCard;
+        std::cin >> useCard;
+        if (useCard == 'y') {
+            std::cout << "Used Get Out Of Jail Free card." << std::endl;
+            std::cout << "You are at tile #10." << std::endl;
+            
+            // find a card
+            (P->DeckCards.begin())->second->doDeckCardFunction(P);
+
+        }
+        else {
+            std::cout << "You are still in Jail." << std::endl;
+        }
+    }
+
 }
 
 void CornerTile::doTileFunction(Player * P) {
