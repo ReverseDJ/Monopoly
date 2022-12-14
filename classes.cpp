@@ -66,7 +66,6 @@ void PropertyTile::doTileFunction(Player * P) {
         else{
             rent = linkedCard->baseRent;
             int numOfCards = checkMonopoly(owner, linkedCard); //returns the number of properties the owner has in the set.
-            std::cout<<owner<<" owns this proprty, they own "<<numOfCards<<" of "<<numCardsInMonopoly<<" cards.\n";
             if (numOfCards == numCardsInMonopoly){ //compares to number of properties in set to determine if player has a monopoly.
                 rent = rent*2; //doubles rent if player has monopoly.
             }
@@ -110,7 +109,7 @@ void UtilityTile::doTileFunction(Player * P) {
     if (owner != nullptr && (!isMortgaged)) { // if owned and not mortgaged
         int rent;
         int roll;
-        int monopoly = checkMonopoly(P, linkedCard); //check if player owns both utilities
+        int monopoly = checkMonopoly(owner, linkedCard); //check if player owns both utilities
 
         roll = diceRoll()+diceRoll();
 
@@ -125,7 +124,7 @@ void UtilityTile::doTileFunction(Player * P) {
 
         P->money = P->money - rent; //check that player can pay rent and charge
         owner->money = owner->money + rent;
-        std::cout<<"You rolled a "<<roll<<" you paid $"<<rent<<" to "<<owner<<std::endl;
+        std::cout<<"You rolled a "<<roll<<" you paid $"<<rent<<" to "<<owner->name<<std::endl;
     } else {
         if (owner == nullptr){
             buyProperty(P);

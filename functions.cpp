@@ -107,14 +107,13 @@ bool checkBalance(Player * P, int money, bool optional){
 
                 }
                 else{ //if not a property type (cannot have houses and hotels), mortgages property.
-
                  P->money = P->money + (P->ownedCards[playerResponse])->mort;
 
                  (P->ownedCards[playerResponse])->mortgage();
 
                   P->mortCards[playerResponse] = P->ownedCards[playerResponse];
 
-                  P->ownedCards.erase("playerResponse");
+                  P->ownedCards.erase(playerResponse);
 
                   std::cout << playerResponse << " has been mortgaged.\n";
                 }
