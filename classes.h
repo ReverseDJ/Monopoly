@@ -224,7 +224,7 @@ public:
 
 class getOutOfJailCard : public DeckCard{
 public:
-    getOutOfJailCard(std::string cardDesc, std::string name, std::string cardID, std::string type="GOOJ"):DeckCard(name, cardDesc, cardID, type ){}
+    getOutOfJailCard(std::string cardDesc, std::string name, std::string cardID, std::string type="GetOutOfJail"):DeckCard(name, cardDesc, cardID, type ){}
     void doDeckCardFunction(Player * P) override;
 };
 

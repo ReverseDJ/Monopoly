@@ -148,7 +148,9 @@ void DrawCardTile::doTileFunction(Player * P){
     cardDeck->pop_front(); //removes card from deck
 
     if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
-        P->DeckCards["GetOutOfJail"] = frontCard; //gives get out of jail card to player
+        std::cout << frontCard->cardDesc << std::endl;
+        P->DeckCards[frontCard->cardID] = frontCard; //gives get out of jail card to player
+        std::cout << "Player " << P->name << " has " << P->DeckCards.size() << " Get Out Of Jail Free cards." << std::endl;
     }
     else{
         cardDeck->push_back(frontCard);
@@ -253,17 +255,25 @@ void transferMoneyCard::doDeckCardFunction(Player * P){
 }
 
 void payPerBuildingCard::doDeckCardFunction(Player *P) {
-    int totalToPay;
+
+    std::cout << cardDesc << std::endl;
+
+    int totalToPay = 0;
+    int numHouses = 0;
+    int numHotels = 0;
     PropertyCard * tempCard;
 
     // traverse map OwnedCards
     for (auto it = P->ownedCards.begin(); it != P->ownedCards.end(); it++) {
         if (it->second->type == "Property") {
             tempCard = dynamic_cast<PropertyCard*>(it->second);
-            totalToPay += tempCard->linkTile->houseNum * this->amtPerHouse;
-            totalToPay += tempCard->linkTile->hotelNum * this->amtPerHotel;
+            numHouses += tempCard->linkTile->houseNum;
+            numHotels += tempCard->linkTile->hotelNum;
+            totalToPay = (numHouses * amtPerHouse) + (numHotels * amtPerHotel);
         }
     }
+
+    std::cout << "Paying $" << totalToPay << "for " << numHouses << " houses and " << numHotels << " hotels." << std::endl;
 
     if (checkBalance(P, totalToPay,false)) {
         P->money -= totalToPay;
