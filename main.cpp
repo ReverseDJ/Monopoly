@@ -118,8 +118,9 @@ int main() {
 
 
                 } else {
+                    std::this_thread::sleep_for(std::chrono::seconds(5));
                     int dice1 = diceRoll();
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::seconds(4));
                     int dice2 = diceRoll();
                     int totalRoll = dice1 + dice2;
                     std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
@@ -136,9 +137,9 @@ int main() {
                     while (dice1 == dice2) {
                         std::cout << "You rolled doubles, rolling again" << std::endl;
                         jailCount = 1;
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        std::this_thread::sleep_for(std::chrono::seconds(3));
                         dice1 = diceRoll();
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        std::this_thread::sleep_for(std::chrono::seconds(5));
                         dice2 = diceRoll();
                         totalRoll = dice1 + dice2;
                         std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
@@ -200,8 +201,9 @@ int main() {
                     movePlayer(curP, totalRoll, false);
                     Board[curP->location]->doTileFunction(curP);
                 } else {
+                    std::this_thread::sleep_for(std::chrono::seconds(5));
                     int dice1 = diceRoll();
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::seconds(4));
                     int dice2 = diceRoll();
                     int totalRoll = dice1 + dice2;
                     std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
@@ -218,9 +220,9 @@ int main() {
                     while (dice1 == dice2) {
                         std::cout << "You rolled doubles, rolling again" << std::endl;
                         jailCount = 1;
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        std::this_thread::sleep_for(std::chrono::seconds(3));
                         dice1 = diceRoll();
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        std::this_thread::sleep_for(std::chrono::seconds(5));
                         dice2 = diceRoll();
                         totalRoll = dice1 + dice2;
                         std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
