@@ -20,8 +20,6 @@ There are no known errors with our game when played only by console players.
 
 However, our computer player has the following issues.
 
-- Does not buy houses
-
 - Does not unmortgage properties
 
 - Causes a segmentation fault when the computer player goes bankrupt
