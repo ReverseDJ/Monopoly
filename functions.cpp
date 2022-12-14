@@ -300,12 +300,12 @@ void buyHouses(Player * P) { //called at the end of player turn
             PropertyTile *playerTile = playerCard->linkTile; //gets linked tile
 
             if (playerTile->houseNum == 4) { //if player can buy a hotel
-                std::cout << "Would you like to buy a hotel?\nEnter yes or no: ";
+                std::cout << "Would you like to buy a hotel? (y/n)\n";
 
                 std::string buyHotel;
                 std::cin >> buyHotel;
 
-                if ((buyHotel == "yes") && checkBalance(P, playerCard->hotelCost, true)) {
+                if ((buyHotel == "y") && checkBalance(P, playerCard->hotelCost, true)) {
                     playerTile->hotelNum = 1;
                     playerTile->houseNum = 0;
                     P->money = P->money - (playerCard->hotelCost);
