@@ -35,4 +35,7 @@ void buyHouses(Player * P);
 
 void printStartTurn(Player * P);
 
+//handles player turn while player is in jail
+bool inJail(Player * P)
+
 #endif 
