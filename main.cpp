@@ -28,9 +28,13 @@ int main(){
 int main() {
 
 
-    makeBoard(MAKEBOARD_CSV, Board);
-    makeDrawCards(MAKECHANCE_TSV, &chanceCards);
-    makeDrawCards(MAKECHEST_TSV, &communityChestCards);
+    //makeBoard(MAKEBOARD_CSV, Board);
+    //makeDrawCards(MAKECHANCE_TSV, &chanceCards);
+    //makeDrawCards(MAKECHEST_TSV, &communityChestCards);
+
+    makeBoard("makeboard.csv", Board);
+    makeDrawCards("makechance.tsv", &chanceCards);
+    makeDrawCards("makechest.tsv", &communityChestCards);
 
     std::cout<<"Welcome to Monopoly!\n";
     int players;
