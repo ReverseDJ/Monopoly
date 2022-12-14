@@ -261,6 +261,7 @@ void buyProperty(Player * P){
 
             if (checkBalance(P,purchaseCard->saleValue,true, nullptr)){ //if player has enough money to buy property
                 purchaseProperty->owner = P;
+                P->money -= purchaseProperty->linkedCard->saleValue;
                 P->ownedCards[purchaseCard->cardID] = purchaseCard; //adds linked card to ownedCards
                 std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
             }
@@ -275,6 +276,7 @@ void buyProperty(Player * P){
 
             if (checkBalance(P,purchaseCard->saleValue,true, nullptr)){
                 purchaseProperty->owner = P;
+                P->money -= purchaseProperty->linkedCard->saleValue;
                 P->ownedCards[purchaseCard->cardID] = purchaseCard;
                 std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
             }
@@ -289,6 +291,7 @@ void buyProperty(Player * P){
 
             if (checkBalance(P,purchaseCard->saleValue,true, nullptr)){
                 purchaseProperty->owner = P;
+                P->money -= purchaseProperty->linkedCard->saleValue;
                 P->ownedCards[purchaseCard->cardID] = purchaseCard;
                 std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
             }
