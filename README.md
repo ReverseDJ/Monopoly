@@ -15,6 +15,7 @@ We employed the following rule simplifications.
 
 Additionally, because there are over a hundred cards with data that needed to be instantiated as our objects, we wrote a program to take the data from a TSV (tab separated value) file and instantiate all of our card and tile objects.
 
+Bot players are created by naming a player some string containing the word BOT, such as BOT123, testBOT, etc.
 
 There are no known errors with our game when played only by console players. 
 
