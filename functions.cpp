@@ -41,6 +41,31 @@ void displayProperties(Player * P) {
     }
 }
 
+void displayMortgaged(Player * P) {
+    std::cout << "You have the following mortgaged properties:" << std::endl;
+
+    auto it = P->mortCards.begin();
+    std::cout << std::setw(25) << std::left << "Card Name";
+    std::cout << std::setw(10) << std::left << "Card ID";
+    std::cout << std::setw(15) << std::left << "Mortgage Value" << std::endl;
+
+    while (it != P->ownedCards.end()) {
+
+        std::string propertyID = it->first; //property ID
+        std::string propertyName = it->second->name;
+        int mortgageValue = it->second->mort; //mortgage value
+
+        std::cout << std::setw(25) << std::left << propertyName;
+        std::cout << std::setw(10) << std::left << propertyID;
+        std::cout << std::setw(15) << std::left << mortgageValue << std::endl;
+
+        it++;
+    }
+}
+
+
+
+
 bool checkBalance(Player * P, int money, bool optional){
     if (P->money >= money){ //if player has enough money to pay rent
         return true;

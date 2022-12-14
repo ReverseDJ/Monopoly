@@ -15,6 +15,7 @@ bool checkBalance(Player * P, int money,bool optional);
 int checkMonopoly(Player * P, Card * C);
 
 void displayProperties(Player * P); //Prints out all properties owned by the player, generally useful during the game loop.
+void displayMortgaged(Player * P); // prints mortgaged properties
 
 void Bankruptcy(Player* P, PlayerTurn Turn); //Removes Player from Player Turn list and declares them bankrupt
 
