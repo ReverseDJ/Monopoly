@@ -98,7 +98,7 @@ bool checkBalance(Player * P, int money, bool optional){
                         int sellHouse;
                         std::cin >> sellHouse;
 
-                        if ((sellHouse > 0) && (sellHouse < playerTile->houseNum)){ //if player wants to sell houses
+                        if ((sellHouse > 0) && (sellHouse <= playerTile->houseNum)){ //if player wants to sell houses
                             playerTile->houseNum = playerTile->houseNum - sellHouse;
                             P->money = P->money + (playerCard->houseCost)*sellHouse*0.5; //gives the player back half the house purchase value
                             std::cout << "You have sold " << sellHouse << " houses, worth " << (playerCard->houseCost)*sellHouse*0.5 << "\n";
@@ -159,7 +159,7 @@ int checkMonopoly(Player * P, Card * C){
             }
         }
     }
-    return monopolyCount; //returns the number of other cards in the suit the player owns
+    return monopolyCount+1; //returns the number of other cards in the suit the player owns
 }
 
 void buyProperty(Player * P){
@@ -264,10 +264,9 @@ void buyHouses(Player * P){ //called at the end of player turn
             int numHouses = (dynamic_cast<PropertyCard *>(it->second))->linkTile->houseNum; //gets number of houses
             int numHotels = (dynamic_cast<PropertyCard *>(it->second))->linkTile->hotelNum; //gets number of hotels
             
-            if ((numHotels == 0) && (checkMonopoly(P,dynamic_cast<Card *>(it->second)) == dynamic_cast<Card *>(it->second)->cardID[1])){
+            if ((numHotels == 0) && (checkMonopoly(P,it->second) == (int((it->second)->cardID[2]-48)))){
                 std::cout << std::setw(25) << std::left << propertyName;
                 std::cout << std::setw(10) << std::left << propertyID;
-                std::cout << std::setw(15) << std::left << mortgageValue;
                 std::cout << std::setw(10) << std::left << numHouses;
                 std::cout << std::setw(10) << std::left << numHotels << std::endl;
                 
@@ -276,44 +275,54 @@ void buyHouses(Player * P){ //called at the end of player turn
         } 
         it++;
     }
-    
-    std::string playerResponse;
-    
-    std::cout << "Which property would you like to buy a house/hotel on?\n";
-    
-    std::cin >> playerResponse;
-    
-    if (houseCards.find(playerResponse) != houseCards.end()){ //if the player's choice is in their ownedProperties deck
 
-                    PropertyCard* playerCard = houseCards[playerResponse]; //gets correct property card based on player response
+    if(houseCards.empty()){
+        std::cout<<"There are no properties that you can buy houses on"<<std::endl;
+    }
+    else {
 
-                    PropertyTile* playerTile = playerCard->linkTile; //gets linked tile
- 
-                        if (playerTile->houseNum == 4){ //if player can buy a hotel
-                            std::cout << "Would you like to buy a hotel?\nEnter yes or no: ";
+        std::string playerResponse;
 
-                            std::string buyHotel;
-                            std::cin >> buyHotel;
+        std::cout << "Which property would you like to buy a house/hotel on?\n";
 
-                            if ((buyHotel == "yes") && checkBalance(P,playerCard->hotelCost,true)){
-                                playerTile->hotelNum = 1; 
-                                playerTile->houseNum = 0;
-                                P->money = P->money - (playerCard->hotelCost);
-                                std::cout << "You have bought a hotel";
-                            }
-                        }
+        std::cin >> playerResponse;
 
-                        else{ std::cout << "How many houses would you like to buy?\n"; //if player cant buy a hotel but can buy houses
-                        
-                        int buyHouse;
-                        std::cin >> buyHouse;
+        if (houseCards.find(playerResponse) != houseCards.end()) { //if the player's choice is in their ownedProperties deck
 
-                        if ((buyHouse > 0) && (buyHouse < (4 - playerTile->houseNum)) && checkBalance(P,((playerCard->houseCost)*buyHouse),true)){ //if player wants to and can buy houses
-                            playerTile->houseNum = playerTile->houseNum + buyHouse;
-                            P->money = P->money - (playerCard->houseCost)*buyHouse; //deducts the house purchase value from player balance
-                            std::cout << "You have bought " << buyHouse << " houses.";
-                        }
-                        }
+            PropertyCard *playerCard = houseCards[playerResponse]; //gets correct property card based on player response
 
-}
+            PropertyTile *playerTile = playerCard->linkTile; //gets linked tile
+
+            if (playerTile->houseNum == 4) { //if player can buy a hotel
+                std::cout << "Would you like to buy a hotel?\nEnter yes or no: ";
+
+                std::string buyHotel;
+                std::cin >> buyHotel;
+
+                if ((buyHotel == "yes") && checkBalance(P, playerCard->hotelCost, true)) {
+                    playerTile->hotelNum = 1;
+                    playerTile->houseNum = 0;
+                    P->money = P->money - (playerCard->hotelCost);
+                    std::cout << "You have bought a hotel";
+                }
+            } else {
+                std::cout << "How many houses would you like to buy? (1-4)\n"; //if player cant buy a hotel but can buy houses
+
+                int buyHouse;
+                std::cin >> buyHouse;
+
+                //if player wants to and can buy houses
+                if ((buyHouse <= (4 - playerTile->houseNum)) && checkBalance(P, ((playerCard->houseCost) * buyHouse), true)) {
+                    playerTile->houseNum = playerTile->houseNum + buyHouse;
+                    //deducts the house purchase value from player balance
+                    P->money = P->money - (playerCard->houseCost) * buyHouse;
+                    std::cout << "You have bought " << buyHouse << " houses.\n";
+                }
+                else{
+                    std::cout<<"Invalid House Number"<<std::endl;
+                }
+            }
+
+        }
+    }
 }

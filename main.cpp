@@ -26,14 +26,6 @@ int main() {
     makeDrawCards(MAKECHANCE_TSV, &chanceCards);
     makeDrawCards(MAKECHEST_TSV, &communityChestCards);
 
-    printDeck(&chanceCards);
-    printDeck(&communityChestCards);
-
-    for(auto i : chanceCards){
-        std::cout<<i->cardDesc<<std::endl;
-    }
-
-    // Tile * Board[40];
     std::cout<<"Welcome to Monopoly!\n";
     int players;
     std::cout<<"How many players?\n";
@@ -69,6 +61,7 @@ int main() {
         displayProperties(curP);
         if (curP->inJail) {
             std::cout<<"You are in Jail"<<std::endl;
+            //STILL NEEDS TO BE IMPLEMENTED!!!
         }
         else {
             /*implement dice roll function*/

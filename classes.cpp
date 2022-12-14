@@ -55,7 +55,7 @@ void PropertyTile::doTileFunction(Player * P) {
     if (owner != nullptr && (!isMortgaged)){ //if tile is owned and not mortgaged
         int rent;
         std::string linkedID = linkedCard->cardID;
-        int numCardsInMonopoly = int(linkedID[1]); //uses the cardID field of the linked card to determine how many properties are in the set.
+        int numCardsInMonopoly = int(linkedID[2]-48); //uses the cardID field of the linked card to determine how many properties are in the set.
 
         if (hotelNum != 0){
             rent = linkedCard->hotelRent; //sets rent to hotel rent if property has hotel
@@ -65,9 +65,9 @@ void PropertyTile::doTileFunction(Player * P) {
         }
         else{
             rent = linkedCard->baseRent;
-            int monopoly = checkMonopoly(P, linkedCard); //returns the number of properties the owner has in the set.
-
-            if (monopoly >= numCardsInMonopoly){ //compares to number of properties in set to determine if player has a monopoly.
+            int numOfCards = checkMonopoly(owner, linkedCard); //returns the number of properties the owner has in the set.
+            std::cout<<owner<<" owns this proprty, they own "<<numOfCards<<" of "<<numCardsInMonopoly<<" cards.\n";
+            if (numOfCards == numCardsInMonopoly){ //compares to number of properties in set to determine if player has a monopoly.
                 rent = rent*2; //doubles rent if player has monopoly.
             }
         }
@@ -86,10 +86,8 @@ void PropertyTile::doTileFunction(Player * P) {
 void RailRoadTile::doTileFunction(Player * P) {
     if (owner != nullptr && (!isMortgaged)) { // if owned and not mortgaged
         int rent = linkedCard->baseRent;
-        std::cout<<"Base Rent "<<rent<<std::endl;
         int monopoly = checkMonopoly(owner, linkedCard); //determine how many rail roads owner has
-        std::cout<<"Num of Cards "<<monopoly<<std::endl;
-        rent *= int(pow(2, (monopoly))); //rent is doubled for every additional rail road owner has.
+        rent *= int(pow(2, (monopoly-1))); //rent is doubled for every additional rail road owner has.
 
         checkBalance(P, rent,false); //makes sure player can pay rent.
         P->money = P->money - rent;
@@ -133,6 +131,7 @@ void GoToJailTile::doTileFunction(Player * P) {
     int jailLocation = 10; //jail is the 11th space on the board, or Board[10]
     P->inJail = jailLocation;
     P->location = 10;
+    std::cout<<"Player "<<P->name<<" has gone to Jail"<<std::endl;
 }
 
 void CornerTile::doTileFunction(Player * P) {
@@ -143,13 +142,13 @@ void DrawCardTile::doTileFunction(Player * P){
     DeckCard * frontCard = cardDeck->front(); //gets card from top of deck
     cardDeck->pop_front(); //removes card from deck
     std::cout<<frontCard->cardDesc<<std::endl;
-    if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
+    /*if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
         P->DeckCards[frontCard->cardID] = frontCard; //gives get out of jail card to player
     }
     else{
         cardDeck->push_back(frontCard);
         frontCard->doDeckCardFunction(P); //runs appropriate card function
-    }
+    }*/
 }
 
 
