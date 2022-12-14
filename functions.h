@@ -16,7 +16,7 @@ int checkMonopoly(Player * P, Card * C);
 
 void displayProperties(Player * P); //Prints out all properties owned by the player, generally useful during the game loop.
 
-void Bankruptcy(Player* P, PlayerTurn* Turn); //Removes Player from Player Turn list and declares them bankrupt
+void Bankruptcy(Player* P, PlayerTurn Turn); //Removes Player from Player Turn list and declares them bankrupt
 
 //Take a generic player and moves them to a generic space
 //dest can be an out-of-bounds location, uses % to make it a valid spot in the board array

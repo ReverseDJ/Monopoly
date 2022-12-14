@@ -4,7 +4,7 @@
 
 #include "functions.h"
 
-extern PlayerTurn * activePlayers;
+extern PlayerTurn activePlayers;
 extern Tile * Board[];
 extern std::unordered_map<std::string,OwnableCard*> bankCards;
 extern std::deque<DeckCard*> chanceCards;
@@ -146,7 +146,7 @@ void CornerTile::doTileFunction(Player * P) {
 void DrawCardTile::doTileFunction(Player * P){
     DeckCard * frontCard = cardDeck->front(); //gets card from top of deck
     cardDeck->pop_front(); //removes card from deck
-    std::cout<<frontCard->cardDesc<<std::endl;
+
     if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
         P->DeckCards["GetOutOfJail"] = frontCard; //gives get out of jail card to player
     }
@@ -203,34 +203,34 @@ void getMoneyCard::doDeckCardFunction(Player * P){
 }
 
 void transferMoneyCard::doDeckCardFunction(Player * P){
-    int payAmount;
+    std::cout << cardDesc << std::endl;
     //backs up current player
-    Player * curPlayerBackup = activePlayers->currentPlayer;
+    Player * curPlayerBackup = activePlayers.currentPlayer;
     //updates to next player since we don't want to subtract money from the player who is paying
-    activePlayers->next_player();
+    activePlayers.next_player();
     //sets next player to temp;
-    Player * tempPlayer = activePlayers->currentPlayer;
+    Player * tempPlayer = activePlayers.currentPlayer;
 
     while(tempPlayer != curPlayerBackup){
 
         // + pay amount = card drawer receives money, else card drawer pays to all other players
         // if card drawer is paying, check balance at each loop iteration
 
-        if (payAmount > 0) {
-            if (checkBalance(tempPlayer, payAmount,false)) {
-                tempPlayer->money -= payAmount;
-                curPlayerBackup->money += payAmount;
+        if (moneyAmount > 0) {
+            if (checkBalance(tempPlayer, moneyAmount,false)) {
+                tempPlayer->money -= moneyAmount;
+                curPlayerBackup->money += moneyAmount;
             }
         }
         else {
-            if (checkBalance(curPlayerBackup, payAmount,false)) {
-                curPlayerBackup->money += payAmount; // payAmount < 0
-                tempPlayer->money -= payAmount;
+            if (checkBalance(curPlayerBackup, moneyAmount,false)) {
+                curPlayerBackup->money += moneyAmount; // payAmount < 0
+                tempPlayer->money -= moneyAmount;
             }
         }
 
-        activePlayers->next_player();
-        tempPlayer = activePlayers->currentPlayer;
+        activePlayers.next_player();
+        tempPlayer = activePlayers.currentPlayer;
     }
 
     /*

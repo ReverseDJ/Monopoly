@@ -2,7 +2,7 @@
 
 #include "functions.h"
 
-extern PlayerTurn * activePlayers;
+extern PlayerTurn activePlayers;
 extern Tile * Board[];
 extern std::unordered_map<std::string,OwnableCard*> bankCards;
 
@@ -143,10 +143,10 @@ bool checkBalance(Player * P, int money, bool optional){
         }
         return false;
     }
-  }
+}
 
-  void Bankruptcy(Player* P, PlayerTurn* Turn){
-    Turn->RemovePlayer(P);  //removes player from playerTurn object
+void Bankruptcy(Player* P, PlayerTurn Turn) {
+    Turn.RemovePlayer(P);  //removes player from playerTurn object
     std::cout << P->name << " has gone bankrupt!\n";
 }
 
@@ -339,6 +339,7 @@ void printStartTurn(Player * P) {
     std::cout << std::endl;
     std::cout << "PLAYER " << P->name << "'S TURN" << std::endl;
     std::cout << "Player " << P->name << " is on tile # " << P->location << std::endl;
+    std::cout << "Player " << P->name << " has $" << P->money << std::endl;
     displayProperties(P);
 }
 
