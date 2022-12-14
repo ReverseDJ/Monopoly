@@ -12,18 +12,13 @@ extern std::deque<DeckCard*> communityChestCards;
 
 void PropertyCard::mortgage(){
     linkTile->isMortgaged = true;
-    // add to owner's mortCards
-    linkTile->owner->mortCards[cardID] = linkTile->linkedCard;
-    // remove from owner's ownedCards
-    linkTile->owner->ownedCards.erase(cardID);
-    linkTile->owner->money += mort;
 }
 void PropertyCard::unmortgage(){
 
-    if(checkBalance(linkTile->owner, mort, true)){
+    if(checkBalance(linkTile->owner, mort, true, nullptr)){
         linkTile->owner->money -= mort;
         linkTile->isMortgaged = false;
-        linkTile->owner->ownedCards[cardID] = linkTile->owner->mortCards[cardID];
+        linkTile->owner->ownedCards.insert(std::make_pair(cardID, linkTile->linkedCard));
         linkTile->owner->mortCards.erase(cardID);
     }
     else{
@@ -37,15 +32,10 @@ void PropertyCard::buy(Player * P){
 
 void RailRoadCard::mortgage(){
     linkTile->isMortgaged = true;
-    // add to owner's mortCards
-    linkTile->owner->mortCards[cardID] = linkTile->linkedCard;
-    // remove from owner's ownedCards
-    linkTile->owner->ownedCards.erase(cardID);
-    linkTile->owner->money += mort;
 }
 void RailRoadCard::unmortgage(){
 
-    if(checkBalance(linkTile->owner, mort, true)){
+    if(checkBalance(linkTile->owner, mort, true, nullptr)){
         linkTile->owner->money -= mort;
         linkTile->isMortgaged = false;
         linkTile->owner->ownedCards[cardID] = linkTile->owner->mortCards[cardID];
@@ -61,14 +51,10 @@ void RailRoadCard::buy(Player * P){
 
 void UtilityCard::mortgage(){
     linkTile->isMortgaged = true;
-    // add to owner's mortCards
-    linkTile->owner->mortCards[cardID] = linkTile->linkedCard;
-    // remove from owner's ownedCards
-    linkTile->owner->ownedCards.erase(cardID);
-    linkTile->owner->money += mort;
+
 }
 void UtilityCard::unmortgage(){
-    if(checkBalance(linkTile->owner, mort, true)){
+    if(checkBalance(linkTile->owner, mort, true, nullptr)){
         linkTile->owner->money -= mort;
         linkTile->isMortgaged = false;
         linkTile->owner->ownedCards[cardID] = linkTile->owner->mortCards[cardID];
@@ -115,7 +101,7 @@ void PropertyTile::doTileFunction(Player * P) {
                 rent = rent*2; //doubles rent if player has monopoly.
             }
         }
-        checkBalance(P, rent,false); //makes sure player can pay rent.
+        checkBalance(P, rent,false,owner); //makes sure player can pay rent.
         P->money = P->money - rent;
         owner->money = owner->money + rent;
         std::cout<<"You paid $"<<rent<<" to "<<owner->name<<", you have $"<<P->money<<" left"<<std::endl;
@@ -133,7 +119,7 @@ void RailRoadTile::doTileFunction(Player * P) {
         int monopoly = checkMonopoly(owner, linkedCard); //determine how many rail roads owner has
         rent *= int(pow(2, (monopoly-1))); //rent is doubled for every additional rail road owner has.
 
-        checkBalance(P, rent,false); //makes sure player can pay rent.
+        checkBalance(P, rent,false, owner); //makes sure player can pay rent.
         P->money = P->money - rent;
         owner->money = owner->money + rent;
         std::cout<<"You paid $"<<rent<<" to "<<owner->name<<", you have $"<<P->money<<" left"<<std::endl;
@@ -145,7 +131,7 @@ void RailRoadTile::doTileFunction(Player * P) {
 }
 
 void TaxTile::doTileFunction(Player * P) { //if player can pay tax, subtract from balance
-    if (checkBalance(P, taxValue,false)){
+    if (checkBalance(P, taxValue,false, nullptr)){
         P->money = P->money - taxValue;
     }
 }
@@ -165,7 +151,7 @@ void UtilityTile::doTileFunction(Player * P) {
         else{
             rent = roll*(linkedCard->rentOneUtil);
         }
-        checkBalance(P,rent,false);
+        checkBalance(P,rent,false, owner);
 
         P->money = P->money - rent; //check that player can pay rent and charge
         owner->money = owner->money + rent;
@@ -259,7 +245,7 @@ void movePlayerCard::doDeckCardFunction(Player * P){
 
 void getMoneyCard::doDeckCardFunction(Player * P){
     std::cout<<cardDesc<<std::endl;
-    if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount),false)){ //if player needs to pay money, check their balance (returns true if they can pay) and subtract the money.
+    if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount),false, nullptr)){ //if player needs to pay money, check their balance (returns true if they can pay) and subtract the money.
         P->money = P->money + moneyAmount; //moneyAmount will be negative if this branch is active.
     }
     else {
@@ -282,13 +268,13 @@ void transferMoneyCard::doDeckCardFunction(Player * P){
         // if card drawer is paying, check balance at each loop iteration
 
         if (moneyAmount > 0) {
-            if (checkBalance(tempPlayer, moneyAmount,false)) {
+            if (checkBalance(tempPlayer, moneyAmount,false, tempPlayer)) {
                 tempPlayer->money -= moneyAmount;
                 curPlayerBackup->money += moneyAmount;
             }
         }
         else {
-            if (checkBalance(curPlayerBackup, moneyAmount,false)) {
+            if (checkBalance(curPlayerBackup, moneyAmount,false, tempPlayer)) {
                 curPlayerBackup->money += moneyAmount; // payAmount < 0
                 tempPlayer->money -= moneyAmount;
             }
@@ -297,24 +283,6 @@ void transferMoneyCard::doDeckCardFunction(Player * P){
         activePlayers.next_player();
         tempPlayer = activePlayers.currentPlayer;
     }
-
-    /*
-    if (moneyAmount >= 0){ //called if player recieves money from other players
-        for (int i = 0; i < playerList.size(); ++i){  //iterates over a list of all players and checks their balance. If they can pay, subtracts the amount.
-            if (checkBalance(playerList[i],moneyAmount,false) == true){
-                (playerList[i])->money = (playerList[i])->money - moneyAmount;
-                payAmount = payAmount + moneyAmount; //sum of amount payed by other players.
-            }
-        }
-        P->money = P->money + payAmount;
-    }
-    else{ //called if player pays money to others.
-        if (checkBalance(P,(-1*(playerList.size())*moneyAmount),false) == true) //checks if player can pay balance to all other players
-            for (int i = 0; i < playerList.size(); ++i){
-                (playerList[i])->money = (playerList[i])->money - moneyAmount; //loops over list of players and pays correct amount to all.
-            }
-    }
-     */
 }
 
 void payPerBuildingCard::doDeckCardFunction(Player *P) {
@@ -338,7 +306,7 @@ void payPerBuildingCard::doDeckCardFunction(Player *P) {
 
     std::cout << "Paying $" << totalToPay << "for " << numHouses << " houses and " << numHotels << " hotels." << std::endl;
 
-    if (checkBalance(P, totalToPay,false)) {
+    if (checkBalance(P, totalToPay,false, nullptr)) {
         P->money -= totalToPay;
     }
 }

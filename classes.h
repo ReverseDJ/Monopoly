@@ -53,7 +53,7 @@ public:
     bool inJail;
     int turnsInJail=0;
 
-    Player(int money = 1500, std::unordered_map<std::string, OwnableCard*> ownedCards = {}, std::unordered_map<std::string, OwnableCard*> mortCards = {}, std::string name = "", int location = 0, bool inJail = false){
+    Player(int money = 100, std::unordered_map<std::string, OwnableCard*> ownedCards = {}, std::unordered_map<std::string, OwnableCard*> mortCards = {}, std::string name = "", int location = 0, bool inJail = false){
         this->ownedCards = ownedCards;
         this->money = money;
         this->mortCards = mortCards;

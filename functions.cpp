@@ -66,7 +66,7 @@ void displayMortgaged(Player * P) {
 
 
 
-bool checkBalance(Player * P, int money, bool optional){
+bool checkBalance(Player * P, int money, bool optional, Player * debtor = nullptr){
     if (P->money >= money){ //if player has enough money to pay rent
         return true;
     }
@@ -129,6 +129,17 @@ bool checkBalance(Player * P, int money, bool optional){
                             std::cout << "You have sold " << sellHouse << " houses, worth " << (playerCard->houseCost)*sellHouse*0.5 << "\n";
                         }
                     }
+                    else{
+                        P->money = P->money + (P->ownedCards[playerResponse])->mort;
+
+                        (P->ownedCards[playerResponse])->mortgage();
+
+                        P->mortCards[playerResponse] = P->ownedCards[playerResponse];
+
+                        P->ownedCards.erase(playerResponse);
+
+                        std::cout << playerResponse << " has been mortgaged.\n";
+                    }
 
                 }
                 else{ //if not a property type (cannot have houses and hotels), mortgages property.
@@ -156,8 +167,8 @@ bool checkBalance(Player * P, int money, bool optional){
 
         }
 
-        if (optional == false){
-            Bankruptcy(P, activePlayers); //if value of houses/properties cannot cover rent, player goes bankrupt.
+        if (!optional){
+            Bankruptcy(P, activePlayers, debtor); //if value of houses/properties cannot cover rent, player goes bankrupt.
         }
          return false;
     }
@@ -170,9 +181,46 @@ bool checkBalance(Player * P, int money, bool optional){
     }
 }
 
-void Bankruptcy(Player* P, PlayerTurn Turn) {
-    Turn.RemovePlayer(P);  //removes player from playerTurn object
+void Bankruptcy(Player* P, PlayerTurn Turn, Player * debtor) {
+    if(debtor != nullptr){
+        debtor->money += P->money;
+        for(auto i : P->mortCards){
+            if(i.second->type == "Property"){
+                dynamic_cast<PropertyCard*>(i.second)->linkTile->owner = debtor;
+            }
+            else if(i.second->type == "RailRoad"){
+                dynamic_cast<RailRoadCard*>(i.second)->linkTile->owner = debtor;
+            }
+            else if(i.second->type == "Utility"){
+                dynamic_cast<UtilityCard*>(i.second)->linkTile->owner = debtor;
+            }
+            debtor->mortCards[i.first] = i.second;
+        }
+    }
+    else{
+        for(auto i : P->mortCards){
+            if(i.second->type == "Property"){
+                dynamic_cast<PropertyCard*>(i.second)->linkTile->owner = debtor;
+                dynamic_cast<PropertyCard*>(i.second)->linkTile->isMortgaged = false;
+            }
+            else if(i.second->type == "RailRoad"){
+                dynamic_cast<RailRoadCard*>(i.second)->linkTile->owner = debtor;
+                dynamic_cast<RailRoadCard*>(i.second)->linkTile->isMortgaged = false;
+            }
+            else if(i.second->type == "Utility"){
+                dynamic_cast<UtilityCard*>(i.second)->linkTile->owner = debtor;
+                dynamic_cast<UtilityCard*>(i.second)->linkTile->isMortgaged = false;
+            }
+
+        }
+    }
+
+    while(!(P->DeckCards.empty())){
+        (P->DeckCards.begin())->second->doDeckCardFunction(P);
+    }
     std::cout << P->name << " has gone bankrupt!\n";
+    Turn.RemovePlayer(P);  //removes player from playerTurn object
+
 }
 
 int checkMonopoly(Player * P, Card * C){
@@ -209,7 +257,7 @@ void buyProperty(Player * P){
 
             OwnableCard* purchaseCard = purchaseProperty->linkedCard; //gets the linked card to insert to ownedProperties
 
-            if (checkBalance(P,purchaseCard->saleValue,true)){ //if player has enough money to buy property
+            if (checkBalance(P,purchaseCard->saleValue,true, nullptr)){ //if player has enough money to buy property
                 purchaseProperty->owner = P;
                 P->ownedCards[purchaseCard->cardID] = purchaseCard; //adds linked card to ownedCards
                 std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
@@ -223,7 +271,7 @@ void buyProperty(Player * P){
 
             OwnableCard* purchaseCard = purchaseProperty->linkedCard;
 
-            if (checkBalance(P,purchaseCard->saleValue,true)){
+            if (checkBalance(P,purchaseCard->saleValue,true, nullptr)){
                 purchaseProperty->owner = P;
                 P->ownedCards[purchaseCard->cardID] = purchaseCard;
                 std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
@@ -237,7 +285,7 @@ void buyProperty(Player * P){
 
             OwnableCard* purchaseCard = purchaseProperty->linkedCard;
 
-            if (checkBalance(P,purchaseCard->saleValue,true)){
+            if (checkBalance(P,purchaseCard->saleValue,true, nullptr)){
                 purchaseProperty->owner = P;
                 P->ownedCards[purchaseCard->cardID] = purchaseCard;
                 std::cout << "You have successfully purchased " << purchaseCard->name << "\n";
@@ -330,7 +378,7 @@ void buyHouses(Player * P) { //called at the end of player turn
                 std::string buyHotel;
                 std::cin >> buyHotel;
 
-                if ((buyHotel == "y") && checkBalance(P, playerCard->hotelCost, true)) {
+                if ((buyHotel == "y") && checkBalance(P, playerCard->hotelCost, true, nullptr)) {
                     playerTile->hotelNum = 1;
                     playerTile->houseNum = 0;
                     P->money = P->money - (playerCard->hotelCost);
@@ -425,7 +473,7 @@ bool inJail(Player * P){
          if (P->turnsInJail > 2){
              std::cout << "You have been in jail for three turns and must pay to get out.\n";
              
-             if (checkBalance(P,50,false)){
+             if (checkBalance(P,50,false, nullptr)){
                  P->money = P->money - 50;
                  P->inJail = false;
                  P->turnsInJail = 0;

@@ -9,7 +9,7 @@
 void buyProperty(Player * P);
 
 //called if player needs to pay rent or taxes, needs to check if player has enough money to cover rent value. If not, force to mortgage or initiate bankruptcy
-bool checkBalance(Player * P, int money,bool optional);
+bool checkBalance(Player * P, int money,bool optional, Player * debtor);
 
 //takes in a player and a card and returns how many cards the player has that match the type of the passed in card
 int checkMonopoly(Player * P, Card * C);
@@ -19,7 +19,7 @@ void displayMortgaged(Player * P); // prints mortgaged properties
 
 void displayMortgaged(Player * P);
 
-void Bankruptcy(Player* P, PlayerTurn Turn); //Removes Player from Player Turn list and declares them bankrupt
+void Bankruptcy(Player* P, PlayerTurn Turn, Player * debtor); //Removes Player from Player Turn list and declares them bankrupt
 
 //Take a generic player and moves them to a generic space
 //dest can be an out-of-bounds location, uses % to make it a valid spot in the board array
