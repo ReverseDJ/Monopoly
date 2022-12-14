@@ -342,3 +342,78 @@ void printStartTurn(Player * P) {
     std::cout << "Player " << P->name << " is on tile # " << P->location << std::endl;
     displayProperties(P);
 }
+
+//handles player turns while player is in jail
+bool inJail(Player * P){
+    P->location = 10;
+    P->inJail = true;
+    std::string playerResponse = "";
+    
+    std::cout<<"You are in Jail"<<std::endl;
+    
+    if (P->DeckCards.find("GetOutOfJail") != P->DeckCards.end()){ 
+        std::cout << "You have a get out of jail free card. Would you like to use it? (y/n)\n";
+        std::cin >> playerResponse;
+        
+        if (playerResponse == "y"){
+            (P->DeckCards["GetOutOfJail"])->doDeckCardFunction(P); 
+            std::cout << "You are out of jail.\n";
+            P->turnsInJail = 0;
+            P->DeckCards.erase("GetOutOfJail");
+            return true;
+        }
+    }
+    std::cout<<"Rolling to get out of Jail"<<std::endl;
+    
+     int dice1 = diceRoll();
+     std::this_thread::sleep_for(std::chrono::seconds(1));
+     int dice2 = diceRoll();
+     int totalRoll = dice1 + dice2;
+     std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
+     
+     if (dice1 == dice2){
+         std::cout << "You rolled doubles and got out of jail.\n";
+         P->inJail = false;
+         P->turnsInJail = 0;
+         return true;
+     }
+     else{
+         std::cout << "Would you like to pay $50 to get out of jail? (y/n)\n ";
+         std::cin >> playerResponse;
+         
+         if (playerResponse == "y"){
+             if (checkBalance(P,50,true)){
+                 P->money = P->money - 50;
+                 P->inJail = false;
+                 P->turnsInJail = 0;
+                 return true;
+             }
+             else{
+                 std::cout << "You don't have enough money to get out of jail.\n";
+             }
+         }
+     }
+     
+     if (P->inJail == true){
+         P->turnsInJail += 1;
+         
+         if (P->turnsInJail > 2){
+             std::cout << "You have been in jail for three turns and must pay to get out.\n";
+             
+             if (checkBalance(P,50,false)){
+                 P->money = P->money - 50;
+                 P->inJail = false;
+                 P->turnsInJail = 0;
+                 return true;
+             }
+             else{
+                 std::cout << "You don't have enough money to get out of jail and went bankrupt.\n";
+             }
+         }
+         else{
+            std::cout << "You are still in jail.\n";
+            return false;
+         }
+     }
+     return false;
+}
