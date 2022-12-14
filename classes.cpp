@@ -148,13 +148,13 @@ void DrawCardTile::doTileFunction(Player * P){
     DeckCard * frontCard = cardDeck->front(); //gets card from top of deck
     cardDeck->pop_front(); //removes card from deck
     std::cout<<frontCard->cardDesc<<std::endl;
-    /*if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
-        P->DeckCards[frontCard->cardID] = frontCard; //gives get out of jail card to player
+    if (frontCard->type == "GetOutOfJail"){ //if card is get out of jail card
+        P->DeckCards["GetOutOfJail"] = frontCard; //gives get out of jail card to player
     }
     else{
         cardDeck->push_back(frontCard);
         frontCard->doDeckCardFunction(P); //runs appropriate card function
-    }*/
+    }
 }
 
 
