@@ -222,7 +222,7 @@ void Bankruptcy(Player* P, PlayerTurn Turn, Player * debtor) {
     }
     std::cout << P->name << " has gone bankrupt!\n";
     Turn.RemovePlayer(P);  //removes player from playerTurn object
-
+    std::cout<<activePlayers.playerList.size()<<std::endl;
 }
 
 int checkMonopoly(Player * P, Card * C){
