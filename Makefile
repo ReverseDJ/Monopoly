@@ -1,13 +1,13 @@
-Monopoly.exe: main.o functions.o classes.o  makeCards.o makeBoard.o shuffle.o 
+Monopoly.exe: main.o functions.o classes.o makeCards.o makeBoard.o shuffle.o 
 	g++ main.o functions.o classes.o makeCards.o makeBoard.o shuffle.o -o Monopoly.exe
 
 main.o: main.cpp
 	g++ -c main.cpp
 
-functions.o: functions.cpp functions.h
+functions.o: functions.cpp Makefile functions.h
 	g++ -c functions.cpp
 
-classes.o: classes.cpp classes.h
+classes.o: classes.cpp Makefile classes.h
 	g++ -c classes.cpp
 
 makeCards.o: makeCards.cpp

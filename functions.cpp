@@ -517,4 +517,7 @@ bool checkGOOJ(Player * P) {
             return false;
         }
     }
+    else{
+        return true;
+    }
 }
