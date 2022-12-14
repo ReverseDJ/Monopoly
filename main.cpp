@@ -4,6 +4,7 @@
 
 #include "functions.h"
 #include "filepath.h" // ADD THIS FILE TO YOUR WORKING DIRECTORY
+#include <cstring>
 
 Tile * Board[40];
 Player * curP;
@@ -14,6 +15,8 @@ std::deque<DeckCard*> chanceCards;
 std::deque<DeckCard*> communityChestCards;
 //PlayerTurn * activePlayers;
 PlayerTurn activePlayers({});
+
+
 
 /*
 int main(){
@@ -33,10 +36,10 @@ int main() {
     std::cout<<"How many players?\n";
     std::cin>>players;
     char answer;
-    
+
     std::list<Player*> playerList;
-    
-    for (int i = 1; i <= players; i++){    
+
+    for (int i = 1; i <= players; i++){
         std::string playerName;
         std::cout << "\nEnter player " << i << " name: ";
         std::cin >> playerName;
@@ -44,7 +47,7 @@ int main() {
         P->name = playerName;
         playerList.push_back(P);
     }
-        
+
     // activePlayers = new PlayerTurn(playerList);
     activePlayers.playerList = playerList;
     activePlayers.it = activePlayers.playerList.begin();
@@ -61,11 +64,11 @@ int main() {
         mixCards(chanceCards);
         mixCards(communityChestCards);
     }
-    if(activePlayers.playerList.size() == 1){
-        std::cout<<"Player "<<curP->name<<" Has Won"<<std::endl;
-    }
 
-    
+    bool lateGame;
+    int botSpent;
+    int botMoneyStart;
+
     bool justVisiting;
 
     while(activePlayers.playerList.size() !=1 /*temporary variable*/) {
@@ -74,115 +77,206 @@ int main() {
         curP = activePlayers.currentPlayer;
         printStartTurn(curP);
 
-        if (curP->inJail) { // try to get out of jail AFTER doing all the non-in-jail stuff
-            if (inJail(curP)) { // if you got out
-                justVisiting = true;
-            }
-        }
+        if ((curP->name).find("BOT")) {
+            // init bot money spending tracker
+            botSpent = 0;
+            botMoneyStart = curP->money;
 
-        if (!(curP->inJail) && !justVisiting) {
-            /*implement dice roll function*/
-
-            if (test) {
-                int totalRoll;
-                std::cout << "Enter board index to move current player to." << std::endl;
-                std::cin >> totalRoll;
-                movePlayer(curP, totalRoll, false);
-                Board[curP->location]->doTileFunction(curP);
-            }
-
-            else {
-                int dice1 = diceRoll();
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                int dice2 = diceRoll();
-                int totalRoll = dice1 + dice2;
-                std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
-                movePlayer(curP, curP->location + totalRoll, false);
-
-                int jailCount;
-
-                Board[curP->location]->doTileFunction(curP);
-                if(curPisBankrupt == true){
-                    break;
+            if(curP->inJail){
+                int roll1 = diceRoll();
+                int roll2 = diceRoll();
+                // set justVisiting if bot has gotten out of jail
+                if(roll1 == roll2){
+                    justVisiting = true;
+                    curP->inJail = false;
                 }
-                jailCount = 1;
+                else if(!(curP->DeckCards.empty())){
+                    justVisiting = true;
+                    curP->inJail = false;
+                    if(curP->DeckCards.begin()->second->type == "CC"){
+                        communityChestCards.push_back(curP->DeckCards.begin()->second);
+                        curP->DeckCards.erase(curP->DeckCards.begin()->first);
+                    }
+                    else if(curP->DeckCards.begin()->second->type == "CH"){
+                        chanceCards.push_back(curP->DeckCards.begin()->second);
+                        curP->DeckCards.erase(curP->DeckCards.begin()->first);
+                    }
+                }
+                else{
 
-                while (dice1 == dice2) {
-                    std::cout << "You rolled doubles, rolling again" << std::endl;
-                    jailCount = 1;
+                }
+            }
+
+
+
+            if (!(curP->inJail) && !justVisiting) { // normal (non-jail) bot turn
+
+                if (test) {
+                    int totalRoll;
+                    std::cout << "Enter board index to move current player to." << std::endl;
+                    std::cin >> totalRoll;
+                    movePlayer(curP, totalRoll, false);
+                    // BOT DO TILE FUNCTION
+
+                } else {
+                    int dice1 = diceRoll();
                     std::this_thread::sleep_for(std::chrono::seconds(1));
-                    dice1 = diceRoll();
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
-                    dice2 = diceRoll();
-                    totalRoll = dice1 + dice2;
+                    int dice2 = diceRoll();
+                    int totalRoll = dice1 + dice2;
                     std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
-
-                    /*implement move player function*/
                     movePlayer(curP, curP->location + totalRoll, false);
+
+                    int jailCount;
+
                     Board[curP->location]->doTileFunction(curP);
-                    jailCount++;
-
-
-                    if (jailCount == 3) {//send player to jail if they roll doubles 3 times in a row
-
-                        movePlayer(curP, 10, true);
-                        std::cout << "You have rolled doubles 3 times in a row! You must be sent to jail\n";
+                    if (curPisBankrupt) {
                         break;
                     }
+                    jailCount = 1;
+
+                    while (dice1 == dice2) {
+                        std::cout << "You rolled doubles, rolling again" << std::endl;
+                        jailCount = 1;
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        dice1 = diceRoll();
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        dice2 = diceRoll();
+                        totalRoll = dice1 + dice2;
+                        std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
+
+                        /*implement move player function*/
+                        movePlayer(curP, curP->location + totalRoll, false);
+                        Board[curP->location]->doTileFunction(curP);
+                        jailCount++;
+
+
+                        if (jailCount == 3) {//send player to jail if they roll doubles 3 times in a row
+
+                            movePlayer(curP, 10, true);
+                            std::cout << "You have rolled doubles 3 times in a row! You must be sent to jail\n";
+                            break;
+                        }
+                    }
                 }
+
+
             }
 
+        } // End Bot Turn --------------------------------------------------------------
 
-        }
 
-        if(curPisBankrupt){
-            break;
-        }
+        // HUMAN PLAYER TURN ------------------------------------------------------------------------------------------
         else{
-            std::cout<<"Money: $"<<curP->money<<std::endl;
-            std::cout<<"Would you like to unmortgage a property? (y/n)";
-            std::cin>>answer;
-            std::string unmortID;
-            if (answer=='y'){
 
-                while (answer == 'y'){
-                    displayMortgaged(curP);
-                    std::cout<<"Which Property would you like to unmortgage "<<std::endl;
-                    std::cin>>unmortID;
 
-                    if(curP->mortCards.find(unmortID) != curP->mortCards.end()){
-                        curP->mortCards[unmortID]->unmortgage();
-                    }
-                    else{
-                        std::cout<<"Card not found"<<std::endl;
-                    }
-                    std::cout<<"Would you like to unmortgage another property? (y/n)";
-                    std::cin>>answer;
+            if (curP->inJail) { // try to get out of jail AFTER doing all the non-in-jail stuff
+                if (inJail(curP)) { // if you got out
+                    justVisiting = true;
                 }
+            }
+
+            if (!(curP->inJail) && !justVisiting) {
+                /*implement dice roll function*/
+
+                if (test) {
+                    int totalRoll;
+                    std::cout << "Enter board index to move current player to." << std::endl;
+                    std::cin >> totalRoll;
+                    movePlayer(curP, totalRoll, false);
+                    Board[curP->location]->doTileFunction(curP);
+                } else {
+                    int dice1 = diceRoll();
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    int dice2 = diceRoll();
+                    int totalRoll = dice1 + dice2;
+                    std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
+                    movePlayer(curP, curP->location + totalRoll, false);
+
+                    int jailCount;
+
+                    Board[curP->location]->doTileFunction(curP);
+                    if (curPisBankrupt) {
+                        break;
+                    }
+                    jailCount = 1;
+
+                    while (dice1 == dice2) {
+                        std::cout << "You rolled doubles, rolling again" << std::endl;
+                        jailCount = 1;
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        dice1 = diceRoll();
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        dice2 = diceRoll();
+                        totalRoll = dice1 + dice2;
+                        std::cout << "Dice 1: " << dice1 << " Dice 2: " << dice2 << "\n";
+
+                        /*implement move player function*/
+                        movePlayer(curP, curP->location + totalRoll, false);
+                        Board[curP->location]->doTileFunction(curP);
+                        jailCount++;
+
+
+                        if (jailCount == 3) {//send player to jail if they roll doubles 3 times in a row
+
+                            movePlayer(curP, 10, true);
+                            std::cout << "You have rolled doubles 3 times in a row! You must be sent to jail\n";
+                            break;
+                        }
+                    }
+                }
+
 
             }
 
-            std::cout<<"Money: $"<<curP->money<<std::endl;
-            std::cout<<"Would you like to buy and houses or hotels before the end of your turn? (y/n)";
-            std::cin>>answer;
+            if (curPisBankrupt) {
+                break;
+            } else {
+                std::cout << "Money: $" << curP->money << std::endl;
+                std::cout << "Would you like to unmortgage a property? (y/n)";
+                std::cin >> answer;
+                std::string unmortID;
+                if (answer == 'y') {
 
-            if (answer=='y'){
+                    while (answer == 'y') {
+                        displayMortgaged(curP);
+                        std::cout << "Which Property would you like to unmortgage " << std::endl;
+                        std::cin >> unmortID;
 
-                while (answer == 'y'){
-                    buyHouses(curP);
-                    std::cout<<"Money: $"<<curP->money<<std::endl;
-                    std::cout<<"Would you like to buy more houses or hotels? (y/n)";
-                    std::cin>>answer;
+                        if (curP->mortCards.find(unmortID) != curP->mortCards.end()) {
+                            curP->mortCards[unmortID]->unmortgage();
+                        } else {
+                            std::cout << "Card not found" << std::endl;
+                        }
+                        std::cout << "Would you like to unmortgage another property? (y/n)";
+                        std::cin >> answer;
+                    }
+
                 }
 
+                std::cout << "Money: $" << curP->money << std::endl;
+                std::cout << "Would you like to buy and houses or hotels before the end of your turn? (y/n)";
+                std::cin >> answer;
+
+                if (answer == 'y') {
+
+                    while (answer == 'y') {
+                        buyHouses(curP);
+                        std::cout << "Money: $" << curP->money << std::endl;
+                        std::cout << "Would you like to buy more houses or hotels? (y/n)";
+                        std::cin >> answer;
+                    }
+
+                }
             }
+
         }
+        // END HUMAN PLAYER TURN ---------------------------------------------------------------------------------------
 
         activePlayers.next_player();
 
     }
 
 
-
+    std::cout<<"Player "<<curP->name<<" Has Won"<<std::endl;
     return 0;
 }

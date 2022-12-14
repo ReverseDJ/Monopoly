@@ -7,9 +7,11 @@
 
 //uses players location to determine tile to buy;
 void buyProperty(Player * P);
+void botBuyProperty(Player * P);
 
 //called if player needs to pay rent or taxes, needs to check if player has enough money to cover rent value. If not, force to mortgage or initiate bankruptcy
 bool checkBalance(Player * P, int money,bool optional, Player * debtor);
+bool checkBotBalance(Player * P, int money, Player * debtor);
 
 //takes in a player and a card and returns how many cards the player has that match the type of the passed in card
 int checkMonopoly(Player * P, Card * C);
@@ -42,5 +44,20 @@ void printStartTurn(Player * P);
 //handles player turn while player is in jail. Returns true if player gets out of jail. False otherwise.
 bool inJail(Player * P);
 bool checkGOOJ(Player * P); // Jail helper function
+
+
+
+// MACROS
+#define BOT(P) ((P->name).find("BOT"))
+// detroit become human
+#define BH_CHECKBALANCE(P, money, opt, debtor) { \
+    if (BOT(P)) checkBotBalance(P, money, debtor);\
+    else checkBalance(P, money, opt, debtor);\
+}
+
+#define BH_BUYPROPERTY(P) { \
+    if (BOT(P)) botBuyProperty(P); \
+    else buyProperty(P);\
+}
 
 #endif 

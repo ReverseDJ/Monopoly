@@ -102,7 +102,16 @@ void PropertyTile::doTileFunction(Player * P) {
                 rent = rent*2; //doubles rent if player has monopoly.
             }
         }
-        if(checkBalance(P, rent,false,owner)){
+
+        // Check Balance different for bot and human
+        if (BOT(P)) {
+            if (checkBotBalance(P, rent, owner)) {
+                P->money = P->money - rent;
+                owner->money = owner->money + rent;
+                std::cout<<"BOT paid $"<<rent<<" to "<<owner->name<<", BOT has $"<<P->money<<" left"<<std::endl;
+            }
+        }
+        else if(checkBalance(P, rent,false,owner)){
             P->money = P->money - rent;
             owner->money = owner->money + rent;
             std::cout<<"You paid $"<<rent<<" to "<<owner->name<<", you have $"<<P->money<<" left"<<std::endl;
@@ -114,7 +123,7 @@ void PropertyTile::doTileFunction(Player * P) {
     }
     else{
         if (owner == nullptr){ //if property is unowned, offer property to player
-            buyProperty(P);
+            BH_BUYPROPERTY(P);
         }
     }
 }
@@ -125,19 +134,27 @@ void RailRoadTile::doTileFunction(Player * P) {
         int monopoly = checkMonopoly(owner, linkedCard); //determine how many rail roads owner has
         rent *= int(pow(2, (monopoly-1))); //rent is doubled for every additional rail road owner has.
 
-        checkBalance(P, rent,false, owner); //makes sure player can pay rent.
+        BH_CHECKBALANCE(P, rent, false, owner);
+        //checkBalance(P, rent,false, owner); //makes sure player can pay rent.
+
         P->money = P->money - rent;
         owner->money = owner->money + rent;
         std::cout<<"You paid $"<<rent<<" to "<<owner->name<<", you have $"<<P->money<<" left"<<std::endl;
     } else {
         if (owner == nullptr){ //if property is unowned, offer to player.
-            buyProperty(P);
+            BH_BUYPROPERTY(P);
+            //buyProperty(P);
         }
     }
 }
 
 void TaxTile::doTileFunction(Player * P) { //if player can pay tax, subtract from balance
-    if (checkBalance(P, taxValue,false, nullptr)){
+    if (BOT(P)) {
+        if (checkBotBalance(P, taxValue, nullptr)) {
+            P->money = P->money - taxValue;
+        }
+    }
+    else if (checkBalance(P, taxValue,false, nullptr)){
         P->money = P->money - taxValue;
     }
 }
@@ -157,14 +174,16 @@ void UtilityTile::doTileFunction(Player * P) {
         else{
             rent = roll*(linkedCard->rentOneUtil);
         }
-        checkBalance(P,rent,false, owner);
+        BH_CHECKBALANCE(P, rent, false, owner);
+        //checkBalance(P,rent,false, owner);
 
         P->money = P->money - rent; //check that player can pay rent and charge
         owner->money = owner->money + rent;
         std::cout<<"You rolled a "<<roll<<" you paid $"<<rent<<" to "<<owner->name<<std::endl;
     } else {
         if (owner == nullptr){
-            buyProperty(P);
+            //buyProperty(P);
+            BH_BUYPROPERTY(P);
         }
     }
 }
@@ -175,7 +194,7 @@ void GoToJailTile::doTileFunction(Player * P) {
     P->location = 10;
     std::cout<<"Player "<<P->name<<" has gone to Jail"<<std::endl;
     
-    checkGOOJ(P);
+    if (!BOT(P))checkGOOJ(P);
     /* if (P->DeckCards.size()) {
         std::cout << "Would you like to use a Get Out Of Jail Free card? (y/n)" << std::endl;
         char useCard;
@@ -252,7 +271,13 @@ void movePlayerCard::doDeckCardFunction(Player * P){
 
 void getMoneyCard::doDeckCardFunction(Player * P){
     std::cout<<cardDesc<<std::endl;
-    if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount),false, nullptr)){ //if player needs to pay money, check their balance (returns true if they can pay) and subtract the money.
+
+    if (BOT(P)) {
+        if (moneyAmount < 0 && checkBotBalance(P, (-1*moneyAmount), nullptr)) {
+            P->money = P->money + moneyAmount;
+        }
+    }
+    else if (moneyAmount < 0 && checkBalance(P,(-1*moneyAmount),false, nullptr)){ //if player needs to pay money, check their balance (returns true if they can pay) and subtract the money.
         P->money = P->money + moneyAmount; //moneyAmount will be negative if this branch is active.
     }
     else {
@@ -275,13 +300,25 @@ void transferMoneyCard::doDeckCardFunction(Player * P){
         // if card drawer is paying, check balance at each loop iteration
 
         if (moneyAmount > 0) {
-            if (checkBalance(tempPlayer, moneyAmount,false, tempPlayer)) {
+            if (BOT(P)) {
+                if (checkBotBalance(tempPlayer, moneyAmount, tempPlayer)) {
+                    tempPlayer->money -= moneyAmount;
+                    curPlayerBackup->money +=moneyAmount;
+                }
+            }
+            else if (checkBalance(tempPlayer, moneyAmount,false, tempPlayer)) {
                 tempPlayer->money -= moneyAmount;
                 curPlayerBackup->money += moneyAmount;
             }
         }
         else {
-            if (checkBalance(curPlayerBackup, moneyAmount,false, tempPlayer)) {
+            if (BOT(P)) {
+                if (checkBotBalance(curPlayerBackup, moneyAmount, tempPlayer)) {
+                    curPlayerBackup->money += moneyAmount; // payAmount < 0
+                    tempPlayer->money -= moneyAmount;
+                }
+            }
+            else if (checkBalance(curPlayerBackup, moneyAmount,false, tempPlayer)) {
                 curPlayerBackup->money += moneyAmount; // payAmount < 0
                 tempPlayer->money -= moneyAmount;
             }
@@ -313,8 +350,8 @@ void payPerBuildingCard::doDeckCardFunction(Player *P) {
 
     std::cout << "Paying $" << totalToPay << "for " << numHouses << " houses and " << numHotels << " hotels." << std::endl;
 
-    if (checkBalance(P, totalToPay,false, nullptr)) {
-        P->money -= totalToPay;
-    }
+    BH_CHECKBALANCE(P, totalToPay,false, nullptr);
+    P->money -= totalToPay;
+
 }
 
