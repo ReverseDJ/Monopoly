@@ -426,7 +426,9 @@ bool inJail(Player * P){
     
     std::cout<<"You are in Jail"<<std::endl;
     
-    if (P->DeckCards.find("GetOutOfJail") != P->DeckCards.end()){ 
+    if (checkGOOJ(P)) return true;
+
+    /* if (P->DeckCards.find("GetOutOfJail") != P->DeckCards.end()){ 
         std::cout << "You have a get out of jail free card. Would you like to use it? (y/n)\n";
         std::cin >> playerResponse;
         
@@ -437,7 +439,8 @@ bool inJail(Player * P){
             P->DeckCards.erase("GetOutOfJail");
             return true;
         }
-    }
+    } */
+    
     std::cout<<"Rolling to get out of Jail"<<std::endl;
     
      int dice1 = diceRoll();
@@ -491,4 +494,24 @@ bool inJail(Player * P){
          }
      }
      return false;
+}
+
+bool checkGOOJ(Player * P) {
+    if (P->DeckCards.size()) {
+        std::cout << "You have a get out of jail free card. Would you like to use it? (y/n)\n";
+        char useCard;
+        std::cin >> useCard;
+        if (useCard == 'y') {
+            std::cout << "Used Get Out Of Jail Free card." << std::endl;
+            std::cout << "You are out of Jail at tile #10." << std::endl;
+            
+            // find a card
+            (P->DeckCards.begin())->second->doDeckCardFunction(P);
+            return true;
+        }
+        else {
+            std::cout << "You are still in Jail." << std::endl;
+            return false;
+        }
+    }
 }

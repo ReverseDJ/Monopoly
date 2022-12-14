@@ -41,5 +41,6 @@ void printStartTurn(Player * P);
 
 //handles player turn while player is in jail. Returns true if player gets out of jail. False otherwise.
 bool inJail(Player * P);
+bool checkGOOJ(Player * P); // Jail helper function
 
 #endif 

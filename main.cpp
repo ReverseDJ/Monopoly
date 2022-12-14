@@ -64,16 +64,23 @@ int main() {
     if(activePlayers.playerList.size() == 1){
         std::cout<<"Player "<<curP->name<<" Has Won"<<std::endl;
     }
+
+    
+    bool justVisiting;
+
     while(activePlayers.playerList.size() !=1 /*temporary variable*/) {
+        justVisiting = false;
         curPisBankrupt = false;
         curP = activePlayers.currentPlayer;
         printStartTurn(curP);
-        
-        if (curP->inJail) {
-            std::cout<<"You are in Jail"<<std::endl;
-            //STILL NEEDS TO BE IMPLEMENTED!!!
+
+        if (curP->inJail) { // try to get out of jail AFTER doing all the non-in-jail stuff
+            if (inJail(curP)) { // if you got out
+                justVisiting = true;
+            }
         }
-        else {
+
+        if (!(curP->inJail) && !justVisiting) {
             /*implement dice roll function*/
 
             if (test) {

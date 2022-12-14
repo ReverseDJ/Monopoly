@@ -70,6 +70,7 @@ void UtilityCard::buy(Player * P){
 
 void getOutOfJailCard::doDeckCardFunction(Player *P){ //runs if player uses get out of jail card
     P->inJail = false;
+    P->turnsInJail = 0;
     if (cardID == "CH") {
         chanceCards.push_back(P->DeckCards[cardID]);
     }
@@ -173,8 +174,9 @@ void GoToJailTile::doTileFunction(Player * P) {
     P->inJail = true;
     P->location = 10;
     std::cout<<"Player "<<P->name<<" has gone to Jail"<<std::endl;
-
-    if (P->DeckCards.size()) {
+    
+    checkGOOJ(P);
+    /* if (P->DeckCards.size()) {
         std::cout << "Would you like to use a Get Out Of Jail Free card? (y/n)" << std::endl;
         char useCard;
         std::cin >> useCard;
@@ -189,7 +191,7 @@ void GoToJailTile::doTileFunction(Player * P) {
         else {
             std::cout << "You are still in Jail." << std::endl;
         }
-    }
+    } */
 
 }
 
