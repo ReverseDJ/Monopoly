@@ -55,7 +55,11 @@ int main() {
     if (test) {
         std::cout << "Test mode. Rolling doubles is disabled." << std::endl;
     }
-
+    else {
+        std::cout << "Running game, shuffling chance & community chest." << std::endl;
+        mixCards(chanceCards);
+        mixCards(communityChestCards);
+    }
 
     while(activePlayers.playerList.size() !=1 /*temporary variable*/) {
         curP = activePlayers.currentPlayer;
