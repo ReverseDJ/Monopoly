@@ -342,7 +342,7 @@ void printStartTurn(Player * P) {
     displayProperties(P);
 }
 
-//handles player turns while player is in jail
+//handles player turns while player is in jail. Returns true if player gets out of jail. False otherwise.
 bool inJail(Player * P){
     P->location = 10;
     P->inJail = true;
