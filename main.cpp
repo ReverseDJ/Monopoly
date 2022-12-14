@@ -22,6 +22,7 @@ int main(){
 
 int main() {
 
+
     makeBoard(MAKEBOARD_CSV, Board);
     makeDrawCards(MAKECHANCE_TSV, &chanceCards);
     makeDrawCards(MAKECHEST_TSV, &communityChestCards);
@@ -115,7 +116,30 @@ int main() {
 
 
         }
-      
+
+        std::cout<<"Money: $"<<curP->money<<std::endl;
+        std::cout<<"Would you like to unmortgage a property? (y/n)";
+        std::cin>>answer;
+        std::string unmortID;
+        if (answer=='y'){
+
+            while (answer == 'y'){
+                displayMortgaged(curP);
+                std::cout<<"Which Property would you like to unmortgage "<<std::endl;
+                std::cin>>unmortID;
+
+                if(curP->mortCards.find(unmortID) != curP->mortCards.end()){
+                    curP->mortCards[unmortID]->unmortgage();
+                }
+                else{
+                    std::cout<<"Card not found"<<std::endl;
+                }
+                std::cout<<"Would you like to unmortgage another property? (y/n)";
+                std::cin>>answer;
+            }
+
+        }
+
         std::cout<<"Money: $"<<curP->money<<std::endl;
         std::cout<<"Would you like to buy and houses or hotels before the end of your turn? (y/n)";
         std::cin>>answer;

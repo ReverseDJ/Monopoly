@@ -8,3 +8,5 @@
 *.out
 
 /filepath.h
+
+/log.txt

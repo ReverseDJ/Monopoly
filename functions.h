@@ -17,6 +17,8 @@ int checkMonopoly(Player * P, Card * C);
 void displayProperties(Player * P); //Prints out all properties owned by the player, generally useful during the game loop.
 void displayMortgaged(Player * P); // prints mortgaged properties
 
+void displayMortgaged(Player * P);
+
 void Bankruptcy(Player* P, PlayerTurn Turn); //Removes Player from Player Turn list and declares them bankrupt
 
 //Take a generic player and moves them to a generic space
@@ -26,7 +28,6 @@ void movePlayer(Player *P, int dest, bool inst);
 
 void makeBoard(std::string filename, Tile ** Board);
 void makeDrawCards(std::string filename, std::deque<DeckCard*> * deck);
-void printDeck(std::deque<DeckCard*> * deck);
 
 //used to make a single dice roll
 int diceRoll();

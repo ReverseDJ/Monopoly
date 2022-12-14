@@ -19,7 +19,17 @@ void PropertyCard::mortgage(){
     linkTile->owner->money += mort;
 }
 void PropertyCard::unmortgage(){
-    linkTile->isMortgaged = false;
+
+    if(checkBalance(linkTile->owner, mort, true)){
+        linkTile->owner->money -= mort;
+        linkTile->isMortgaged = false;
+        linkTile->owner->ownedCards[cardID] = linkTile->owner->mortCards[cardID];
+        linkTile->owner->mortCards.erase(cardID);
+    }
+    else{
+        std::cout<<"Unmortgage Canceled"<<std::endl;
+    }
+
 }
 void PropertyCard::buy(Player * P){
     linkTile->owner = P;
@@ -34,7 +44,16 @@ void RailRoadCard::mortgage(){
     linkTile->owner->money += mort;
 }
 void RailRoadCard::unmortgage(){
-    linkTile->isMortgaged = false;
+
+    if(checkBalance(linkTile->owner, mort, true)){
+        linkTile->owner->money -= mort;
+        linkTile->isMortgaged = false;
+        linkTile->owner->ownedCards[cardID] = linkTile->owner->mortCards[cardID];
+        linkTile->owner->mortCards.erase(cardID);
+    }
+    else{
+        std::cout<<"Unmortgage Canceled"<<std::endl;
+    }
 }
 void RailRoadCard::buy(Player * P){
     linkTile->owner = P;
@@ -49,7 +68,15 @@ void UtilityCard::mortgage(){
     linkTile->owner->money += mort;
 }
 void UtilityCard::unmortgage(){
-    linkTile->isMortgaged = false;
+    if(checkBalance(linkTile->owner, mort, true)){
+        linkTile->owner->money -= mort;
+        linkTile->isMortgaged = false;
+        linkTile->owner->ownedCards[cardID] = linkTile->owner->mortCards[cardID];
+        linkTile->owner->mortCards.erase(cardID);
+    }
+    else{
+        std::cout<<"Unmortgage Canceled"<<std::endl;
+    }
 }
 void UtilityCard::buy(Player * P){
     linkTile->owner = P;
@@ -60,7 +87,7 @@ void getOutOfJailCard::doDeckCardFunction(Player *P){ //runs if player uses get 
     if (cardID == "CH") {
         chanceCards.push_back(P->DeckCards[cardID]);
     }
-    else if (cardID == "CH") {
+    else if (cardID == "CC") {
         communityChestCards.push_back(P->DeckCards[cardID]);
     }
     P->DeckCards.erase(cardID);
