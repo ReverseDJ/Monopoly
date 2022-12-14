@@ -16,6 +16,7 @@ std::deque<DeckCard*> communityChestCards;
 //PlayerTurn * activePlayers;
 PlayerTurn activePlayers({});
 
+int botMoneyStart; // blame Carlson
 
 
 /*
@@ -65,9 +66,7 @@ int main() {
         mixCards(communityChestCards);
     }
 
-    bool lateGame;
-    int botSpent;
-    int botMoneyStart;
+    // bool lateGame;
 
     bool justVisiting;
 
@@ -77,9 +76,8 @@ int main() {
         curP = activePlayers.currentPlayer;
         printStartTurn(curP);
 
-        if ((curP->name).find("BOT")) {
+        if BOT(curP) {
             // init bot money spending tracker
-            botSpent = 0;
             botMoneyStart = curP->money;
 
             if(curP->inJail){
@@ -116,7 +114,8 @@ int main() {
                     std::cout << "Enter board index to move current player to." << std::endl;
                     std::cin >> totalRoll;
                     movePlayer(curP, totalRoll, false);
-                    // BOT DO TILE FUNCTION
+                    Board[curP->location]->doTileFunction(curP);
+
 
                 } else {
                     int dice1 = diceRoll();
@@ -158,8 +157,24 @@ int main() {
                         }
                     }
                 }
+            }
 
+        // Bot Optional Actions: Unmortgaging properties, then (if no mortgaged properties left) buying houses --------
+            if (curPisBankrupt) break;
+            else {
+                for(auto i: curP->mortCards) {
+                    if (trackBotSpending(curP)) {
+                        i.second->unmortgage();
+                    }
+                    else {
+                        std::cout << "Spending limit reached while unmortgaging" << std::endl;
+                        break;
+                    }
+                }
 
+                if (curP->mortCards.empty()) {
+                    botBuyHouses(curP);
+                }
             }
 
         } // End Bot Turn --------------------------------------------------------------

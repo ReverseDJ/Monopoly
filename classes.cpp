@@ -157,6 +157,7 @@ void TaxTile::doTileFunction(Player * P) { //if player can pay tax, subtract fro
     else if (checkBalance(P, taxValue,false, nullptr)){
         P->money = P->money - taxValue;
     }
+    std::cout << "Player " << P->name << " has $" << P->money << std::endl;
 }
 
 void UtilityTile::doTileFunction(Player * P) {
