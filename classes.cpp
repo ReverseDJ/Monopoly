@@ -109,17 +109,23 @@ void TaxTile::doTileFunction(Player * P) { //if player can pay tax, subtract fro
 void UtilityTile::doTileFunction(Player * P) {
     if (owner != nullptr && (!isMortgaged)) { // if owned and not mortgaged
         int rent;
+        int roll;
         int monopoly = checkMonopoly(P, linkedCard); //check if player owns both utilities
 
+        roll = diceRoll()+diceRoll();
+
         if (monopoly == 2){
-            rent = linkedCard->rentTwoUtil; //if players owns both utilities, set appropriate rent
+            rent = roll*(linkedCard->rentTwoUtil); //if players owns both utilities, set appropriate rent
+
         }
         else{
-            rent = linkedCard->rentOneUtil;
+            rent = roll*(linkedCard->rentOneUtil);
         }
         checkBalance(P,rent,false);
+
         P->money = P->money - rent; //check that player can pay rent and charge
         owner->money = owner->money + rent;
+        std::cout<<"You rolled a "<<roll<<" you paid $"<<rent<<" to "<<owner<<std::endl;
     } else {
         if (owner == nullptr){
             buyProperty(P);
